@@ -5,7 +5,7 @@ namespace Everything2Everyone.Models
 {
     // Clasa Users va mosteni clasa IdentityUser care deja contine:
     // -> UserID, RoleID, Password, Email
-    public class Users: IdentityUser
+    public class User: IdentityUser
     {
 
         [Required(ErrorMessage = "First name is required! Length must be between 5 and 30 characters.")]
@@ -24,6 +24,11 @@ namespace Everything2Everyone.Models
         public string NickName { get; set; }
 
         public DateTime JoinDate { get; set; }
+
+        // Colectii pentru a putea face join cu `Artcile` & `Comment` 
+        // si pentru a afisa ulterior toate articolele si comentariile asociate unui utilizator
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Article> Articles { get; set; }
 
     }
 }
