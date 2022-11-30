@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Everything2Everyone.props" />
+</Project>
