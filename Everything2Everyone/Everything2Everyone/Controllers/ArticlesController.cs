@@ -197,6 +197,12 @@ namespace Everything2Everyone.Controllers
             ArticleBundle articleToBeInserted = new ArticleBundle();
             articleToBeInserted.Categories = StoreCategories();
 
+            // message received
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.DisplayedMessage = TempData["message"];
+            }
+
             return View(articleToBeInserted);
         }
 
@@ -215,6 +221,13 @@ namespace Everything2Everyone.Controllers
             // provided article and chapters are valid
             if (ModelState.IsValid)
             {
+                if (articleBundle.Chapters.Count == 0)
+                {
+                    articleBundle.Categories = StoreCategories();
+                    TempData["message"] = "An article must contain at least one chapter";
+                    return View(articleBundle);
+                }
+
                 DataBase.Articles.Add(articleBundle.Article);
                 DataBase.SaveChanges();
 
@@ -229,11 +242,9 @@ namespace Everything2Everyone.Controllers
             }
             // provided article and chapters are invalid, so the 'New' View
             // is returned and populated with the said article and chapters
-            else
-            {
-                articleBundle.Categories = StoreCategories();
-                return View(articleBundle);
-            }
+            
+            articleBundle.Categories = StoreCategories();
+            return View(articleBundle);
         }
 
 
@@ -335,6 +346,14 @@ namespace Everything2Everyone.Controllers
 
             if (ModelState.IsValid)
             {
+                // there must be at least one chapter associated with every article
+                if (articleVersionBundle.Chapters.Count == 0)
+                {
+                    articleVersionBundle.Categories = StoreCategories();
+                    TempData["message"] = "An article must contain at least one chapter";
+                    return View(articleVersionBundle);
+                }
+
                 // copying the previous version of the article and the versions
                 // of all chapters associated with it into the ARTICLE_VERSIONS
                 // and CHAPTER_VERSIONS tables
