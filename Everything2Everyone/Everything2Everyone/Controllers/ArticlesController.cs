@@ -22,19 +22,23 @@ namespace Everything2Everyone.Controllers
         // of choosing a version based on which to modify their article
         public IActionResult ChooseVersion(int articleID)
         {
-            // fetching all previous article versions from the database
-            var articleVersions = DataBase.ArticleVersions.Include("Category").Where(articleVersion => articleVersion.ArticleID == articleID)
-                                                                              .OrderBy(articleVersion => articleVersion.VersionID);
+            // fetching current article version from the database
+            Article currentArticleVersion;
 
             // making sure provided articleID is valid
-            if (articleVersions == null)
-            { 
+            try
+            {
+                currentArticleVersion = DataBase.Articles.Include("Category").Where(articleVersion => articleVersion.ArticleID == articleID).First();
+            }
+            catch
+            {
                 TempData["message"] = "No article with specified ID could be found.";
                 return Redirect("/Articles/Index/filter-sort");
             }
 
-            // fetching current article version from the database
-            Article currentArticleVersion = DataBase.Articles.Include("Category").Where(articleVersion => articleVersion.ArticleID == articleID).First();
+            // fetching all previous article versions from the database
+            var articleVersions = DataBase.ArticleVersions.Include("Category").Where(articleVersion => articleVersion.ArticleID == articleID)
+                                                                              .OrderBy(articleVersion => articleVersion.VersionID);
 
             ViewBag.articleVersions = articleVersions;
             return View(currentArticleVersion);
@@ -46,10 +50,14 @@ namespace Everything2Everyone.Controllers
         // like an on/off switch
         public IActionResult Restrict(int articleID)
         {
-            Article article = DataBase.Articles.Find(articleID);
+            Article article;
 
             // making sure provided articleID is valid
-            if (article == null)
+            try
+            {
+                article = DataBase.Articles.Find(articleID);
+            }
+            catch
             {
                 TempData["message"] = "No article with specified ID could be found.";
                 return Redirect("/Articles/Index/filter-sort");
@@ -312,10 +320,14 @@ namespace Everything2Everyone.Controllers
         [HttpPost]
         public IActionResult Edit(ArticleVersionBundle articleVersionBundle)
         {
-            Article currentArticle = DataBase.Articles.Find(articleVersionBundle.Article.ArticleID);
-            
+            Article currentArticle;
+
             // making sure provided bundled object stores a valid articleID
-            if (currentArticle == null)
+            try
+            {
+                currentArticle = DataBase.Articles.Find(articleVersionBundle.Article.ArticleID);
+            }
+            catch
             {
                 TempData["message"] = "No article with specified ID could be found.";
                 return Redirect("/Articles/Index/filter-sort");
@@ -402,10 +414,14 @@ namespace Everything2Everyone.Controllers
         [HttpPost]
         public IActionResult Delete(int articleID)
         {
-            Article article = DataBase.Articles.Find(articleID);
+            Article article;
 
             // making sure provided articleID is valid
-            if (article == null)
+            try
+            {
+                article = DataBase.Articles.Find(articleID);
+            }
+            catch
             {
                 TempData["message"] = "No article with specified ID could be found.";
                 return Redirect("/Articles/Index/my-articles");
