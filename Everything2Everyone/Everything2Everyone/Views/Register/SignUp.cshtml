@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewData["Title"] = "SignUp";
+    Layout = "~/Views/Shared/_LayoutRegister.cshtml";
+}
+
+<form action="" class="vw-log-sign-form">
+    <div class="vw-form-groups">
+        <div class="vw-form-groups-items">
+            <label for="FirstName" class="vw-log-sign-label">First name:</label>
+            <input type="text" name="FirstName">
+        </div>
+        <div class="vw-form-groups-items">
+            <label for="LastName" class="vw-log-sign-label">Last name:</label>
+            <input type="text" name="LastName">
+        </div>
+    </div>
+
+    <label for="NickName" class="vw-log-sign-label">Nick name:</label>
+    <input type="text" name="Nickname">
+
+    <label for="Email" class="vw-log-sign-label">Email:</label>
+    <input type="text" name="Email">
+
+    <div class="vw-form-groups">
+        <div class="vw-form-groups-items">
+            <label for="Password" class="vw-log-sign-label">Password:</label>
+            <input type="text" name="Password">
+        </div>
+        <div class="vw-form-groups-items">
+            <label for="PasswordRepeat" class="vw-log-sign-label">Repeat password:</label>
+            <input type="text" name="PasswordRepeat">
+        </div>
+    </div>
+
+    <button class="btn-basic btn-log-sign" type="submit">
+        Sign up
+    </button>
+</form>
+

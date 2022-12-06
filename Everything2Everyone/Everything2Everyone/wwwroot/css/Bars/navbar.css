@@ -1,0 +1,72 @@
+.vw-navbar{
+    background: var(--color-bg);
+    height: 10vh;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+}
+
+/* NAVBAR Logo */
+.vw-navbar-logo img{
+    height: 48%;
+    width: 48%;
+}
+
+/* NAVBAR Search */
+.navbar-search{
+    display: flex;
+    justify-content: center;
+}
+
+/* NAVBAR LOGIN, SIGNUP
+NAVBAR LINKS */
+.vw-navbar-links{
+    display: flex;
+    color: var(--color-stroke);
+}
+
+.vw-navbar-link{
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+/* PROFILE DROPDOWN */
+.btn-drop {
+    background-color: var(--top-gradient);;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+  
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+  
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--text-secondary);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+  
+.dropdown-content a {
+    color: var(--color-bg);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+  
+.dropdown-content a:hover {background-color: #f1f1f1}
+.dropdown:hover .dropdown-content { display: block; right:0;}
+
+.dropdown-content a.dropdown-sign-out{ background-color: var(--color-bg); }

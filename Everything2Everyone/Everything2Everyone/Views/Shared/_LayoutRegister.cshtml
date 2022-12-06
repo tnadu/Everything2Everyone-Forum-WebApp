@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--
+        Font families:
+        - Source Sans Pro
+        - Rubik Glitch
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Glitch&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+
+    <!-- General CSS -->
+    <link rel="stylesheet" href="~/css/resetsheet.css">
+    <link rel="stylesheet" href="~/css/vw-style.css">
+
+    <!-- Elements CSS -->
+    <link rel="stylesheet" href="~/css/Register/login.css">
+
+    <title>EverythingToEveryone</title>
+</head>
+
+<body>
+
+    <div class="vw-log-sign">
+        <div class="vw-log-sign-message">
+            <a href="/"><img src="/Images/Logo/logo.svg" alt=""></a>
+            <div class="vw-message-welcome">Start spreading your knowledge and own experience.</div>
+            <div class="vw-message-small-welcome">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem qui aliquid illum explicabo unde saepe sunt totam doloremque assumenda. Consectetur voluptate accusamus aut laboriosam fugiat odio unde minima dignissimos voluptas.</div>
+        </div>
+        @RenderBody()
+    </div>
+
+</body>
+</html>

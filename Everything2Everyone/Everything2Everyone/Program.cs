@@ -39,6 +39,17 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
 
+// Just to test if the LayoutRegister works
+app.MapControllerRoute(
+    name: "MyRegisterLogIn",
+    pattern: "MyRegister/LogIn",
+    defaults: new { controller = "Register", action = "LogIn" });
+
+app.MapControllerRoute(
+    name: "MyRegisterSignUp",
+    pattern: "MyRegister/SignUp",
+    defaults: new { controller = "Register", action = "SignUp" });
+
+app.MapRazorPages();
 app.Run();

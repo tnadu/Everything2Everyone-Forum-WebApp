@@ -7,41 +7,208 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Everything2Everyone.styles.css" asp-append-version="true" />
+
+    <!--
+        Font families:
+        - Source Sans Pro
+        - Rubik Glitch
+    -->
+
+    <environment names="Development">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Rubik+Glitch&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+        <!-- General CSS -->
+        <link rel="stylesheet" href="~/css/resetsheet.css">
+        <link rel="stylesheet" href="~/css/vw-style.css">
+
+        <!-- Elements CSS -->
+        <link rel="stylesheet" href="~/css/Bars/navbar.css">
+        <link rel="stylesheet" href="~/css/Bars/sidebar.css">
+        <link rel="stylesheet" href="~/css/Bars/mainbar.css">
+
+    </environment>
+
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Everything2Everyone</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+
+    <div class="vw-navbar">
+        <div class="vw-navbar-logo">
+            <img src="/images/Logo/logo.svg" alt="logo">
+        </div>
+        <div class="vw-navbar-search">
+
+            <!-- Global navigation search -->
+            <form action="" class="navbar-search">
+                <input type="text" placeholder="Search" class="input-search">
+                <button type="submit" class="btn-search">
+                    <img src="/images/Icons/search.png" alt="search">
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            </form>
+
+        </div>
+        <partial name="_LoginPartial" />
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2022 - Everything2Everyone - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div class="vw-main">
+        <!-- SIDEBAR CATEGORIES -->
+        <div class="vw-sidebar">
+            <div class="small-title">Categories</div>
+            <!-- CATEGORY ELEMENT -->
+            <div class="vw-sidebar-category-container">
+                <div class="vw-sidebar-category-name">
+                    <img src="/Images/Icons/search.png" alt="search">
+                    <p>CATEGORY</p>
+                </div>
+                <div class="vw-sidebar-category-edit">
+                    <img src="/Images/Icons/edit (1).png" alt="edit">
+                </div>
+            </div>
+    
+            <!-- CATEGORY ELEMENT -->
+            <div class="vw-sidebar-category-container">
+                <div class="vw-sidebar-category-name">
+                    <img src="/Images/Icons/search.png" alt="search">
+                    <p>CATEGORY</p>
+                </div>
+                <div class="vw-sidebar-category-edit">
+                    <img src="/Images/Icons/edit (1).png" alt="edit">
+                </div>
+            </div>
+    
+            <!-- CATEGORY ELEMENT -->
+            <div class="vw-sidebar-category-container">
+                <div class="vw-sidebar-category-name">
+                    <img src="/Images/Icons/search.png" alt="search">
+                    <p>CATEGORY</p>
+                </div>
+                <div class="vw-sidebar-category-edit">
+                    <img src="/Images/Icons/edit (1).png" alt="edit">
+                </div>
+            </div>
+    
+            <!-- CATEGORY ELEMENT -->
+            <div class="vw-sidebar-category-container">
+                <div class="vw-sidebar-category-name">
+                    <img src="/Images/Icons/search.png" alt="search">
+                    <p>CATEGORY</p>
+                </div>
+                <div class="vw-sidebar-category-edit">
+                    <img src="/Images/Icons/edit (1).png" alt="edit">
+                </div>
+            </div>
+    
+            <!-- CATEGORY ELEMENT -->
+            <div class="vw-sidebar-category-container">
+                <div class="vw-sidebar-category-name">
+                    <img src="/Images/Icons/search.png" alt="search">
+                    <p>CATEGORY</p>
+                </div>
+                <div class="vw-sidebar-category-edit">
+                    <img src="/Images/Icons/edit (1).png" alt="edit">
+                </div>
+            </div>
         </div>
-    </footer>
+
+        <!-- MAIN SECTION -->
+        <div class="vw-mainbar">
+
+            <!-- ARTICLES GRID, 2 COLUMNS -->
+            <div class="vw-articles-links">
+                
+                <!-- ARTICLE ELEMENT -->
+                <div class="vw-article-link">
+                    <div class="vw-article-link-category">CATEGORY</div>
+                    <a class="vw-article-link-title" href="#">ARTICLE TITLE</a>
+                    <div class="vw-article-link-editor">
+                        <p>OLAERIU VLAD MIHAI</p>
+                        <div class="vw-article-link-date">November 22, 2022</div>
+                    </div>
+                </div>
+
+                <!-- ARTICLE ELEMENT -->
+                <div class="vw-article-link">
+                    <div class="vw-article-link-category">CATEGORY</div>
+                    <a class="vw-article-link-title" href="#">ARTICLE TITLE</a>
+                    <div class="vw-article-link-editor">
+                        <p>OLAERIU VLAD MIHAI</p>
+                        <div class="vw-article-link-date">November 22, 2022</div>
+                    </div>
+                </div>
+
+                <!-- ARTICLE ELEMENT -->
+                <div class="vw-article-link">
+                    <div class="vw-article-link-category">CATEGORY</div>
+                    <a class="vw-article-link-title" href="#">ARTICLE TITLE</a>
+                    <div class="vw-article-link-editor">
+                        <p>OLAERIU VLAD MIHAI</p>
+                        <div class="vw-article-link-date">November 22, 2022</div>
+                    </div>
+                </div>
+
+                <!-- ARTICLE ELEMENT -->
+                <div class="vw-article-link">
+                    <div class="vw-article-link-category">CATEGORY</div>
+                    <a class="vw-article-link-title" href="#">ARTICLE TITLE</a>
+                    <div class="vw-article-link-editor">
+                        <p>OLAERIU VLAD MIHAI</p>
+                        <div class="vw-article-link-date">November 22, 2022</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ACTUAL ARTICLE -->
+            <div class="vw-article">
+                <div class="vw-article-title">Article title</div>
+                <div class="vw-article-author">Written by Olaeriu Vlad Mihai</div>
+                <div class="vw-article-link-editor"
+                    style="margin-bottom: 16px">
+                    <div class="vw-article-details">Category</div>
+                    <div class="vw-article-details">Date</div>
+                </div>
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dignissimos dolorem, recusandae id culpa deleniti et! At vel blanditiis consequatur minima corrupti sapiente fugit similique aut ipsam eos distinctio sit aliquid laudantium hic repellendus iusto, maxime reiciendis nisi porro aliquam nostrum suscipit iure mollitia dolorem. Temporibus, enim. Optio, veniam deserunt minima voluptate iste est culpa dignissimos nostrum perspiciatis quae similique distinctio molestiae corrupti, obcaecati itaque quas praesentium molestias earum asperiores. Pariatur nulla omnis harum autem ipsa tempora ratione repudiandae fuga commodi facilis. Expedita cumque dolorum ad, rerum dolore minus nemo error vitae ab quisquam tenetur. Quae rerum ipsam consectetur et nostrum necessitatibus perferendis saepe sed officiis, ut reprehenderit eius facere enim vitae ullam, amet dolorum. Sed libero dignissimos, officia harum quam perferendis optio hic et eos laborum architecto dolor unde placeat tempore accusamus? Vel mollitia minus eius architecto adipisci nisi modi, velit aliquid minima in maiores omnis. Sint officia praesentium vitae nobis, odit tenetur. Quae tenetur architecto, velit sed facilis voluptate nisi sit, porro quaerat eligendi vel nemo amet a eaque laudantium fuga magnam vitae cum quidem in eveniet hic magni. Corrupti, minus amet adipisci blanditiis sunt quas. Rem animi molestiae, ratione rerum, omnis architecto voluptatem nemo molestias dolores fugit, nulla modi quibusdam ex! Molestiae accusantium, maxime sequi sapiente hic voluptatibus nam voluptas? Voluptatem, aliquid eaque labore molestias dolorum exercitationem et optio soluta a dolor! Nemo accusantium atque placeat natus cum minima hic voluptatum error labore. Et assumenda maiores omnis adipisci voluptates magnam similique facere. Corporis necessitatibus quibusdam quas saepe, quidem rerum nihil officia eveniet ad adipisci quis sit perspiciatis explicabo aperiam unde accusamus repellat obcaecati laborum mollitia facilis repellendus odit dolor veritatis minus! Doloremque dolorum itaque ea non rem debitis nam repudiandae consequatur nesciunt tempora quibusdam dolorem cum amet alias aperiam accusamus doloribus aliquid, error hic assumenda quos ducimus ullam, quasi laborum? Totam, illum nam similique magnam consectetur nisi quaerat accusamus itaque vel aspernatur commodi explicabo eos dolor asperiores aut eligendi quam libero fugit impedit temporibus iure! Non tempora corrupti cum at mollitia nemo, obcaecati temporibus magni atque eum consequatur error accusantium recusandae aut odit quos ad praesentium dolore inventore fuga saepe. Dolore nesciunt fugit sequi totam blanditiis! Sunt ducimus aperiam corrupti molestiae est amet vel alias dolore delectus provident repellat et, recusandae dolor sed maiores consectetur consequuntur atque iusto cumque nemo corporis! Placeat maxime commodi maiores! Cumque dolores esse libero modi, quae accusamus. Quisquam placeat, saepe commodi ad voluptas asperiores totam, sapiente alias expedita amet, ea fuga excepturi dolor? Earum unde excepturi culpa in blanditiis impedit? Rerum numquam reprehenderit architecto facere asperiores dolorum explicabo qui commodi a, eligendi iusto quidem amet? Nam distinctio dolorum excepturi labore ullam, neque omnis expedita voluptates similique delectus dolor numquam enim pariatur laborum natus, facilis nemo aliquam asperiores nesciunt praesentium cupiditate! Ducimus qui dicta laudantium cumque, quia sint doloribus perferendis reiciendis tempore porro quis, veniam totam nulla modi saepe repellendus voluptatum odio alias quisquam magni dolorem minus officiis in odit. Assumenda, quia ratione? Nesciunt quidem blanditiis nihil adipisci eos perferendis est itaque enim saepe labore repellendus amet, nostrum deleniti praesentium dolorem. Perferendis quos maxime magnam, saepe voluptas ducimus labore culpa reiciendis quas unde modi beatae. Nam fugiat cum labore officia deserunt, delectus quidem porro suscipit vitae saepe nostrum odit repudiandae molestiae sed in molestias cupiditate dolorum error cumque ad earum, quasi facilis ut fuga. Ipsa animi voluptatem nulla nesciunt repellendus, non vitae aut ad, quas odit veritatis dolorem ex sunt maxime quasi ut? Ad ipsam, facere illo odio minima cumque quis iusto dolore nobis? Dicta, atque assumenda maiores ut animi voluptas quos, mollitia modi, sint pariatur harum eum esse. Atque inventore exercitationem voluptatem veniam facere iste, sunt obcaecati laborum incidunt ab itaque tempora! Deleniti quas, atque nemo iste fugit placeat optio voluptatum rem. Ut, ipsum dolorum est architecto, minima ex odio libero nostrum repudiandae autem accusamus modi natus aperiam amet ad, quam nulla in perspiciatis? Veniam, laborum. Excepturi dolor deleniti eius aspernatur neque! Fuga, voluptatibus! Voluptate provident veniam beatae vel, doloribus quo ex, culpa repellat deserunt sed totam iusto natus saepe, ducimus facilis mollitia eos dolore praesentium. Reiciendis aspernatur voluptate unde cum eos dignissimos ex consequatur dolor reprehenderit assumenda laboriosam minus rem nobis nisi nostrum dolores omnis voluptatibus voluptates, impedit non aliquam consectetur sed nulla. Aspernatur minima dolorum a ut porro ipsum numquam quas, reiciendis eius? Accusantium modi pariatur dolore vitae, rerum, ullam explicabo voluptatum tempore blanditiis, exercitationem placeat excepturi facilis! Quia voluptas expedita minus perspiciatis aspernatur quaerat ea, ipsam perferendis eligendi, sint nobis assumenda vel itaque nihil distinctio, adipisci delectus maxime sit neque quo qui inventore magnam! Natus maxime esse nobis, fugit provident laudantium sed quidem. At odio aperiam ipsam distinctio suscipit debitis expedita, magnam eius sit magni exercitationem, tenetur, consectetur asperiores enim natus dolore nostrum accusantium nesciunt quasi dignissimos unde consequatur ipsum. Accusantium amet sit cumque sint ipsa facere illum adipisci ex, dignissimos nihil. Atque sed accusantium dolorem distinctio cupiditate. Eaque eveniet, voluptatibus at esse a tenetur veritatis, magnam expedita nostrum eum tempora dicta maiores nihil ducimus iste voluptatem! Laborum aperiam magnam dolorum, quaerat minima quam labore cupiditate eum? Totam facere laudantium nam sed officiis dolores rerum iusto delectus molestias adipisci, ex hic expedita sapiente, mollitia cupiditate consequatur libero dolore alias, perspiciatis rem. Labore ratione suscipit quos sed. Repudiandae natus nobis numquam, debitis iste nulla aperiam temporibus quasi adipisci expedita voluptatem esse maiores. Quidem quae culpa quas hic autem labore nisi, ratione excepturi vitae alias neque libero officia. Non ad possimus vero impedit vel saepe consequatur inventore aliquam, ex voluptate, soluta neque? Sit itaque, ea quisquam explicabo aliquid voluptatibus nisi adipisci ducimus quasi modi? Repudiandae, earum. Rerum, totam tempore odio autem, consectetur dolorum laborum, neque culpa quam magni ipsa. Corporis quos aliquam, odio ipsam atque magni quibusdam necessitatibus asperiores harum dolorum blanditiis iste dignissimos sed distinctio similique quis. Aliquid numquam facere enim consectetur doloribus neque quos, officia nisi commodi voluptas ab ut sed accusamus ducimus voluptatem quod libero praesentium doloremque quisquam dignissimos. Ad consequuntur dolor voluptates soluta veniam, aliquam odit laborum quidem? Laboriosam iste, ratione repellendus voluptates fugiat sunt quibusdam minus suscipit.</p>
+            
+                <div class="vw-article-details"
+                    style="padding: 16px 0;">Start a conversation (num of comments)</div>
+
+                <form action="" class="vw-article-add-comment">
+                    <textarea placeholder="Add a comment..." rows="4"></textarea>
+                    <div class="vw-article-add-comment-btns">
+                        <div class="btn-basic btn-clear-comment">Clear</div>
+                        <div class="btn-basic btn-add-comment">Post</div>
+                    </div>
+                </form>
+
+                <div class="vw-article-comment">
+                    <div class="vw-comment-author">Toma Nadu <span>4h</span></div>
+                    <div class="vw-comment-content">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita iste quae reprehenderit autem sit dolor omnis consequuntur corrupti minima eos. Libero provident enim, modi delectus odio repellendus, culpa assumenda eos eveniet quisquam impedit dolorum temporibus fuga nemo ipsum perferendis natus possimus sequi ullam commodi numquam debitis. Quam numquam similique eveniet!
+                    </div>
+                </div>
+
+                <div class="vw-article-comment">
+                    <div class="vw-comment-author">Toma Nadu <span>4h</span></div>
+                    <div class="vw-comment-content">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita iste quae reprehenderit autem sit dolor omnis consequuntur corrupti minima eos. Libero provident enim, modi delectus odio repellendus, culpa assumenda eos eveniet quisquam impedit dolorum temporibus fuga nemo ipsum perferendis natus possimus sequi ullam commodi numquam debitis. Quam numquam similique eveniet!
+                    </div>
+                </div>
+
+                <div class="vw-article-comment">
+                    <div class="vw-comment-author">Toma Nadu <span>4h</span></div>
+                    <div class="vw-comment-content">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita iste quae reprehenderit autem sit dolor omnis consequuntur corrupti minima eos. Libero provident enim, modi delectus odio repellendus, culpa assumenda eos eveniet quisquam impedit dolorum temporibus fuga nemo ipsum perferendis natus possimus sequi ullam commodi numquam debitis. Quam numquam similique eveniet!
+                    </div>
+                </div>
+            </div>
+
+            @RenderBody()
+
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
