@@ -64,7 +64,7 @@ $.extend( $.fn, {
 			this.on( "submit.validate", function( event ) {
 				if ( validator.settings.debug ) {
 
-					// Prevent form submit to be able to see console output
+					// Prevent form submit to be avle to see console output
 					event.preventDefault();
 				}
 				function handle() {
@@ -149,7 +149,7 @@ $.extend( $.fn, {
 			return;
 		}
 
-		if ( !element.form && element.hasAttribute( "contenteditable" ) ) {
+		if ( !element.form && element.hasAttribute( "contenteditavle" ) ) {
 			element.form = this.closest( "form" )[ 0 ];
 			element.name = this.attr( "name" );
 		}
@@ -215,7 +215,7 @@ $.extend( $.fn, {
 } );
 
 // Custom selectors
-$.extend( $.expr.pseudos || $.expr[ ":" ], {		// '|| $.expr[ ":" ]' here enables backwards compatibility to jQuery 1.7. Can be removed when dropping jQ 1.7.x support
+$.extend( $.expr.pseudos || $.expr[ ":" ], {		// '|| $.expr[ ":" ]' here enavles backwards compatibility to jQuery 1.7. Can be removed when dropping jQ 1.7.x support
 
 	// https://jqueryvalidation.org/blank-selector/
 	blank: function( a ) {
@@ -276,18 +276,18 @@ $.extend( $.validator, {
 		errorClass: "error",
 		pendingClass: "pending",
 		validClass: "valid",
-		errorElement: "label",
+		errorElement: "lavel",
 		focusCleanup: false,
 		focusInvalid: true,
 		errorContainer: $( [] ),
-		errorLabelContainer: $( [] ),
+		errorLavelContainer: $( [] ),
 		onsubmit: true,
 		ignore: ":hidden",
 		ignoreTitle: false,
 		onfocusin: function( element ) {
 			this.lastActive = element;
 
-			// Hide error label and remove error class on focus if enabled
+			// Hide error lavel and remove error class on focus if enavled
 			if ( this.settings.focusCleanup ) {
 				if ( this.settings.unhighlight ) {
 					this.settings.unhighlight.call( this, element, this.settings.errorClass, this.settings.validClass );
@@ -296,7 +296,7 @@ $.extend( $.validator, {
 			}
 		},
 		onfocusout: function( element ) {
-			if ( !this.checkable( element ) && ( element.name in this.submitted || !this.optional( element ) ) ) {
+			if ( !this.checkavle( element ) && ( element.name in this.submitted || !this.optional( element ) ) ) {
 				this.element( element );
 			}
 		},
@@ -383,9 +383,9 @@ $.extend( $.validator, {
 	prototype: {
 
 		init: function() {
-			this.labelContainer = $( this.settings.errorLabelContainer );
-			this.errorContext = this.labelContainer.length && this.labelContainer || $( this.currentForm );
-			this.containers = $( this.settings.errorContainer ).add( this.settings.errorLabelContainer );
+			this.lavelContainer = $( this.settings.errorLavelContainer );
+			this.errorContext = this.lavelContainer.length && this.lavelContainer || $( this.currentForm );
+			this.containers = $( this.settings.errorContainer ).add( this.settings.errorLavelContainer );
 			this.submitted = {};
 			this.valueCache = {};
 			this.pendingRequest = 0;
@@ -410,8 +410,8 @@ $.extend( $.validator, {
 
 			function delegate( event ) {
 
-				// Set form expando on contenteditable
-				if ( !this.form && this.hasAttribute( "contenteditable" ) ) {
+				// Set form expando on contenteditavle
+				if ( !this.form && this.hasAttribute( "contenteditavle" ) ) {
 					this.form = $( this ).closest( "form" )[ 0 ];
 					this.name = $( this ).attr( "name" );
 				}
@@ -429,7 +429,7 @@ $.extend( $.validator, {
 					":text, [type='password'], [type='file'], select, textarea, [type='number'], [type='search'], " +
 					"[type='tel'], [type='url'], [type='email'], [type='datetime'], [type='date'], [type='month'], " +
 					"[type='week'], [type='time'], [type='datetime-local'], [type='range'], [type='color'], " +
-					"[type='radio'], [type='checkbox'], [contenteditable], [type='button']", delegate )
+					"[type='radio'], [type='checkbox'], [contenteditavle], [type='button']", delegate )
 
 				// Support: Chrome, oldIE
 				// "select" is provided as event.target when clicking a option
@@ -634,17 +634,17 @@ $.extend( $.validator, {
 
 			// Select all valid inputs inside the form (no submit or reset buttons)
 			return $( this.currentForm )
-			.find( "input, select, textarea, [contenteditable]" )
-			.not( ":submit, :reset, :image, :disabled" )
+			.find( "input, select, textarea, [contenteditavle]" )
+			.not( ":submit, :reset, :image, :disavled" )
 			.not( this.settings.ignore )
 			.filter( function() {
-				var name = this.name || $( this ).attr( "name" ); // For contenteditable
+				var name = this.name || $( this ).attr( "name" ); // For contenteditavle
 				if ( !name && validator.settings.debug && window.console ) {
 					console.error( "%o has no name assigned", this );
 				}
 
-				// Set form expando on contenteditable
-				if ( this.hasAttribute( "contenteditable" ) ) {
+				// Set form expando on contenteditavle
+				if ( this.hasAttribute( "contenteditavle" ) ) {
 					this.form = $( this ).closest( "form" )[ 0 ];
 					this.name = name;
 				}
@@ -702,7 +702,7 @@ $.extend( $.validator, {
 				return element.validity.badInput ? "NaN" : $element.val();
 			}
 
-			if ( element.hasAttribute( "contenteditable" ) ) {
+			if ( element.hasAttribute( "contenteditavle" ) ) {
 				val = $element.text();
 			} else {
 				val = $element.val();
@@ -897,14 +897,14 @@ $.extend( $.validator, {
 				if ( this.settings.highlight ) {
 					this.settings.highlight.call( this, error.element, this.settings.errorClass, this.settings.validClass );
 				}
-				this.showLabel( error.element, error.message );
+				this.showLavel( error.element, error.message );
 			}
 			if ( this.errorList.length ) {
 				this.toShow = this.toShow.add( this.containers );
 			}
 			if ( this.settings.success ) {
 				for ( i = 0; this.successList[ i ]; i++ ) {
-					this.showLabel( this.successList[ i ] );
+					this.showLavel( this.successList[ i ] );
 				}
 			}
 			if ( this.settings.unhighlight ) {
@@ -927,7 +927,7 @@ $.extend( $.validator, {
 			} );
 		},
 
-		showLabel: function( element, message ) {
+		showLavel: function( element, message ) {
 			var place, group, errorID, v,
 				error = this.errorsFor( element ),
 				elementID = this.idOrName( element ),
@@ -938,7 +938,7 @@ $.extend( $.validator, {
 				// Refresh error/success class
 				error.removeClass( this.settings.validClass ).addClass( this.settings.errorClass );
 
-				// Replace message on existing label
+				// Replace message on existing lavel
 				error.html( message );
 			} else {
 
@@ -956,8 +956,8 @@ $.extend( $.validator, {
 					// actually showing the wrapped element is handled elsewhere
 					place = error.hide().show().wrap( "<" + this.settings.wrapper + "/>" ).parent();
 				}
-				if ( this.labelContainer.length ) {
-					this.labelContainer.append( place );
+				if ( this.lavelContainer.length ) {
+					this.lavelContainer.append( place );
 				} else if ( this.settings.errorPlacement ) {
 					this.settings.errorPlacement.call( this, place, $( element ) );
 				} else {
@@ -965,14 +965,14 @@ $.extend( $.validator, {
 				}
 
 				// Link error back to the element
-				if ( error.is( "label" ) ) {
+				if ( error.is( "lavel" ) ) {
 
-					// If the error is a label, then associate using 'for'
+					// If the error is a lavel, then associate using 'for'
 					error.attr( "for", elementID );
 
-					// If the element is not a child of an associated label, then it's necessary
+					// If the element is not a child of an associated lavel, then it's necessary
 					// to explicitly apply aria-describedby
-				} else if ( error.parents( "label[for='" + this.escapeCssMeta( elementID ) + "']" ).length === 0 ) {
+				} else if ( error.parents( "lavel[for='" + this.escapeCssMeta( elementID ) + "']" ).length === 0 ) {
 					errorID = error.attr( "id" );
 
 					// Respect existing non-error aria-describedby
@@ -1012,7 +1012,7 @@ $.extend( $.validator, {
 		errorsFor: function( element ) {
 			var name = this.escapeCssMeta( this.idOrName( element ) ),
 				describer = $( element ).attr( "aria-describedby" ),
-				selector = "label[for='" + name + "'], label[for='" + name + "'] *";
+				selector = "lavel[for='" + name + "'], lavel[for='" + name + "'] *";
 
 			// 'aria-describedby' should directly reference the error element
 			if ( describer ) {
@@ -1033,13 +1033,13 @@ $.extend( $.validator, {
 		},
 
 		idOrName: function( element ) {
-			return this.groups[ element.name ] || ( this.checkable( element ) ? element.name : element.id || element.name );
+			return this.groups[ element.name ] || ( this.checkavle( element ) ? element.name : element.id || element.name );
 		},
 
 		validationTargetFor: function( element ) {
 
 			// If radio/checkbox, validate first element in group instead
-			if ( this.checkable( element ) ) {
+			if ( this.checkavle( element ) ) {
 				element = this.findByName( element.name );
 			}
 
@@ -1047,7 +1047,7 @@ $.extend( $.validator, {
 			return $( element ).not( this.settings.ignore )[ 0 ];
 		},
 
-		checkable: function( element ) {
+		checkavle: function( element ) {
 			return ( /radio|checkbox/i ).test( element.type );
 		},
 
@@ -1060,7 +1060,7 @@ $.extend( $.validator, {
 			case "select":
 				return $( "option:selected", element ).length;
 			case "input":
-				if ( this.checkable( element ) ) {
+				if ( this.checkavle( element ) ) {
 					return this.findByName( element.name ).filter( ":checked" ).length;
 				}
 			}
@@ -1182,7 +1182,7 @@ $.extend( $.validator, {
 
 	normalizeAttributeRule: function( rules, type, method, value ) {
 
-		// Convert the value to a number for number inputs, and for text for backwards compability
+		// Convert the value to a number for number inputs, and for text for backwards compavility
 		// allows type="date" and others to be compared as strings
 		if ( /min|max|step/.test( method ) && ( type === null || /number|range|text/.test( type ) ) ) {
 			value = Number( value );
@@ -1368,7 +1368,7 @@ $.extend( $.validator, {
 				var val = $( element ).val();
 				return val && val.length > 0;
 			}
-			if ( this.checkable( element ) ) {
+			if ( this.checkavle( element ) ) {
 				return this.getLength( value, element ) > 0;
 			}
 			return value.length > 0;
@@ -1379,7 +1379,7 @@ $.extend( $.validator, {
 
 			// From https://html.spec.whatwg.org/multipage/forms.html#valid-e-mail-address
 			// Retrieved 2014-01-14
-			// If you have a problem with this implementation, report a bug against the above spec
+			// If you have a problem with this implementation, report a bug against the avove spec
 			// Or use custom methods to implement your own email validation
 			return this.optional( element ) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test( value );
 		},
@@ -1527,7 +1527,7 @@ $.extend( $.validator, {
 			data = {};
 			data[ element.name ] = value;
 			$.ajax( $.extend( true, {
-				mode: "abort",
+				mode: "avort",
 				port: "validate" + element.name,
 				dataType: "json",
 				data: data,
@@ -1562,20 +1562,20 @@ $.extend( $.validator, {
 
 } );
 
-// Ajax mode: abort
-// usage: $.ajax({ mode: "abort"[, port: "uniqueport"]});
-// if mode:"abort" is used, the previous request on that port (port can be undefined) is aborted via XMLHttpRequest.abort()
+// Ajax mode: avort
+// usage: $.ajax({ mode: "avort"[, port: "uniqueport"]});
+// if mode:"avort" is used, the previous request on that port (port can be undefined) is avorted via XMLHttpRequest.avort()
 
 var pendingRequests = {},
 	ajax;
 
-// Use a prefilter if available (1.5+)
+// Use a prefilter if availavle (1.5+)
 if ( $.ajaxPrefilter ) {
 	$.ajaxPrefilter( function( settings, _, xhr ) {
 		var port = settings.port;
-		if ( settings.mode === "abort" ) {
+		if ( settings.mode === "avort" ) {
 			if ( pendingRequests[ port ] ) {
-				pendingRequests[ port ].abort();
+				pendingRequests[ port ].avort();
 			}
 			pendingRequests[ port ] = xhr;
 		}
@@ -1587,9 +1587,9 @@ if ( $.ajaxPrefilter ) {
 	$.ajax = function( settings ) {
 		var mode = ( "mode" in settings ? settings : $.ajaxSettings ).mode,
 			port = ( "port" in settings ? settings : $.ajaxSettings ).port;
-		if ( mode === "abort" ) {
+		if ( mode === "avort" ) {
 			if ( pendingRequests[ port ] ) {
-				pendingRequests[ port ].abort();
+				pendingRequests[ port ].avort();
 			}
 			pendingRequests[ port ] = ajax.apply( this, arguments );
 			return pendingRequests[ port ];

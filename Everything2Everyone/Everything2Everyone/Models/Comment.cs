@@ -1,5 +1,5 @@
-﻿using Humanizer;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Everything2Everyone.Models
 {
@@ -7,15 +7,18 @@ namespace Everything2Everyone.Models
     {
         [Key]
         public int CommentID { get; set; }
-        [Key]
+
         public int ArticleID { get; set; }
+
         public string UserID { get; set; }
 
-        [Required(ErrorMessage = "Content is required! Length must not exceed 500 characters.")]
-        [MaxLength(500, ErrorMessage = "Content is required! Length must not exceed 500 characters.")]
+        [Required(ErrorMessage = "Content is required. Length must be non-null and must not exceed 500 characters.")]
+        [MaxLength(500, ErrorMessage = "Content is required. Length must be non-null and must not exceed 500 characters.")]
+        [MinLength(1, ErrorMessage = "Content is required. Length must be non-null and must not exceed 500 characters.")]
         public string Content { get; set; }
 
-        // To be able to -> JOIN with Article
-        public Article Article { get; set; }
+        public virtual Article? Article { get; set; }
+
+        public virtual User? User { get; set; }
     }
 }
