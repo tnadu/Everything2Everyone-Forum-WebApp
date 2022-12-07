@@ -1,24 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml;
 
 namespace Everything2Everyone.Models
 {
     public class ArticleVersion
     {
-        [Key]
+        // [Key]
+        //public int ArticleVersionID { get; set; }
+
         public int ArticleID { get; set; }
 
-        [Required(ErrorMessage = "Category is required.")]
+        //[Required(ErrorMessage = "Category is required.")]
         public int? CategoryID { get; set; }
 
-        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int VersionID { get; set; }
 
-        // No validations required, since the only way
-        // an article version can be inserted here is 
-        // if it already passed the valdiation in the
-        // Article Model
+        [Required(ErrorMessage = "Title is required. Length must be between 5 and 50 characters.")]
+        [MaxLength(50, ErrorMessage = "Title is required. Length must be between 5 and 50 characters.")]
+        [MinLength(5, ErrorMessage = "Title is required. Length must be between 5 and 50 characters.")]
         public string Title { get; set; }
 
+        [Required(ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
+        [MaxLength(20, ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
+        [MinLength(5, ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
         public string CommitTitle { get; set; }
 
         public DateTime CommitDate { get; set; }

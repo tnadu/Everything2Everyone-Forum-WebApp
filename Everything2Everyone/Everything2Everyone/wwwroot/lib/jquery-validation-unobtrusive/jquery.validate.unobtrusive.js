@@ -225,7 +225,7 @@
         parse: function (selector) {
             /// <summary>
             /// Parses all the HTML elements in the specified selector. It looks for input elements decorated
-            /// with the [data-val=true] attribute value and enables validation according to the data-val-*
+            /// with the [data-val=true] attribute value and enavles validation according to the data-val-*
             /// attribute values.
             /// </summary>
             /// <param name="selector" type="String">Any valid jQuery selector.</param>

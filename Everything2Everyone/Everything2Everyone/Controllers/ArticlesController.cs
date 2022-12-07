@@ -3,8 +3,9 @@ using Everything2Everyone.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Everything2Everyone.Controllers
 {
@@ -138,26 +139,26 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        // Index method which returns all articles published by the request's sender (editor or admin)
-        [HttpGet("my-articles")]
-        public IActionResult Index()
-        {
-            // will be implemented when roles and permissions are decided upon
-            var returnedArticles = DataBase.Articles.Include("Categories").Where(article => article.UserID == _userManager.GetUserId(User));
+        //// Index method which returns all articles published by the request's sender (editor or admin)
+        //[HttpGet("my-articles")]
+        //public IActionResult Index()
+        //{
+        //    // will be implemented when roles and permissions are decided upon
+        //    var returnedArticles = DataBase.Articles.Include("Categories").Where(article => article.UserID == _userManager.GetUserId(User));
 
-            ViewBag.CurrentArticleQuery = returnedArticles;
-            // the same view will be used for both Index actions, which
-            // makes this variable necessary in the FE
-            ViewBag.Filtering = false;
+        //    ViewBag.CurrentArticleQuery = returnedArticles;
+        //    // the same view will be used for both Index actions, which
+        //    // makes this variable necessary in the FE
+        //    ViewBag.Filtering = false;
 
-            // message received
-            if (TempData.ContainsKey("message"))
-            {
-                ViewBag.DisplayedMessage = TempData["message"];
-            }
+        //    // message received
+        //    if (TempData.ContainsKey("message"))
+        //    {
+        //        ViewBag.DisplayedMessage = TempData["message"];
+        //    }
 
-            return View();
-        }
+        //    return View();
+        //}
 
 
         // Method which returns the specified article's content and details, along with its

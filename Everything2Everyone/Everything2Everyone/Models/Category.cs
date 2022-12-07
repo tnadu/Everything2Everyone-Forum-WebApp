@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Everything2Everyone.Models
 {
@@ -12,5 +13,8 @@ namespace Everything2Everyone.Models
         [MinLength(5, ErrorMessage = "Title is required. Length must be between 5 and 30 characters.")]
         public string Title { get; set; }
 
+        public virtual ICollection<Article>? Articles { get; set; }
+
+        public virtual ICollection<ArticleVersion>? ArticleVersions { get; set; }
     }
 }
