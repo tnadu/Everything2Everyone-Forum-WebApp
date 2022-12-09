@@ -39,10 +39,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
 // Just to test if the LayoutRegister works
 app.MapControllerRoute(
     name: "MyRegisterLogIn",
@@ -53,6 +49,81 @@ app.MapControllerRoute(
     name: "MyRegisterSignUp",
     pattern: "MyRegister/SignUp",
     defaults: new { controller = "Register", action = "SignUp" });
+
+// Articles routes
+// INDEX
+app.MapControllerRoute(
+    name: "ArticlesIndex",
+    pattern: "Articles/Index/filter-sort/{categoryID?}/{sort?}",
+    defaults: new { controller = "Articles", action = "Index"});
+
+// SHOW
+app.MapControllerRoute(
+    name: "ArticlesShow",
+    pattern: "Articles/Show/{articleID}",
+    defaults: new { controller = "Articles", action = "Show" });
+
+// NEW
+app.MapControllerRoute(
+    name: "ArticlesNew",
+    pattern: "Articles/New",
+    defaults: new { controller = "Articles", action = "New" });
+
+// EDIT
+app.MapControllerRoute(
+    name: "ArticlesEdit",
+    pattern: "Articles/Edit/{articleID}/{versionID}",
+    defaults: new { controller = "Articles", action = "Edit" });
+
+// DELETE
+app.MapControllerRoute(
+    name: "ArticlesDelete",
+    pattern: "Articles/Delete/{articleID}",
+    defaults: new { controller = "Articles", action = "Delete" });
+
+// RESTRICT
+app.MapControllerRoute(
+    name: "ArticlesRestrict",
+    pattern: "Articles/Restrict/{articleID}",
+    defaults: new { controller = "Articles", action = "Restrict" });
+
+// CHOOSE_VERSION
+app.MapControllerRoute(
+    name: "ArticlesChooseVersion",
+    pattern: "Articles/Choose-Version/{articleID}",
+    defaults: new { controller = "Articles", action = "ChooseVersion" });
+
+// Search article
+// TO DO 
+// app.MapControllerRoute(
+//    name: "ArticlesSearch",
+//    pattern: "Articles/Search/Search-string/{query?}",
+//    defaults: new { controller = "Articles", action = "Search" });
+
+// Categories routes
+// NEW
+app.MapControllerRoute(
+    name: "CategoriesNew",
+    pattern: "Categories/New",
+    defaults: new { controller = "Categories", action = "New" });
+
+// EDIT
+app.MapControllerRoute(
+    name: "CategoriesEdit",
+    pattern: "Categories/Edit/{CategoryID}",
+    defaults: new { controller = "Categories", action = "Edit"});
+
+// DELETE
+app.MapControllerRoute(
+    name: "CategoriesDelete",
+    pattern: "Categories/Delete/{CategoryID}",
+    defaults: new { controller = "Categories", action = "Delete" });
+
+// Basic route
+app.MapControllerRoute(
+    name: "default",
+    pattern: "/",
+    defaults: new { controller = "Articles", action = "Index" });
 
 app.MapRazorPages();
 app.Run();

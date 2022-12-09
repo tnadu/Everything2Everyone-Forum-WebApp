@@ -1,0 +1,133 @@
+.vw-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.vw-form-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+/* GROUPING 2 INPUTS */
+.vw-form-groups {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 16px;
+}
+
+.vw-form-groups-items {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.vw-form textarea {
+    resize: none;
+    margin-bottom: 16px;
+}
+
+.vw-form input {
+    margin-bottom: 16px;
+    border: 2px solid var(--bottom-gradient);
+}
+
+    .vw-form input:focus {
+        border: 2px solid var(--text-secondary);
+    }
+
+/* /////////////// */
+/* CATEGORIES FORM */
+/* /////////////// */
+
+.vw-sidebar-form {
+    background-color: var(--top-gradient);
+    color: var(--text-primary);
+    display: flex;
+    padding: 8px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+}
+
+.vw-sidebar-form input {
+    background-color: var(--top-gradient);
+    color: var(--text-primary);
+    flex: 1;
+    max-width: 75%;
+}
+
+.vw-sidebar-form button {
+    flex: 1;
+    border: none;
+    font-weight: 600;
+    font-size: var(--M-text);
+    background-color: var(--top-gradient);
+    color: var(--text-primary);
+}
+
+.vw-sidebar-form button:hover {
+    cursor: pointer;
+}
+
+/* ///////////// */
+/* ARTICLE FORM */
+/* ///////////// */
+
+#RestrictTrue, #RestrictFalse {
+    margin-bottom: 0px;
+    margin-left: 8px;
+}
+
+/* FORM CHAPTER DESIGN */
+.vw-form-article-chapter {
+    background: var(--color-menu);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.vw-form-article-chapter button {
+max-width: 5rem;
+margin-right: 16px;
+}
+
+.vw-form-article-chapter button:hover {
+    cursor: pointer;
+}
+
+.vw-form-article-chapter button:nth-child(3) {
+    margin-right: 0px;
+}
+
+/* ADDED CHAPTER */
+.chapter-added {
+    background: var(--bottom-gradient);
+}
+
+.chapter-added-btns {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* //////////////////////////////////// */
+/* FORM ON THE RIGHT, IN LOG IN/SIGN UP */
+/* //////////////////////////////////// */
+.vw-form-log-sign {
+    flex: 2;
+    padding: 16px 64px;
+}
+
+.btn-log-sign {
+    background: var(--color-stroke);
+    font-size: 1.4em;
+    border: none;
+    max-width: 5rem;
+}
+
+.btn-log-sign:hover {
+    cursor: pointer;
+}

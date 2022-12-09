@@ -1,34 +1,32 @@
-:root{
-    --color-stroke: #EFCB68 ;
-    --color-stroke-secondary: ;
+:root {
+    --color-stroke: #EFCB68;
+    --color-stroke-secondary:;
     --color-bg: #121212;
     --color-menu: #181818;
     --top-gradient: #404040;
     --bottom-gradient: #282828;
     --text-primary: #FFFFFF;
     --text-secondary: #B3B3B3;
-
     --delete: rgb(198, 47, 47);
     --validate: rgb(42, 174, 62);
-
     --XL-text: 64px;
     --L-text: 48px;
     --M-text: 32px;
 }
 
-*, ::after, ::before{
+*, ::after, ::before {
     box-sizing: initial;
 }
 
-body, input, button{
+body, input, button, textarea {
     /* font-family: 'Rubik Glitch', cursive; */
     font-family: 'Source Sans Pro', sans-serif;
     line-height: 1.15;
 }
 
 /* TITLES */
-.small-title{
-    color:var(--text-secondary);
+.small-title {
+    color: var(--text-secondary);
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 8px;
@@ -37,47 +35,99 @@ body, input, button{
 
 /* GENERAL CSS ELEMENTS DESIGN */
 /* INPUTS: */
-input, textarea{ 
+input, textarea {
     background: var(--bottom-gradient);
     padding: 8px;
     color: white;
     border: none;
 }
-input:focus, textarea:focus{ outline: none;}
 
-.input-search{
+    input:focus, textarea:focus {
+        outline: none;
+    }
+
+.input-search {
     width: 20vw;
 }
 
 /* BUTTONS */
-.btn-basic{
+.btn-basic {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--text-primary);
     padding: 8px;
     min-width: 5vw;
     text-align: center;
+    border: none;
+}
+
+    .btn-basic a, .btn-basic a:hover {
+        text-transform: uppercase;
+        text-decoration: none;
+        color: var(--text-primary);
+        cursor: pointer;
+    }
+
+.btn-delete {
+    background: var(--delete);
+}
+
+.btn-edit {
+    background: var(--color-stroke);
+}
+
+.btn-add {
+    background: var(--validate);
 }
 
 /* SIGN UP & LOG IN */
 
-.btn-sign-up, .btn-log-in{ margin-right: 8px; display: flex; align-items: center; justify-content: center;}
-.btn-sign-up{ border: 2px solid var(--color-stroke);}
-.btn-log-in{ background: var(--color-stroke);}
-
-.btn-sign-up a, .btn-log-in a{
-    text-transform: uppercase;    
-    text-decoration: none;
+.btn-sign-up, .btn-log-in {
+    margin-right: 8px;
 }
 
-.btn-sign-up a, .btn-sign-up a:hover{ color: var(--color-stroke); }
-.btn-log-in a, .btn-log-in a:hover{ color: var(--text-primary); }
+.btn-sign-up {
+    border: 2px solid var(--color-stroke);
+}
 
-.btn-search{
-    background: var(--bottom-gradient);;
+.btn-log-in {
+    background: var(--color-stroke);
+}
+
+.btn-sign-up a, .btn-sign-up a:hover {
+    color: var(--color-stroke);
+}
+
+.btn-log-in a, .btn-log-in a:hover {
+    color: var(--text-primary);
+}
+
+.btn-search {
+    background: var(--bottom-gradient);
+    ;
     padding: 8px;
     border: none;
     border-left: 5px solid var(--color-stroke);
 }
+
+/* NEW CATEGORY / ARTICLE BUTTON */
+.btn-new {
+    border: 2px solid var(--text-secondary);
+    color: var(--text-secondary);
+    margin-right: 8px;
+}
+
 /* MAIN SECTION*/
-.vw-main{ display: flex; height: 90vh;}
-.vw-sidebar{ flex: 1; }
-.vw-mainbar{ flex: 5;}
+.vw-main {
+    display: flex;
+    height: 90vh;
+}
+
+.vw-sidebar {
+    flex: 1;
+}
+
+.vw-mainbar {
+    flex: 5;
+}

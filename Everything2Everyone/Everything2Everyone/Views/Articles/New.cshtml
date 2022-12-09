@@ -1,0 +1,49 @@
+﻿@model Everything2Everyone.Models.ArticleBundle
+
+<body>
+
+    <!-- Use the Html.BeginForm Helper to build the form that will
+    create a new article 
+    @using (Html.BeginForm(actionName: "New", controllerName: "Articles", method: FormMethod.Post, new { @class = "vw-log-sign-form" }))
+    {
+        @Html.Label("Title", "Titlu de baza", new { @class = "vw-log-sign-label"})
+        @Html.TextBox("Title", null)
+        @Html.ValidationMessageFor(m => m.Article.Title, null, new {@class = "text-danger"})
+
+        <button class="btn-basic" type="submit">CREATE</button>
+    } -->
+
+    <form action="" class="vw-form vw-form-article">
+        <!-- ARTICLE TITLE -->
+        <div class="vw-form-groups-items">
+            <label for="Title" class="vw-form-label">Article title:</label>
+            <input type="text" name="Title">
+        </div>
+
+        <div class="vw-form-groups-items">
+            <label for="CommitTitle" class="vw-form-label">Commit title:</label>
+            <input type="text" name="CommitTitle">
+        </div>
+
+        <!-- ADD NEW CHAPTER -->
+        <div id="chapters-added"></div>
+
+        <div class="vw-form-label">New chapter</div>
+        <div class="vw-form-article-chapter">
+            <label for="ChapterTitle" class="vw-form-label">Chapter title:</label>
+            <input type="text" name="ChapterTitle" id="ChapterTitleJS">
+
+            <label for="ChapterContent" class="vw-form-label">Content:</label>
+            <textarea name="ChapterContent" rows="10" id="ChapterContentJS"></textarea>
+
+            <button type="button" class="btn-basic btn-log-in" id="add-chapter">ADD</button>
+        </div>
+
+        <button type="submit" 
+            class="btn-basic btn-add"
+            style="width: 5rem;">SUBMIT</button>
+    </form>
+
+    <script src="~/js/AddNewChapter.js"></script>
+
+</body>

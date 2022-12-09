@@ -1,4 +1,4 @@
-.vw-mainbar{
+.vw-mainbar {
     background: var(--top-gradient);
     overflow-y: scroll;
     padding: 32px;
@@ -6,7 +6,7 @@
 
 /* ARTICLES LINK GRID */
 
-.vw-articles-links{
+.vw-articles-links {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(auto, auto);
@@ -15,117 +15,124 @@
 
 /* ARTICLE IN GRID */
 
-.vw-article-link{
+.vw-article-link {
     background-image: linear-gradient(to bottom, transparent, black), url("/Images/article-img.jfif");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-
     height: 25vh;
     padding: 16px;
     border-radius: 16px;
 }
 
-.vw-article-link-category{
+.vw-article-link-category {
     color: var(--color-stroke);
     margin-bottom: 4px;
 }
 
-.vw-article-link-title{
+.vw-article-link-title {
     font-size: 1.8em;
     color: var(--text-primary);
     margin-bottom: 16px;
     text-decoration: none;
 }
 
-.vw-article-link-title:hover{ 
-    text-decoration: underline; 
-    cursor: pointer;
-}
+    .vw-article-link-title:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 
 .vw-article-link-category,
-.vw-article-link-title{ font-weight: 600;}
+.vw-article-link-title {
+    font-weight: 600;
+}
 
-.vw-article-link-editor{
+.vw-article-link-editor {
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: var(--text-primary);
 }
 
-.vw-article-link-date{ color:var(--text-secondary)}
+.vw-article-link-date {
+    color: var(--text-secondary)
+}
 
 /* //////////////
 ACTUAL ARTICLE
 ////////////// */
 
-.vw-article-title{
+.vw-article-title {
     font-size: var(--XL-text);
     color: var(--color-stroke);
 }
 
-.vw-article-author{
+.vw-article-author {
     font-size: var(--L-text);
     color: var(--color-menu);
 }
 
-.vw-article-details{
+.vw-article-details {
     font-size: var(--M-text);
     color: var(--text-secondary);
 }
 
-.vw-article p{ color: var(--text-primary); }
+.vw-article p {
+    color: var(--text-primary);
+}
 
 /* COMMENT */
-.vw-article-comment{
+.vw-article-comment {
     padding: 16px;
     border-bottom: 1px solid var(--text-secondary);
 }
 
-.vw-comment-author{
+.vw-comment-author {
     color: var(--text-secondary);
     font-weight: 600;
     margin-bottom: 4px;
 }
 
-.vw-comment-author span{ margin-left: 8px; font-weight: normal;}
-.vw-comment-content{ color: var(--text-primary); }
+    .vw-comment-author span {
+        margin-left: 8px;
+        font-weight: normal;
+    }
+
+.vw-comment-content {
+    color: var(--text-primary);
+}
 
 /* ADD COMMENT */
 
-.vw-article-add-comment{
+.vw-article-add-comment {
     position: relative;
     display: flex;
     flex-direction: column;
     padding: 16px;
 }
 
-.vw-article-add-comment textarea{
-    flex: 1;
-    padding: 16px;
-    resize: none;
-}
+    .vw-article-add-comment textarea {
+        flex: 1;
+        padding: 16px;
+        resize: none;
+    }
 
 /* ADD COMMENTS BTNS */
-.vw-article-add-comment-btns{ display: flex; justify-content: flex-end;}
-
-.btn-clear-comment,
-.btn-add-comment{
-    margin-top: 8px;
-    margin-left: 8px;
+.vw-article-add-comment-btns {
+    display: flex;
+    justify-content: flex-end;
 }
 
-.btn-clear-comment:hover,
-.btn-add-comment:hover{ cursor: pointer;}
+    .vw-article-add-comment-btns .btn-delete,
+    .vw-article-add-comment-btns .btn-add {
+        margin-top: 8px;
+        margin-left: 8px;
+    }
 
-.btn-clear-comment{
-    background: var(--delete);
-}
-
-.btn-add-comment{
-    background: var(--validate);
+.btn-delete:hover,
+.btn-add:hover {
+    cursor: pointer;
 }

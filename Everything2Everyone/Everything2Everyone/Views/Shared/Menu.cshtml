@@ -1,0 +1,48 @@
+﻿@model Everything2Everyone.Models.Category
+
+<div class="vw-sidebar">
+    <div class="small-title">Categories</div>
+
+    @using (Html.BeginForm(actionName: "New",
+        controllerName: "Categories",
+        method: FormMethod.Post,
+        new { @class = "vw-sidebar-form" }))
+    {
+
+        @Html.TextBox("Title", null)
+        @Html.ValidationMessageFor(m => m.Title, null, new { placeholder = "Create a category..."})
+        <button type="submit">+</button>
+    }
+
+    @foreach (var category in ViewBag.GlobalCategories)
+    {
+        <!-- CATEGORY ELEMENT -->
+        <div class="vw-sidebar-category-container">
+            <div class="vw-sidebar-category-name">
+                <!-- TO DO: link to the /Articles/Index/filter-sort/CategoryID/... -->
+                <p>@category.Title</p>
+            </div>
+            <div class="vw-sidebar-category-edit">
+                <!-- <a href="/Categories/Delete/{category.CategoryID}"></a>-->
+                @using (Html.BeginForm(actionName: "Edit",
+                    controllerName: "Categories",
+                    method: FormMethod.Post,
+                    routeValues: new { CategoryID = @category.CategoryID }))
+                    {
+                    <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
+                }
+
+
+                @using (Html.BeginForm(actionName: "Delete",
+                    controllerName: "Categories",
+                    method: FormMethod.Post,
+                    routeValues: new { CategoryID = @category.CategoryID }))
+                    {
+                    <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
+                }
+
+            </div>
+        </div>
+    }
+
+</div>

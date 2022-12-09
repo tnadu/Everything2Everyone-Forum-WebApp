@@ -13,16 +13,24 @@ namespace Everything2Everyone.Controllers
     {
         private readonly ApplicationDbContext DataBase;
 
-        ArticlesController (ApplicationDbContext context)
+        public ArticlesController (ApplicationDbContext context)
         {
             DataBase = context;
         }
 
+        [NonAction]
+        public void FetchCategories()
+        {
+            ViewBag.GlobalCategories = DataBase.Categories.OrderBy(category => category.Title);
+        }
 
         // intermediary method intended to guide the user through the process
         // of choosing a version based on which to modify their article
         public IActionResult ChooseVersion(int articleID)
         {
+            // Fetch categories for side menu
+            FetchCategories();
+
             // fetching current article version from the database
             Article currentArticleVersion;
 
@@ -40,7 +48,6 @@ namespace Everything2Everyone.Controllers
             // fetching all previous article versions from the database
             var articleVersions = DataBase.ArticleVersions.Include("Category").Where(articleVersion => articleVersion.ArticleID == articleID)
                                                                               .OrderBy(articleVersion => articleVersion.VersionID);
-
             ViewBag.articleVersions = articleVersions;
             return View(currentArticleVersion);
         }
@@ -51,6 +58,9 @@ namespace Everything2Everyone.Controllers
         // like an on/off switch
         public IActionResult Restrict(int articleID)
         {
+            // Fetch categories for side menu
+            FetchCategories();
+
             Article article;
 
             // making sure provided articleID is valid
@@ -75,9 +85,13 @@ namespace Everything2Everyone.Controllers
         // When category is specified, the list of articles can be either unsorted or sorted
         // (chronologically/reverse chronologically/alphabetically/reverse alphabetically).
         // It is accesibile only to signed-in users of all kinds.
-        [HttpGet("filter-sort")]
+        
+        // [HttpGet("filter-sort")]
         public IActionResult Index(int? categoryID, int? sort)
         {
+            // Fetch categories for side menu
+            FetchCategories();
+
             // query returns a list of all the articles in the database
             var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters");
 
@@ -143,6 +157,9 @@ namespace Everything2Everyone.Controllers
         //[HttpGet("my-articles")]
         //public IActionResult Index()
         //{
+        //    Fetch categories for side menu
+        //    FetchCategories();
+        //
         //    // will be implemented when roles and permissions are decided upon
         //    var returnedArticles = DataBase.Articles.Include("Categories").Where(article => article.UserID == _userManager.GetUserId(User));
 
@@ -166,6 +183,9 @@ namespace Everything2Everyone.Controllers
         // delete actions are accessible
         public IActionResult Show(int articleID)
         {
+            // Fetch categories for side menu
+            FetchCategories();
+
             Article returnedArtice;
 
             // making sure provided articleID is valid
@@ -188,6 +208,9 @@ namespace Everything2Everyone.Controllers
 
             // mechanism to show/hide edit-delete buttons on article and comments depending on the user who made the request
 
+            // Fetch categories for side menu
+            FetchCategories();
+
             return View(returnedArtice);
         }
 
@@ -195,6 +218,9 @@ namespace Everything2Everyone.Controllers
         // action returning the associated View
         public IActionResult New()
         {
+            // Fetch categories for side menu
+            FetchCategories();
+
             ArticleBundle articleToBeInserted = new ArticleBundle();
             articleToBeInserted.Categories = StoreCategories();
 
@@ -203,6 +229,9 @@ namespace Everything2Everyone.Controllers
             {
                 ViewBag.DisplayedMessage = TempData["message"];
             }
+
+            // Fetch categories for side menu
+            FetchCategories();
 
             return View(articleToBeInserted);
         }
@@ -213,6 +242,9 @@ namespace Everything2Everyone.Controllers
         [HttpPost]
         public IActionResult New(ArticleBundle articleBundle)
         {
+            // Fetch categories for side menu
+            FetchCategories();
+
             // when article is firstly published, both dates are identical
             articleBundle.Article.PublicationDate = DateTime.Now;
             articleBundle.Article.CommitDate = DateTime.Now;
@@ -251,6 +283,9 @@ namespace Everything2Everyone.Controllers
 
         public IActionResult Edit(int articleID, int versionID)
         {
+            // Fetch categories for side menu
+            FetchCategories();
+
             ArticleVersionBundle articleVersionBundle = new ArticleVersionBundle();
 
             // the request involves editing a version other than the most recent version of the article with the provided articleID
@@ -332,6 +367,9 @@ namespace Everything2Everyone.Controllers
         [HttpPost]
         public IActionResult Edit(ArticleVersionBundle articleVersionBundle)
         {
+            // Fetch categories for side menu
+            FetchCategories();
+
             Article currentArticle;
 
             // making sure provided bundled object stores a valid articleID
