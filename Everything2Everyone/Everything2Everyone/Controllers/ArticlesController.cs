@@ -93,7 +93,7 @@ namespace Everything2Everyone.Controllers
             FetchCategories();
 
             // query returns a list of all the articles in the database
-            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters");
+            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters").Include("Users");
 
 
             // sort - category is specified

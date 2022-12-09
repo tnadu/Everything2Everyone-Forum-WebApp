@@ -1,36 +1,28 @@
-﻿<!-- ARTICLES GRID, 2 COLUMNS -->
+﻿<div class="vw-articles-filter">
+    <div>
+        <h1>CATEGORY</h1>
+    </div>
+    <div>
+        <!-- TO DO-->
+    </div>
+</div>
+
+
+<!-- ARTICLES GRID, 2 COLUMNS -->
 <div class="vw-articles-links">
 
-    <!-- ARTICLE ELEMENT -->
-    <div class="vw-article-link">
-        <div class="vw-article-link-category">CATEGORY</div>
-        <a class="vw-article-link-title" href="#">ARTICLE TITLE</a>
-        <div class="vw-article-link-editor">
-            <p>OLAERIU VLAD MIHAI</p>
-            <div class="vw-article-link-date">November 22, 2022</div>
+    @foreach (var article in ViewBag.CurrentArticleQuery){
+        <!-- ARTICLE ELEMENT -->
+        <div class="vw-article-link" href="/Articles/Show/@article.ArticleID">
+            <div class="vw-article-link-category">@article.Category.Title</div>
+            <a class="vw-article-link-title">@article.Title</a>
+            <div class="vw-article-link-editor">
+                <p>@article.User.FirstName @article.User.LastName</p>
+                <div class="vw-article-link-date">@article.PublicationDate</div>
+            </div>
         </div>
-    </div>
-
-    <!-- ARTICLE ELEMENT -->
-    <div class="vw-article-link">
-        <div class="vw-article-link-category">CATEGORY</div>
-        <a class="vw-article-link-title" href="#">ARTICLE TITLE</a>
-        <div class="vw-article-link-editor">
-            <p>OLAERIU VLAD MIHAI</p>
-            <div class="vw-article-link-date">November 22, 2022</div>
-        </div>
-    </div>
-
-    <!-- ARTICLE ELEMENT -->
-    <div class="vw-article-link">
-        <div class="vw-article-link-category">CATEGORY</div>
-        <a class="vw-article-link-title" href="#">ARTICLE TITLE</a>
-        <div class="vw-article-link-editor">
-            <p>OLAERIU VLAD MIHAI</p>
-            <div class="vw-article-link-date">November 22, 2022</div>
-        </div>
-    </div>
-
+    }
+    
     <!-- ARTICLE ELEMENT -->
     <div class="vw-article-link">
         <div class="vw-article-link-category">CATEGORY</div>
