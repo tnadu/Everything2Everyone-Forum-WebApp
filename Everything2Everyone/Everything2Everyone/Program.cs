@@ -1,4 +1,5 @@
 using Everything2Everyone.Data;
+using Everything2Everyone.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)// UNCOMMENT WHEN IMPLEMENTING ROLES -> .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -54,13 +56,13 @@ app.MapControllerRoute(
 // INDEX
 app.MapControllerRoute(
     name: "ArticlesIndex",
-    pattern: "Articles/Index/filter-sort/{categoryID?}/{sort?}",
+    pattern: "articles/index/filter-sort/{categoryID?}/{sort?}",
     defaults: new { controller = "Articles", action = "Index"});
 
 // SHOW
 app.MapControllerRoute(
     name: "ArticlesShow",
-    pattern: "Articles/Show/{articleID}",
+    pattern: "articles/show/{articleID}",
     defaults: new { controller = "Articles", action = "Show" });
 
 // NEW

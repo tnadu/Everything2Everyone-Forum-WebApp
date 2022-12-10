@@ -2,8 +2,7 @@
 
 <body>
 
-    <!-- Use the Html.BeginForm Helper to build the form that will
-    create a new article 
+    <!-- Use the Html.BeginForm Helper to build the form that will create a new article 
     @using (Html.BeginForm(actionName: "New", controllerName: "Articles", method: FormMethod.Post, new { @class = "vw-log-sign-form" }))
     {
         @Html.Label("Title", "Titlu de baza", new { @class = "vw-log-sign-label"})
@@ -11,7 +10,17 @@
         @Html.ValidationMessageFor(m => m.Article.Title, null, new {@class = "text-danger"})
 
         <button class="btn-basic" type="submit">CREATE</button>
-    } -->
+    }
+    
+    @using (Html.BeginForm(actionName: "New", controllerName: "Articles", method: FormMethod.Post, new { @class = "vw-log-sign-form" }))
+    {
+        @Html.Label("Title", "Titlu de baza", new { @class = "vw-log-sign-label"})
+        @Html.TextBox("Title", null)
+        @Html.ValidationMessageFor(m => m.Article.Title, null, new {@class = "text-danger"})
+
+        <button class="btn-basic" type="submit">CREATE</button>
+    }
+    -->
 
     <form action="" class="vw-form vw-form-article">
         <!-- ARTICLE TITLE -->

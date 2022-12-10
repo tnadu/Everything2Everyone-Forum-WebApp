@@ -1,11 +1,87 @@
-﻿<div class="vw-articles-filter">
-    <div>
-        <h1>CATEGORY</h1>
-    </div>
-    <div>
-        <!-- TO DO-->
-    </div>
-</div>
+﻿@if (ViewBag.Source == "filter-sort")
+{
+    @if (ViewBag.CategoryName)
+    {
+        <div class="vw-articles-filter">
+            <div>
+                <h1>ViewBag.CategoryName</h1>
+            </div>
+            <div>
+                <!-- TO DO-->
+            </div>
+        </div>
+
+        <!--ASCENDING BY PUBLICATION DATE-->
+        @if (ViewBag.Sorting == 0)
+        {
+            <!--HTML:
+                - bolded ascending-publication-date icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/1"
+                - simple ascending-alphabetical icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/2"
+            -->
+        }
+        <!--DESCENDING BY PUBLICATION DATE-->
+        @else
+        if (ViewBag.Sorting == 1)
+        {
+            <!--HTML:
+                - bolded descending-publication-date icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/0"
+                - simple ascending-alphabetical icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/2"
+            -->
+        }
+        <!--ASCENDING ALPHABETICALLY-->
+        @else
+        if (ViewBag.Sorting == 2)
+        {
+            <!--HTML:
+                - simple ascending-publication-date icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/0"
+                - bolded ascending-alphabetical icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/3"
+            -->
+        }
+        <!--DESCENDING ALPHABETICALLY-->
+        @else
+        if (ViewBag.Sorting == 1)
+        {
+            <!--HTML:
+                - simple ascending-publication-date icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/0"
+                - bolded descending-alphabetical icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/2"
+            -->
+        }
+    }
+
+    <!--ASCENDING BY PUBLICATION DATE-->
+    @if (ViewBag.Sorting == 0) 
+    {
+        <!--HTML:
+            - bolded ascending-publication-date icon -> href="/articles/index/filter-sort/?sort=1"
+            - simple ascending-alphabetical icon -> href="/articles/index/filter-sort/?sort=2"
+        -->
+    }
+    <!--DESCENDING BY PUBLICATION DATE-->
+    @else if (ViewBag.Sorting == 1)
+    {
+        <!--HTML:
+            - bolded descending-publication-date icon -> href="/articles/index/filter-sort/?sort=0"
+            - simple ascending-alphabetical icon -> href="/articles/index/filter-sort/?sort=2"
+        -->
+    }
+    <!--ASCENDING ALPHABETICALLY-->
+    @else if (ViewBag.Sorting == 2)
+    {
+        <!--HTML:
+            - simple ascending-publication-date icon -> href="/articles/index/filter-sort/?sort=0"
+            - bolded ascending-alphabetical icon -> href="/articles/index/filter-sort/?sort=3"
+        -->
+    }
+    <!--DESCENDING ALPHABETICALLY-->
+    @else
+    if (ViewBag.Sorting == 1)
+    {
+        <!--HTML:
+            - simple ascending-publication-date icon -> href="/articles/index/filter-sort/?sort=0"
+            - bolded descending-alphabetical icon -> href="/articles/index/filter-sort/?sort=2"
+        -->
+    }
+}
 
 
 <!-- ARTICLES GRID, 2 COLUMNS -->
@@ -13,7 +89,7 @@
 
     @foreach (var article in ViewBag.CurrentArticleQuery){
         <!-- ARTICLE ELEMENT -->
-        <div class="vw-article-link" href="/Articles/Show/@article.ArticleID">
+        <div class="vw-article-link" href="/articles/show/@article.ArticleID">
             <div class="vw-article-link-category">@article.Category.Title</div>
             <a class="vw-article-link-title">@article.Title</a>
             <div class="vw-article-link-editor">
@@ -23,7 +99,7 @@
         </div>
     }
     
-    <!-- ARTICLE ELEMENT -->
+    <!-- ARTICLE ELEMENT 
     <div class="vw-article-link">
         <div class="vw-article-link-category">CATEGORY</div>
         <a class="vw-article-link-title" href="#">ARTICLE TITLE</a>
@@ -32,5 +108,6 @@
             <div class="vw-article-link-date">November 22, 2022</div>
         </div>
     </div>
+    -->
 
 </div>

@@ -18,11 +18,6 @@ namespace Everything2Everyone.Controllers
             DataBase = context;
         }
 
-        [NonAction]
-        public void FetchCategories()
-        {
-            ViewBag.GlobalCategories = DataBase.Categories.OrderBy(category => category.Title);
-        }
 
         // intermediary method intended to guide the user through the process
         // of choosing a version based on which to modify their article
@@ -86,17 +81,16 @@ namespace Everything2Everyone.Controllers
         // (chronologically/reverse chronologically/alphabetically/reverse alphabetically).
         // It is accesibile only to signed-in users of all kinds.
         
-        // [HttpGet("filter-sort")]
         public IActionResult Index(int? categoryID, int? sort)
         {
             // Fetch categories for side menu
             FetchCategories();
 
             // query returns a list of all the articles in the database
-            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters").Include("Users");
+            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters"); //.Include("Users");
 
 
-            // sort - category is specified
+            // filter - category is specified
             if (categoryID != null)
             {
                 // making sure provided categoryID is valid
@@ -109,29 +103,26 @@ namespace Everything2Everyone.Controllers
                 {
                     returnedArticles = DataBase.Articles.Include("Category").Include("Chapters");
                 }
-
-
-                // sort (if specified)
-                if (sort == 0)
-                {
-                    returnedArticles = returnedArticles.OrderBy(article => article.PublicationDate);
-                }
-                else if (sort == 1)
-                {
-                    returnedArticles = returnedArticles.OrderByDescending(article => article.PublicationDate);
-                }
-                else if (sort == 2)
-                {
-                    returnedArticles = returnedArticles.OrderBy(article => article.Title);
-                }
-                else if (sort == 3)
-                {
-                    returnedArticles = returnedArticles.OrderByDescending(article => article.Title);
-                }
-                // when invalid sort value is provided, no sorting operation occurs
             }
-            
-            // default behaviour (no categoryID provided)
+
+            // sort (if specified)
+            if (sort == 0)
+            {
+                returnedArticles = returnedArticles.OrderBy(article => article.PublicationDate);
+            }
+            else if (sort == 1)
+            {
+                returnedArticles = returnedArticles.OrderByDescending(article => article.PublicationDate);
+            }
+            else if (sort == 2)
+            {
+                returnedArticles = returnedArticles.OrderBy(article => article.Title);
+            }
+            else if (sort == 3)
+            {
+                returnedArticles = returnedArticles.OrderByDescending(article => article.Title);
+            }
+            // when invalid or null sort value is provided, the default behaviour occurs
             else
             {
                 returnedArticles = returnedArticles.OrderByDescending(article => article.PublicationDate);
@@ -139,8 +130,11 @@ namespace Everything2Everyone.Controllers
 
 
             ViewBag.CurrentArticleQuery = returnedArticles;
-            // necessary when implementing FE logic
-            ViewBag.Filtering = categoryID != null;
+            // necessary to distinguish the action which returns the view when implementing FE logic
+            ViewBag.Source = "filter-sort";
+            // storing chosen category's title, when categoryID is not null, else storing null            
+            ViewBag.CategoryName = categoryID != null ? DataBase.Categories.Where(category => category.CategoryID == categoryID).First().Title : null;
+            ViewBag.CategoryID = categoryID;
             ViewBag.Sorting = sort;
 
             // message received
@@ -166,7 +160,7 @@ namespace Everything2Everyone.Controllers
         //    ViewBag.CurrentArticleQuery = returnedArticles;
         //    // the same view will be used for both Index actions, which
         //    // makes this variable necessary in the FE
-        //    ViewBag.Filtering = false;
+        //    ViewBag.Source = "my-articles";
 
         //    // message received
         //    if (TempData.ContainsKey("message"))
@@ -510,6 +504,14 @@ namespace Everything2Everyone.Controllers
             }
 
             return selectList;
+        }
+
+
+        // method which stores all categories into a viewbag item, in order to be shown in the side-menu partial view
+        [NonAction]
+        public void FetchCategories()
+        {
+            ViewBag.GlobalCategories = DataBase.Categories.OrderBy(category => category.Title);
         }
     }
 }
