@@ -25,9 +25,10 @@ namespace Everything2Everyone.Controllers
                 DataBase.SaveChanges();
 
                 TempData["message"] = "Category added successfully.";
-                return Redirect("/articles/index/filter-sort");
             }
-
+            else
+                TempData["message"] = "Title is required. Length must be between 5 and 30 characters.";
+    
             return Redirect("/Articles/Index/filter-sort");
         }
 
@@ -61,11 +62,22 @@ namespace Everything2Everyone.Controllers
             // If all validations were passed successfully
             if (ModelState.IsValid)
             {
-                Category category = DataBase.Categories.Find(categoryToBeInserted.CategoryID);
-                categoryToBeInserted.Title = categoryToBeInserted.Title;
-                DataBase.SaveChanges();
+                Category category;
 
-                TempData["message"] = "Category edited successfully";
+                try
+                {
+                    category = DataBase.Categories.Find(categoryToBeInserted.CategoryID);
+                    categoryToBeInserted.Title = categoryToBeInserted.Title;
+                    DataBase.SaveChanges();
+
+                    TempData["message"] = "Category edited successfully";
+                }
+                catch
+                {
+                    TempData["message"] = "No category with specified ID could be found.";
+                    
+                }
+
                 return Redirect("/Articles/Index/filter-sort");
             }
 
