@@ -27,10 +27,10 @@ namespace Everything2Everyone.Controllers
 
                 DataBase.Comments.Add(commentToBeInserted);
                 DataBase.SaveChanges();
-                TempData["message"] = "Comment added successfully.";
+                TempData["ActionMessage"] = "Comment added successfully.";
             }
             else
-                TempData["message"] = "Content is required. Length must be non-null and must not exceed 500 characters.";
+                TempData["ActionMessage"] = "Content is required. Length must be non-null and must not exceed 500 characters.";
 
             return Redirect("/articles/show/" + commentToBeInserted.ArticleID);
         }
@@ -48,7 +48,7 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No comment with specified ID could be found.";
+                TempData["ActionMessage"] = "No comment with specified ID could be found.";
                 return Redirect("/articles/index/filter-sort");
             }
 
@@ -72,7 +72,7 @@ namespace Everything2Everyone.Controllers
                 }
                 catch
                 {
-                    TempData["message"] = "No comment with specified ID could be found.";
+                    TempData["ActionMessage"] = "No comment with specified ID could be found.";
                     return Redirect("/articles/index/filter-sort");
                 }
 
@@ -101,13 +101,13 @@ namespace Everything2Everyone.Controllers
                 DataBase.Comments.Remove(commentToBeDeleted);
                 DataBase.SaveChanges();
 
-                TempData["message"] = "Comment successfully deleted.";
+                TempData["ActionMessage"] = "Comment successfully deleted.";
    
                 return Redirect("/articles/show" + commentToBeDeleted.ArticleID);
             }
             catch
             {
-                TempData["message"] = "No comment with specified ID could be found.";
+                TempData["ActionMessage"] = "No comment with specified ID could be found.";
                 return Redirect("/articles/index/filter-sort");
             }
         }

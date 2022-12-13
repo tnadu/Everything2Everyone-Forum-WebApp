@@ -131,3 +131,34 @@ input, textarea {
 .vw-mainbar {
     flex: 5;
 }
+
+/* ALERT ERROR MESSAGE */
+.alert-message {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    transform: translate(-5%, -5%);
+    z-index: 10;
+    color: var(--text-primary);
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    padding: 16px;
+    border-radius: 16px;
+    max-width: 20rem;
+}
+
+    .alert-message span {
+        color: var(--text-secondary);
+    }
+    .alert-message h4 {
+        font-size: 1em;
+        margin-block-start: 0;
+        margin-block-end: 0;
+    }
+.alert-message__succeeded {
+    background: rgb(42, 174, 62);
+}
+
+.alert-message__failed {
+    background: rgb(198, 47, 47);
+}

@@ -29,6 +29,11 @@
     <link rel="stylesheet" href="~/css/Bars/sidebar.css">
     <link rel="stylesheet" href="~/css/Bars/mainbar.css">
 
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <!-- AOS animation -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
 </head>
 <body>
     <div class="vw-navbar">
@@ -61,6 +66,18 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- AOS initialization-->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init();
+        const alert_msg = document.querySelector(".alert-message");
+        setTimeout(() => {
+            $(".alert-message").fadeOut(2000);
+        }, 3000);
+
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

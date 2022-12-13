@@ -131,3 +131,11 @@ margin-right: 16px;
 .btn-log-sign:hover {
     cursor: pointer;
 }
+
+/* Small form */
+.small-form{
+    display: flex;
+    align-item: center;
+    justify-content: center;
+    max-width: 25vw; 
+}

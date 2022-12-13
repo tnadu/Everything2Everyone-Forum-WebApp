@@ -1,91 +1,31 @@
-﻿@if (ViewBag.Source == "filter-sort")
-{
-    @if (ViewBag.CategoryName)
+﻿<!-- Check if the ActionMessage was successful-->
+@{
+    if (TempData.ContainsKey("ActionMessage"))
     {
-        <div class="vw-articles-filter">
-            <div>
-                <h1>ViewBag.CategoryName</h1>
+        if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
+        {
+            <div class="alert-message alert-message__succeeded"
+             data-aos="fade-down"
+             data-aos-duration="1000">
+                <h4>@TempData["ActionMessage"]</h4>
             </div>
-            <div>
-                <!-- TO DO-->
+        }
+        else
+        {
+            <div class="alert-message alert-message__failed"
+                 data-aos="fade-down"
+                 data-aos-duration="1000">
+                <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
             </div>
-        </div>
-
-        <!--ASCENDING BY PUBLICATION DATE-->
-        @if (ViewBag.Sorting == 0)
-        {
-            <!--HTML:
-                - bolded ascending-publication-date icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/1"
-                - simple ascending-alphabetical icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/2"
-            -->
         }
-        <!--DESCENDING BY PUBLICATION DATE-->
-        @else
-        if (ViewBag.Sorting == 1)
-        {
-            <!--HTML:
-                - bolded descending-publication-date icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/0"
-                - simple ascending-alphabetical icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/2"
-            -->
-        }
-        <!--ASCENDING ALPHABETICALLY-->
-        @else
-        if (ViewBag.Sorting == 2)
-        {
-            <!--HTML:
-                - simple ascending-publication-date icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/0"
-                - bolded ascending-alphabetical icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/3"
-            -->
-        }
-        <!--DESCENDING ALPHABETICALLY-->
-        @else
-        if (ViewBag.Sorting == 1)
-        {
-            <!--HTML:
-                - simple ascending-publication-date icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/0"
-                - bolded descending-alphabetical icon -> href="/articles/index/filter-sort/ViewBag.CategoryID/2"
-            -->
-        }
-    }
-
-    <!--ASCENDING BY PUBLICATION DATE-->
-    @if (ViewBag.Sorting == 0) 
-    {
-        <!--HTML:
-            - bolded ascending-publication-date icon -> href="/articles/index/filter-sort/?sort=1"
-            - simple ascending-alphabetical icon -> href="/articles/index/filter-sort/?sort=2"
-        -->
-    }
-    <!--DESCENDING BY PUBLICATION DATE-->
-    @else if (ViewBag.Sorting == 1)
-    {
-        <!--HTML:
-            - bolded descending-publication-date icon -> href="/articles/index/filter-sort/?sort=0"
-            - simple ascending-alphabetical icon -> href="/articles/index/filter-sort/?sort=2"
-        -->
-    }
-    <!--ASCENDING ALPHABETICALLY-->
-    @else if (ViewBag.Sorting == 2)
-    {
-        <!--HTML:
-            - simple ascending-publication-date icon -> href="/articles/index/filter-sort/?sort=0"
-            - bolded ascending-alphabetical icon -> href="/articles/index/filter-sort/?sort=3"
-        -->
-    }
-    <!--DESCENDING ALPHABETICALLY-->
-    @else
-    if (ViewBag.Sorting == 1)
-    {
-        <!--HTML:
-            - simple ascending-publication-date icon -> href="/articles/index/filter-sort/?sort=0"
-            - bolded descending-alphabetical icon -> href="/articles/index/filter-sort/?sort=2"
-        -->
     }
 }
 
-
 <!-- ARTICLES GRID, 2 COLUMNS -->
 <div class="vw-articles-links">
+
+    <span>@TempData["message"]</span>
+
 
     @foreach (var article in ViewBag.CurrentArticleQuery){
         <!-- ARTICLE ELEMENT -->

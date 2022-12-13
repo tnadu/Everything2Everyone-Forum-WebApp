@@ -24,11 +24,12 @@ namespace Everything2Everyone.Controllers
                 DataBase.Categories.Add(categoryToBeInserted);
                 DataBase.SaveChanges();
 
-                TempData["message"] = "Category added successfully.";
+                TempData["ActionMessage"] = "Category added successfully.";
             }
             else
-                TempData["message"] = "Title is required. Length must be between 5 and 30 characters.";
-    
+            {
+                TempData["ActionMessage"] = "Title is required. Length must be between 5 and 30 characters.";
+            }
             return Redirect("/Articles/Index/filter-sort");
         }
 
@@ -44,7 +45,7 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No category with specified ID could be found.";
+                TempData["ActionMessage"] = "No category with specified ID could be found.";
                 return Redirect("/articles/index/filter-sort");
             }
 
@@ -67,15 +68,14 @@ namespace Everything2Everyone.Controllers
                 try
                 {
                     category = DataBase.Categories.Find(categoryToBeInserted.CategoryID);
-                    categoryToBeInserted.Title = categoryToBeInserted.Title;
+                    category.Title = categoryToBeInserted.Title;
                     DataBase.SaveChanges();
 
-                    TempData["message"] = "Category edited successfully";
+                    TempData["ActionMessage"] = "Category edited successfully";
                 }
                 catch
                 {
-                    TempData["message"] = "No category with specified ID could be found.";
-                    
+                    TempData["ActionMessage"] = "No category with specified ID could be found.";
                 }
 
                 return Redirect("/Articles/Index/filter-sort");
@@ -96,11 +96,11 @@ namespace Everything2Everyone.Controllers
                 Category category = DataBase.Categories.Find(categoryID);
                 DataBase.Categories.Remove(category);
                 DataBase.SaveChanges();
-                TempData["Messages"] = "Category deleted successfully!";
+                TempData["ActionMessage"] = "Category deleted successfully!";
             }
             catch
             {
-                TempData["message"] = "No category with specified ID could be found.";
+                TempData["ActionMessage"] = "No category with specified ID could be found.";
             }
 
             return Redirect("/Articles/Index/filter-sort");

@@ -36,7 +36,7 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No article with specified ID could be found.";
+                TempData["ActionMessage"] = "No article with specified ID could be found.";
                 return Redirect("/Articles/Index/filter-sort");
             }
 
@@ -65,7 +65,7 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No article with specified ID could be found.";
+                TempData["ActionMessage"] = "No article with specified ID could be found.";
                 return Redirect("/Articles/Index/filter-sort");
             }
 
@@ -138,9 +138,9 @@ namespace Everything2Everyone.Controllers
             ViewBag.Sorting = sort;
 
             // message received
-            if (TempData.ContainsKey("message"))
+            if (TempData.ContainsKey("ActionMessage"))
             {
-                ViewBag.DisplayedMessage = TempData["message"];
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
             }
 
             return View();
@@ -190,14 +190,14 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No article with specified ID could be found.";
+                TempData["ActionMessage"] = "No article with specified ID could be found.";
                 return Redirect("/Articles/Index/filter-sort");
             }
 
             // message received
-            if (TempData.ContainsKey("message"))
+            if (TempData.ContainsKey("ActionMessage"))
             {
-                ViewBag.DisplayedMessage = TempData["message"];
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
             }
 
             // mechanism to show/hide edit-delete buttons on article and comments depending on the user who made the request
@@ -219,9 +219,9 @@ namespace Everything2Everyone.Controllers
             articleToBeInserted.Categories = StoreCategories();
 
             // message received
-            if (TempData.ContainsKey("message"))
+            if (TempData.ContainsKey("ActionMessage"))
             {
-                ViewBag.DisplayedMessage = TempData["message"];
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
             }
 
             // Fetch categories for side menu
@@ -251,7 +251,7 @@ namespace Everything2Everyone.Controllers
                 if (articleBundle.Chapters.Count == 0)
                 {
                     articleBundle.Categories = StoreCategories();
-                    TempData["message"] = "An article must contain at least one chapter";
+                    TempData["ActionMessage"] = "An article must contain at least one chapter";
                     return View(articleBundle);
                 }
 
@@ -264,7 +264,7 @@ namespace Everything2Everyone.Controllers
                     DataBase.SaveChanges();
                 }
 
-                TempData["message"] = "Article added successfully.";
+                TempData["ActionMessage"] = "Article added successfully.";
                 return Redirect("/Articles/Show/" + articleBundle.Article.ArticleID);
             }
             // provided article and chapters are invalid, so the 'New' View
@@ -294,7 +294,7 @@ namespace Everything2Everyone.Controllers
                 }
                 catch
                 {
-                    TempData["message"] = "No article with specified ID and version ID could be found.";
+                    TempData["ActionMessage"] = "No article with specified ID and version ID could be found.";
                     return Redirect("/Articles/Index/my-articles");
                 }
 
@@ -316,7 +316,7 @@ namespace Everything2Everyone.Controllers
                 }
                 catch
                 {
-                    TempData["message"] = "No article with specified ID and version ID could be found.";
+                    TempData["ActionMessage"] = "No article with specified ID and version ID could be found.";
                     return Redirect("/Articles/Index/my-articles");
                 }
 
@@ -349,9 +349,9 @@ namespace Everything2Everyone.Controllers
             articleVersionBundle.Categories = StoreCategories();
 
             // message received
-            if (TempData.ContainsKey("message"))
+            if (TempData.ContainsKey("ActionMessage"))
             {
-                ViewBag.DisplayedMessage = TempData["message"];
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
             }
 
             return View(articleVersionBundle);
@@ -373,7 +373,7 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No article with specified ID could be found.";
+                TempData["ActionMessage"] = "No article with specified ID could be found.";
                 return Redirect("/Articles/Index/filter-sort");
             }
 
@@ -383,7 +383,7 @@ namespace Everything2Everyone.Controllers
                 if (articleVersionBundle.Chapters.Count == 0)
                 {
                     articleVersionBundle.Categories = StoreCategories();
-                    TempData["message"] = "An article must contain at least one chapter";
+                    TempData["ActionMessage"] = "An article must contain at least one chapter";
                     return View(articleVersionBundle);
                 }
 
@@ -452,7 +452,7 @@ namespace Everything2Everyone.Controllers
                     DataBase.SaveChanges();
                 }
 
-                TempData["message"] = "Article edited successfully.";
+                TempData["ActionMessage"] = "Article edited successfully.";
                 return View(articleVersionBundle);
             }
             
@@ -475,14 +475,14 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No article with specified ID could be found.";
+                TempData["ActionMessage"] = "No article with specified ID could be found.";
                 return Redirect("/Articles/Index/my-articles");
             }
 
             DataBase.Articles.Remove(article);
             DataBase.SaveChanges();
 
-            TempData["message"] = "Article deleted successfully.";
+            TempData["ActionMessage"] = "Article deleted successfully.";
             return Redirect("/Articles/Index/my-articles");
         }
 

@@ -24,12 +24,12 @@ namespace Everything2Everyone.Controllers
         public IActionResult ChangeEmail(string userID)
         {
             // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
+            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
             //      return Redirect("/articles/index/filter-sort");
             // }
 
             // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
+            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
             //      return Redirect("/users/index");
             // }
 
@@ -44,15 +44,15 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No user with specified ID could be found.";
+                TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
             // Fetch categories for side menu
             FetchCategories();
 
-            if (TempData.ContainsKey("message"))
-                ViewBag.DisplayedMessage = TempData["message"];
+            if (TempData.ContainsKey("ActionMessage"))
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
 
             return View(changeEmail);
             
@@ -83,7 +83,7 @@ namespace Everything2Everyone.Controllers
                 // hashed provided password must be identical to that stored in the database
                 if (hasher.HashPassword(null, emailChange.Password) != DataBase.Users.Where(user => user.Id == emailChange.UserID).First().PasswordHash)
                 {
-                    TempData["message"] = "Wrong password.";
+                    TempData["ActionMessage"] = "Wrong password.";
                     correctPassword = false;
                 }
             }
@@ -96,7 +96,7 @@ namespace Everything2Everyone.Controllers
                 // // hashed provided password must be identical to that stored in the database
                 // if (hasher.HashPassword(null, emailChange.Password) != DataBase.Users.Where(user => user.Id == _userManager.GetUserId(User)).First().PasswordHash)
                 // {
-                TempData["message"] = "Wrong password.";
+                TempData["ActionMessage"] = "Wrong password.";
                 correctPassword = false;
                 // }
             }
@@ -113,7 +113,7 @@ namespace Everything2Everyone.Controllers
                 }
                 catch
                 {
-                    TempData["message"] = "No user with specified ID could be found.";
+                    TempData["ActionMessage"] = "No user with specified ID could be found.";
                     return Redirect("/users/index");
                 }
 
@@ -122,7 +122,7 @@ namespace Everything2Everyone.Controllers
                 userToChange.Email = emailChange.NewEmail;
                 userToChange.NormalizedEmail = emailChange.NewEmail.ToUpper();
 
-                TempData["message"] = "Email successfully changed.";
+                TempData["ActionMessage"] = "Email successfully changed.";
                 return Redirect("/users/edit" + emailChange.UserID);
             }
 
@@ -156,15 +156,15 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No user with specified ID could be found.";
+                TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
             // Fetch categories for side menu
             FetchCategories();
 
-            if (TempData.ContainsKey("message"))
-                ViewBag.DisplayedMessage = TempData["message"];
+            if (TempData.ContainsKey("ActionMessage"))
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
 
             return View(changePassword);
         }
@@ -194,7 +194,7 @@ namespace Everything2Everyone.Controllers
                 // hashed provided password must be identical to that stored in the database
                 if (hasher.HashPassword(null, passwordChange.CurrentPassword) != DataBase.Users.Where(user => user.Id == passwordChange.CurrentPassword).First().PasswordHash)
                 {
-                    TempData["message"] = "Wrong password.";
+                    TempData["ActionMessage"] = "Wrong password.";
                     correctPassword = false;
                 }
             }
@@ -207,7 +207,7 @@ namespace Everything2Everyone.Controllers
                 // // hashed provided password must be identical to that stored in the database
                 // if (hasher.HashPassword(null, passwordChange.Password) != DataBase.Users.Where(user => user.Id == _userManager.GetUserId(User)).First().PasswordHash)
                 // {
-                TempData["message"] = "Wrong password.";
+                TempData["ActionMessage"] = "Wrong password.";
                 correctPassword = false;
                 // }
             }
@@ -224,13 +224,13 @@ namespace Everything2Everyone.Controllers
                 }
                 catch
                 {
-                    TempData["message"] = "No user with specified ID could be found.";
+                    TempData["ActionMessage"] = "No user with specified ID could be found.";
                     return Redirect("/users/index");
                 }
 
                 // _userManager.ChangePassord(userToChange, passwordChange.CurrentPassword, passwordChange.NewPassword);
 
-                TempData["message"] = "Email successfully changed.";
+                TempData["ActionMessage"] = "Email successfully changed.";
                 return Redirect("/users/edit" + passwordChange.UserID);
             }
 
@@ -249,8 +249,8 @@ namespace Everything2Everyone.Controllers
             // Fetch categories for side menu
             FetchCategories();
 
-            if (TempData.ContainsKey("message"))
-                ViewBag.DisplayedMessage = TempData["message"];
+            if (TempData.ContainsKey("ActionMessage"))
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
 
             return View();
         }
@@ -279,7 +279,7 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No user with specified ID could be found.";
+                TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
@@ -288,8 +288,8 @@ namespace Everything2Everyone.Controllers
 
             user.FetchedRoles = FetchRoles();
 
-            if (TempData.ContainsKey("message"))
-                ViewBag.DisplayedMessage = TempData["message"];
+            if (TempData.ContainsKey("ActionMessage"))
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
 
             return View(user);
         }
@@ -321,7 +321,7 @@ namespace Everything2Everyone.Controllers
                 }
                 catch
                 {
-                    TempData["message"] = "No user or role with specified ID could be found.";
+                    TempData["ActionMessage"] = "No user or role with specified ID could be found.";
                     return Redirect("/users/index");
                 }
 
@@ -337,7 +337,7 @@ namespace Everything2Everyone.Controllers
                 //      _userManager.AddToRole(userToBeInserted.ID, userToBeInserted.NewRoleID);
                 // }
 
-                TempData["message"] = "Changes saved successfully.";
+                TempData["ActionMessage"] = "Changes saved successfully.";
             }
 
 
@@ -373,7 +373,7 @@ namespace Everything2Everyone.Controllers
             }
             catch
             {
-                TempData["message"] = "No user with specified ID could be found.";
+                TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
@@ -385,7 +385,7 @@ namespace Everything2Everyone.Controllers
             //      return Redirect("/users/index");
             // }
 
-            TempData["message"] = "Your account was successfully deleted.";
+            TempData["ActionMessage"] = "Your account was successfully deleted.";
             return Redirect("/sign-up");
         }
 
