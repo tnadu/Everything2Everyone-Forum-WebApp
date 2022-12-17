@@ -77,7 +77,7 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
             /// </summary>
             [Required]
             [EmailAddress]
-            [Display(Name = "Email")]
+            [Display(Name = "Email:")]
             public string Email { get; set; }
 
             /// <summary>
@@ -87,7 +87,7 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Password:")]
             public string Password { get; set; }
 
             /// <summary>
@@ -95,9 +95,36 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
+            [Display(Name = "Confirm password:")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            // CUSTOM FIELDS FOR OUR USER CLASS
+            // First name:
+            [Required(ErrorMessage = "First name is required. Length must be between 5 and 30 characters.")]
+            [MinLength(5, ErrorMessage = "First name is required. Length must be between 5 and 30 characters.")]
+            [MaxLength(30, ErrorMessage = "First name is required. Length must be between 5 and 30 characters.")]
+            [Display(Name = "First name:")]
+            public string FirstName { get; set; }
+
+            // Last name:
+            [Required(ErrorMessage = "Last name is required. Length must be between 5 and 30 characters.")]
+            [MinLength(5, ErrorMessage = "Last name is required. Length must be between 5 and 30 characters.")]
+            [MaxLength(30, ErrorMessage = "Last name is required. Length must be between 5 and 30 characters.")]
+            [Display(Name = "Last name:")]
+            public string LastName { get; set; }
+
+            // Nick name:
+            [Required(ErrorMessage = "Nickname is required. Length must be between 5 and 30 characters.")]
+            [MinLength(5, ErrorMessage = "Nickname is required. Length must be between 5 and 30 characters.")]
+            [MaxLength(30, ErrorMessage = "Nickname is required. Length must be between 5 and 30 characters.")]
+            [Display(Name = "Nick name:")]
+            public string NickName { get; set; }
+
+            // JoinDate & ShowPublicIdentity - implicit values
+            public DateTime JoinDate { get; set; } = DateTime.Now;
+
+            public bool ShowPublicIdentity { get; set; } = false;
         }
 
 
@@ -115,8 +142,16 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                // Set the properties received from Input class
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                user.NickName = Input.NickName;
+                user.JoinDate = DateTime.Now;
+                user.ShowPublicIdentity = true;
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                               
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

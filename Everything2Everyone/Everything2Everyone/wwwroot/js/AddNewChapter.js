@@ -6,18 +6,57 @@ const ChapterTitle = document.querySelector('#ChapterTitleJS');
 const ChapterContent = document.querySelector('#ChapterContentJS');
 let createdChilds = 0;
 
-function CreateNewChapter(){
+function UpdateChapters() {
+    const currentChapters = document.querySelectorAll(".vw-form-article-chapter");
+    // For every chapter:   
+    console.log(currentChapters);
+    for (let i = 0; i < currentChapters.length; i++) {
+        // Set the Chapters.Index field
+        currentChapters[i].childNodes[1].value = i;
+
+        // Set the ArticleID
+        currentChapters[i].childNodes[2].name = "Chapters[" + i + "].ArticleID";
+        // Set the ChapterID
+        currentChapters[i].childNodes[3].name = "Chapters[" + i + "].ChapterID";
+        currentChapters[i].childNodes[3].value = i;
+
+        // Set the Title
+        currentChapters[i].childNodes[5].name = "Chapters[" + i + "].Title";
+        // Set the ContentUnparsed
+        currentChapters[i].childNodes[7].name = "Chapters[" + i + "].ContentUnparsed";
+    }
+}
+
+function CreateNewChapter() {
     // Create the father div of the chapter
     const NewFormChapter = document.createElement("div");
     NewFormChapter.classList.add("vw-form-article-chapter");
     NewFormChapter.classList.add("chapter-added");
+
+    // Text for adding element to Model.Chapters
+    const AddToChapterList = document.createElement("p");
+    AddToChapterList.innerText = "@{ Model.Chapters.Add(new Chapter()); }";
+    NewFormChapter.appendChild(AddToChapterList);
+
+    // HIDDENT INPUTS FOR CHAPTERS:
+    // --> Chapters.Index
+    // --> Chatpers.ArticleID
+    // --> Chapters.ChapterID
+    const Index = document.createElement("input"), ArticleID = document.createElement("input"), ChapterID = document.createElement("input");
+    Index.type = "hidden"; ArticleID.type = "hidden"; ChapterID.type = "hidden";
+    Index.name = "Chapters.Index"; ArticleID.name = "Chapters[" + createdChilds + "].ArticleID"; ChapterID.name = "Chapters[" + createdChilds + "].ChapterID";
+    Index.value = createdChilds; ChapterID.value = createdChilds;
+
+    NewFormChapter.appendChild(Index);
+    NewFormChapter.appendChild(ArticleID);
+    NewFormChapter.appendChild(ChapterID);
 
     // Label for TITLE CHAPTER
     const TitleLabel = document.createElement("label");
     TitleLabel.classList.add("vw-form-label");
     TitleLabel.htmlFor = "ChapterTitle";
     TitleLabel.innerHTML = "Chapter title:";
-    
+
     NewFormChapter.appendChild(TitleLabel);
 
     // Input TITLE
@@ -25,8 +64,8 @@ function CreateNewChapter(){
     // and they will be enabled when the user chooses to edit
     // the chapter
     const Title = document.createElement("input");
-    Title.htmlType = "text";
-    Title.name = "ChapterTitle";
+    Title.type = "text";
+    Title.name = "Chapters[" + createdChilds + "].Title";
     Title.value = ChapterTitle.value;
     Title.disabled = true;
 
@@ -37,12 +76,12 @@ function CreateNewChapter(){
     ContentLabel.classList.add("vw-form-label");
     ContentLabel.htmlFor = "ChapterContent";
     ContentLabel.innerHTML = "Chapter Content:";
-    
+
     NewFormChapter.appendChild(ContentLabel);
 
     // Textarea CONTENT
     const Content = document.createElement("textarea");
-    Content.name = "ChapterContent";
+    Content.name = "Chapters[" + createdChilds + "].ContentUnparsed";
     Content.rows = 10;
     Content.value = ChapterContent.value;
     Content.disabled = true;
@@ -56,9 +95,9 @@ function CreateNewChapter(){
     ButtonWrapper.classList.add("chapter-added-btns");
 
     const ButtonEdit = document.createElement("button"), ButtonDelete = document.createElement("button"), ButtonSave = document.createElement("button");
-    ButtonEdit.classList.add("btn-basic");  ButtonDelete.classList.add("btn-basic");  ButtonSave.classList.add("btn-basic"); 
-    ButtonEdit.classList.add("btn-edit");  ButtonDelete.classList.add("btn-delete"); ButtonSave.classList.add("btn-add"); 
-    ButtonEdit.type = "button"; ButtonDelete.type = "button";  ButtonSave.type = "button"
+    ButtonEdit.classList.add("btn-basic"); ButtonDelete.classList.add("btn-basic"); ButtonSave.classList.add("btn-basic");
+    ButtonEdit.classList.add("btn-edit"); ButtonDelete.classList.add("btn-delete"); ButtonSave.classList.add("btn-add");
+    ButtonEdit.type = "button"; ButtonDelete.type = "button"; ButtonSave.type = "button"
     ButtonEdit.innerHTML = "EDIT"; ButtonDelete.innerHTML = "DELETE"; ButtonSave.innerHTML = "SAVE";
 
     ButtonSave.style.display = "none";
@@ -74,13 +113,13 @@ function CreateNewChapter(){
     createdChilds += 1;
 }
 
-function AddChapter(){
+function AddChapter() {
     // Validations before creating the element
-    if(ChapterContent.value === "" || ChapterTitle.value === ""){
+    if (ChapterContent.value === "" || ChapterTitle.value === "") {
         alert("You need to complete both fields before creating a new chapter!");
-    } else{
+    } else {
         CreateNewChapter();
-        
+
         // We need to update the delete & edit buttons
         const NewlyCreatedChapters = document.querySelectorAll(".chapter-added");
 
@@ -90,10 +129,12 @@ function AddChapter(){
 
         // DeleteBtns.length = SaveBtns.length = EditBtns.length
         // So we will iterate only one time
-        for(let i = 0; i < DeleteBtns.length; i++){
+        for (let i = 0; i < DeleteBtns.length; i++) {
             // Delete BTN is clicked => remove that chapter
             DeleteBtns[i].addEventListener("click", () => {
+                createdChilds -= 1;
                 NewlyCreatedChapters[i].remove();
+                UpdateChapters();
             });
 
             // Edit btn is clicked

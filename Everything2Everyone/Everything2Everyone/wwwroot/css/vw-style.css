@@ -12,6 +12,7 @@
     --XL-text: 64px;
     --L-text: 48px;
     --M-text: 32px;
+    --S-text: 20px;
 }
 
 *, ::after, ::before {
@@ -23,7 +24,7 @@ body, input, button, textarea {
     font-family: 'Source Sans Pro', sans-serif;
     line-height: 1.15;
 }
-
+.universal-link, .universal-link:hover{ text-decoration: none; color: none; }
 /* TITLES */
 .small-title {
     color: var(--text-secondary);

@@ -22,21 +22,24 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-}
-
-.vw-form textarea {
-    resize: none;
     margin-bottom: 16px;
 }
 
-.vw-form input {
-    margin-bottom: 16px;
-    border: 2px solid var(--bottom-gradient);
+.vw-form-groups-items select {
+    background: var(--bottom-gradient);
+    border: none;
+    color: white;
+    padding: 8px;
+
 }
 
-    .vw-form input:focus {
-        border: 2px solid var(--text-secondary);
-    }
+.vw-form-groups-items select:focus { outline: none; }
+.vw-form textarea { resize: none; }
+
+.vw-form input { border: 2px solid var(--bottom-gradient); }
+.vw-form input:focus { border: 2px solid var(--text-secondary); }
+
+.vw-form input, .vw-form textarea, .vw-form select{ margin-bottom: 4px;}
 
 /* /////////////// */
 /* CATEGORIES FORM */

@@ -10,7 +10,6 @@
     {
 
         @Html.TextBox("Title", null)
-        @Html.ValidationMessageFor(m => m.Title, null, new { placeholder = "Create a category..."})
         <button type="submit">+</button>
     }
 
@@ -20,24 +19,24 @@
         <div class="vw-sidebar-category-container">
             <div class="vw-sidebar-category-name">
                 <!-- TO DO: link to the /Articles/Index/filter-sort/CategoryID/... -->
-                <p>@category.Title</p>
+                <a href="/Articles/Index/filter-sort/@category.CategoryID/0" class="universal-link" style="color: white;">@category.Title</a>
             </div>
             <div class="vw-sidebar-category-edit">
                 <!-- <a href="/Categories/Delete/{category.CategoryID}"></a>-->
                 @using (Html.BeginForm(actionName: "Edit",
-                    controllerName: "Categories",
-                    method: FormMethod.Get,
-                    routeValues: new { CategoryID = @category.CategoryID }))
-                    {
+               controllerName: "Categories",
+               method: FormMethod.Post,
+               routeValues: new { CategoryID = @category.CategoryID }))
+                {
                     <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
                 }
 
 
                 @using (Html.BeginForm(actionName: "Delete",
-                    controllerName: "Categories",
-                    method: FormMethod.Post,
-                    routeValues: new { CategoryID = @category.CategoryID }))
-                    {
+               controllerName: "Categories",
+               method: FormMethod.Post,
+               routeValues: new { CategoryID = @category.CategoryID }))
+                {
                     <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
                 }
 

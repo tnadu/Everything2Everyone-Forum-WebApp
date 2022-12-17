@@ -70,13 +70,17 @@ ACTUAL ARTICLE
     color: var(--color-stroke);
 }
 
-.vw-article-author {
-    font-size: var(--L-text);
+.vw-article-author,
+.vw-chapter-title{
+    font-size: var(--M-text);
     color: var(--color-menu);
 }
+.vw-article-title, .vw-article-author{ text-align: center;}
+
+.vw-chapter-title{ text-align: left;}
 
 .vw-article-details {
-    font-size: var(--M-text);
+    font-size: var(--S-text);
     color: var(--text-secondary);
 }
 
@@ -87,7 +91,7 @@ ACTUAL ARTICLE
 /* COMMENT */
 .vw-article-comment {
     padding: 16px;
-    border-bottom: 1px solid var(--text-secondary);
+    border-top: 1px solid var(--text-secondary);
 }
 
 .vw-comment-author {
@@ -111,7 +115,7 @@ ACTUAL ARTICLE
     position: relative;
     display: flex;
     flex-direction: column;
-    padding: 16px;
+    padding: 16px 0;
 }
 
     .vw-article-add-comment textarea {
@@ -136,3 +140,56 @@ ACTUAL ARTICLE
 .btn-add:hover {
     cursor: pointer;
 }
+
+/* FILTER OPTIONS */
+.articles-filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    padding: 0 8px;
+    margin-bottom: 16px;
+}
+
+.articles-filter-btns {
+    display: flex;
+}
+
+.btn-filter img {
+    height: 40px;
+    width: 40px;
+}
+
+.btn-filter:nth-child(2) {
+    margin-left: 16px;
+}
+
+/* PAGINATION */
+.vw-pagination-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.vw-pagination {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    max-width: 50vw;
+
+    border-radius: 8px;
+    border: 2px solid #4f4e4e;
+    padding: 8px;
+
+}
+
+.vw-page-link {
+    color: white;
+    text-decoration: none;
+}
+
+    .vw-page-link:hover {
+        text-decoration: underline;
+    }

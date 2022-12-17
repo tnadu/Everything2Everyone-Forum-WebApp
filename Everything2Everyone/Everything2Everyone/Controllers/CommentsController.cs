@@ -15,27 +15,6 @@ namespace Everything2Everyone.Controllers
             DataBase = context;
         }
 
-
-        [HttpPost]
-        public IActionResult New(Comment commentToBeInserted)
-        {
-            if (ModelState.IsValid)
-            {
-                // at first, the dates are identical
-                commentToBeInserted.DateAdded = DateTime.Now;
-                commentToBeInserted.DateEdited = DateTime.Now;
-
-                DataBase.Comments.Add(commentToBeInserted);
-                DataBase.SaveChanges();
-                TempData["ActionMessage"] = "Comment added successfully.";
-            }
-            else
-                TempData["ActionMessage"] = "Content is required. Length must be non-null and must not exceed 500 characters.";
-
-            return Redirect("/articles/show/" + commentToBeInserted.ArticleID);
-        }
-
-
         public IActionResult Edit(int commentID)
         {
             Comment comment;

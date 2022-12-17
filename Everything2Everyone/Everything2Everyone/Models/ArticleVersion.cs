@@ -28,7 +28,7 @@ namespace Everything2Everyone.Models
         [Required(ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
         [MaxLength(20, ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
         [MinLength(5, ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
-        public string CommitTitle { get; set; }
+        public string CommitTitle { get; set; } = "CommitTitle";
 
         public DateTime CommitDate { get; set; }
 

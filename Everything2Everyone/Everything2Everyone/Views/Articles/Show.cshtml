@@ -1,5 +1,42 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model Everything2Everyone.Models.ArticleBundle
+
+<div class="vw-article">
+    <!-- Article information -->
+    <div class="vw-article-title">@Model.Article.Title</div>
+    <div class="vw-article-author">by Olaeriu Vlad Mihai</div>
+    <div class="vw-article-link-editor"
+         style="margin-bottom: 16px;">
+        <a class="vw-article-details" href="/Articles/Index/filter-sort/@Model.Article.CategoryID/0">@Model.Article.Category.Title</a>
+        <div class="vw-article-details">@Model.Article.PublicationDate</div>
+    </div>
+
+    <!-- Display chapters-->
+    @foreach (Chapter chapter in Model.Chapters){
+        <h2 class="vw-chapter-title">@chapter.Title</h2>
+        <p>@chapter.ContentUnparsed</p>
+    }
+
+    <!-- Add comment: -->
+    <form method="POST" action="/Articles/Show/@Model.Article.ArticleID" class="vw-article-add-comment">
+        <input type="hidden" name="ArticleID" value="@Model.Article.ArticleID" />
+
+        <textarea name="Content" placeholder="Add a comment..." rows="4"></textarea>
+        @Html.ValidationMessage("Content", null, new { @class = "text-danger"})
+
+        <div class="vw-article-add-comment-btns">
+            <div class="btn-basic btn-delete">Clear</div>
+            <button class="btn-basic btn-add" type="submit">Post</button>
+        </div>
+    </form>
+
+    <!-- Display comments: -->
+    @foreach ( Comment comment in Model.Article.Comments){
+        <div class="vw-article-comment">
+            <div class="vw-comment-author">Toma Nadu <span>4h</span></div>
+            <div class="vw-comment-content">
+                @comment.Content
+            </div>
+        </div>
+    }
+</div>
+

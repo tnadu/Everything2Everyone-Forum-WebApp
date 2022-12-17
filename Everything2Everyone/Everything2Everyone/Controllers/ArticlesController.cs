@@ -87,8 +87,7 @@ namespace Everything2Everyone.Controllers
             FetchCategories();
 
             // query returns a list of all the articles in the database
-            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters"); //.Include("Users");
-
+            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters"); // Include("Users");
 
             // filter - category is specified
             if (categoryID != null)
@@ -128,8 +127,30 @@ namespace Everything2Everyone.Controllers
                 returnedArticles = returnedArticles.OrderByDescending(article => article.PublicationDate);
             }
 
+            // FOR PAGINATION
+            /////////////////
+            // chose how much articles we want to display
+            int _articlesPerPage = 10;
+            // because the number of articles is variable, we need to check how many exist
+            int totalArticles = returnedArticles.Count();
+            // take the current page of articles from the View
+            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            // 0th page: offset = 0
+            // 1st page: offset = 10
+            // 2nd page: offset = 20
+            // offset = number of articles already displayed
+            var offset = 0;
+            if (!currentPage.Equals(0))
+            {
+                offset = (currentPage - 1) * _articlesPerPage;
+            }
 
-            ViewBag.CurrentArticleQuery = returnedArticles;
+            // take the corresponding articles depending on what page are we on
+            var paginatedArticles = returnedArticles.Skip(offset).Take(_articlesPerPage);
+            // take the number of the last page
+            ViewBag.lastPage = Math.Ceiling((float)totalArticles /(float)_articlesPerPage);
+
+            ViewBag.CurrentArticleQuery = paginatedArticles;
             // necessary to distinguish the action which returns the view when implementing FE logic
             ViewBag.Source = "filter-sort";
             // storing chosen category's title, when categoryID is not null, else storing null            
@@ -180,13 +201,15 @@ namespace Everything2Everyone.Controllers
             // Fetch categories for side menu
             FetchCategories();
 
-            Article returnedArtice;
+            Article returnedArticle;
+            List<Chapter> returnedChapters = new List<Chapter>();
 
             // making sure provided articleID is valid
             try
             {
-                returnedArtice = DataBase.Articles.Include("Category").Include("Chapters")
+                returnedArticle = DataBase.Articles.Include("Category").Include("Chapters")
                                                       .Include("Comments").Include("User").Where(article => article.ArticleID == articleID).First();
+                returnedChapters = DataBase.Chapters.Where(returnedArticle => returnedArticle.ArticleID == articleID).ToList(); 
             }
             catch
             {
@@ -202,12 +225,36 @@ namespace Everything2Everyone.Controllers
 
             // mechanism to show/hide edit-delete buttons on article and comments depending on the user who made the request
 
+            ArticleBundle returnedArticleBundle = new ArticleBundle();
+            returnedArticleBundle.Article = returnedArticle;
+            returnedArticleBundle.Chapters = returnedChapters;
+
             // Fetch categories for side menu
             FetchCategories();
 
-            return View(returnedArtice);
+            return View(returnedArticleBundle);
         }
 
+        // because Views accept only one Model, we will use the POST Show method to add comments
+        // to the corresponding article
+        [HttpPost]
+        public IActionResult Show([FromForm] Comment commentToBeInserted)
+        {
+            // DEFAULT - TO BE DELETED
+            commentToBeInserted.UserID = "318d855d-4d7a-4b5e-a293-40720ca8faac";
+            // at first, the dates are identical
+            commentToBeInserted.DateAdded = DateTime.Now;
+            commentToBeInserted.DateEdited = DateTime.Now;
+
+            if (ModelState.IsValid)
+            {
+                DataBase.Comments.Add(commentToBeInserted);
+                DataBase.SaveChanges();
+                TempData["ActionMessage"] = "Comment added successfully.";
+            }
+
+            return Redirect("/Articles/Show/" + commentToBeInserted.ArticleID);
+        }
 
         // action returning the associated View
         public IActionResult New()
@@ -217,15 +264,13 @@ namespace Everything2Everyone.Controllers
 
             ArticleBundle articleToBeInserted = new ArticleBundle();
             articleToBeInserted.Categories = StoreCategories();
+            articleToBeInserted.Article = new Article();
 
             // message received
             if (TempData.ContainsKey("ActionMessage"))
             {
                 ViewBag.DisplayedMessage = TempData["ActionMessage"];
             }
-
-            // Fetch categories for side menu
-            FetchCategories();
 
             return View(articleToBeInserted);
         }
@@ -257,9 +302,17 @@ namespace Everything2Everyone.Controllers
 
                 DataBase.Articles.Add(articleBundle.Article);
                 DataBase.SaveChanges();
+                
+                // select the article with the biggest ID, because that will be
+                // the last article inserted in the Database,
+                // which is the article inserted above
+                int ArticleCreatedID = (from article in DataBase.Articles
+                                        orderby article.ArticleID descending
+                                        select article.ArticleID).First();
 
                 foreach (Chapter chapter in articleBundle.Chapters)
                 {
+                    chapter.ArticleID = ArticleCreatedID;
                     DataBase.Chapters.Add(chapter);
                     DataBase.SaveChanges();
                 }
@@ -269,7 +322,7 @@ namespace Everything2Everyone.Controllers
             }
             // provided article and chapters are invalid, so the 'New' View
             // is returned and populated with the said article and chapters
-            
+
             articleBundle.Categories = StoreCategories();
             return View(articleBundle);
         }

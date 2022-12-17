@@ -6,14 +6,9 @@
 <div class="vw-navbar-links">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-        </li>
-        <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-            </form>
-        </li>
+        <div class="btn-basic btn-new">
+            <a href="/Articles/New">NEW +</a>
+        </div>
 
         <div class="dropdown">
             <button class="btn-drop">Profile</button>
@@ -23,30 +18,20 @@
                 <a href="#">My comments</a>
                 <a href="#">My articles</a>
                 <a href="#">Manage users</a>
-                <a href="#"
-                style="background-color: var(--delete); color: var(--text-primary);">Sign out</a>
+                <form style="background-color: var(--delete); color: var(--text-primary); display:flex; align-items: center; justify-content: center;" 
+                        asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button type="submit" class="nav-link btn btn-link text-dark" style="text-align:center;">Logout</button>
+                </form>
             </div>
         </div>
     }
     else
     {
-        <!-- 
-            <div class="btn-basic btn-sign-up">
+        <div class="btn-basic btn-sign-up">
             <a asp-area="Identity" asp-page="/Account/Register">Sign up</a>
         </div>
         <div class="btn-basic btn-log-in">
             <a asp-area="Identity" asp-page="/Account/Login">Log In</a>
-        </div> -->
-
-        <div class="btn-basic btn-new">
-            <a href="/Articles/New">NEW +</a>
-        </div>
-
-        <div class="btn-basic btn-sign-up">
-            <a href="/MyRegister/SignUp">Sign up</a>
-        </div>
-        <div class="btn-basic btn-log-in">
-            <a href="/MyRegister/LogIn">Log In</a>
         </div>
     }
 </div>
