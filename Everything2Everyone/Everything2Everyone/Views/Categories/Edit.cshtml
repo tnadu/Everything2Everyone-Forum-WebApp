@@ -5,9 +5,10 @@
                    controllerName: "Categories",
                    method: FormMethod.Post,
                    routeValues: new { CategoryID = @Model.CategoryID })){
-    <div style="display: flex; align-items: center;">
+    <div style="display: flex; align-items: center; margin-bottom: 4px;">
         <input name="Title" type="text" value="@Model.Title" placeholder="Type a new name for this category..." />
         <button type="submit" class="btn-basic btn-edit" style="margin-left: 8px;">Edit</button>
     </div>
+    @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger" })
 }
 

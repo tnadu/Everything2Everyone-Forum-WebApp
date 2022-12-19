@@ -16,7 +16,8 @@
 /* ARTICLE IN GRID */
 
 .vw-article-link {
-    background-image: linear-gradient(to bottom, transparent, black), url("/Images/article-img.jfif");
+    background-color: var(--color-stroke);
+    background-image: linear-gradient(to bottom, transparent, var(--bottom-gradient)), url("/images/article-wave.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -92,6 +93,9 @@ ACTUAL ARTICLE
 .vw-article-comment {
     padding: 16px;
     border-top: 1px solid var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .vw-comment-author {

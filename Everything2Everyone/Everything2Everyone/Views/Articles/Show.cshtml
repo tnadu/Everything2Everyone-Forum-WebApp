@@ -32,9 +32,32 @@
     <!-- Display comments: -->
     @foreach ( Comment comment in Model.Article.Comments){
         <div class="vw-article-comment">
-            <div class="vw-comment-author">Toma Nadu <span>4h</span></div>
-            <div class="vw-comment-content">
-                @comment.Content
+            <div>
+                <div class="vw-comment-author">Toma Nadu <span>4h</span></div>
+                <div class="vw-comment-content">
+                    @comment.Content
+                </div>
+            </div>
+            
+            <div class="vw-sidebar-category-edit">
+
+                @using (Html.BeginForm(actionName: "Edit",
+                   controllerName: "Comments",
+                   method: FormMethod.Get,
+                   routeValues: new { CommentID = @comment.CommentID }))
+                {
+                    <!-- TO CONFIGURE-->
+                    <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
+                }
+
+                @using (Html.BeginForm(actionName: "Delete",
+                   controllerName: "Comments",
+                   method: FormMethod.Post,
+                   routeValues: new { CommentID = @comment.CommentID }))
+                {
+                    <!-- TO ADD FIELDS-->
+                    <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
+                }
             </div>
         </div>
     }

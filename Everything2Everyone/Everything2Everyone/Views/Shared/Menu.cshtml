@@ -22,7 +22,7 @@
                 <a href="/Articles/Index/filter-sort/@category.CategoryID/0" class="universal-link" style="color: white;">@category.Title</a>
             </div>
             <div class="vw-sidebar-category-edit">
-                <!-- <a href="/Categories/Delete/{category.CategoryID}"></a>-->
+
                 @using (Html.BeginForm(actionName: "Edit",
                controllerName: "Categories",
                method: FormMethod.Post,
@@ -33,9 +33,9 @@
 
 
                 @using (Html.BeginForm(actionName: "Delete",
-               controllerName: "Categories",
-               method: FormMethod.Post,
-               routeValues: new { CategoryID = @category.CategoryID }))
+                   controllerName: "Categories",
+                   method: FormMethod.Post,
+                   routeValues: new { CategoryID = @category.CategoryID }))
                 {
                     <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
                 }
