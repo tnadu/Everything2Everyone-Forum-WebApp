@@ -130,7 +130,7 @@ namespace Everything2Everyone.Controllers
             // FOR PAGINATION
             /////////////////
             // chose how much articles we want to display
-            int _articlesPerPage = 10;
+            int _articlesPerPage = 3;
             // because the number of articles is variable, we need to check how many exist
             int totalArticles = returnedArticles.Count();
             // take the current page of articles from the View

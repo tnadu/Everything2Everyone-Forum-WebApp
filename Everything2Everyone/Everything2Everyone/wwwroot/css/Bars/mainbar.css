@@ -1,3 +1,14 @@
+/* GENERAL CLASSES */
+.vw-centeralized {
+    display: flex;
+    align-items: center;
+}
+
+.vw-centeralized img{
+    margin-right: 4px;
+    width: 30px;
+}
+
 .vw-mainbar {
     background: var(--top-gradient);
     overflow-y: scroll;
@@ -58,6 +69,8 @@
     color: var(--text-primary);
 }
 
+.vw-article-link-editor a{ text-decoration: none;}
+
 .vw-article-link-date {
     color: var(--text-secondary)
 }
@@ -68,15 +81,16 @@ ACTUAL ARTICLE
 
 .vw-article-title {
     font-size: var(--XL-text);
+    font-weight:800;
     color: var(--color-stroke);
 }
 
 .vw-article-author,
-.vw-chapter-title{
+.vw-chapter-title {
     font-size: var(--M-text);
+    font-weight: 800;
     color: var(--color-menu);
 }
-.vw-article-title, .vw-article-author{ text-align: center;}
 
 .vw-chapter-title{ text-align: left;}
 

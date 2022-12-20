@@ -121,24 +121,25 @@ app.MapControllerRoute(
     pattern: "Categories/Delete/{CategoryID}",
     defaults: new { controller = "Categories", action = "Delete" });
 
-// Basic route
-app.MapControllerRoute(
-    name: "default",
-    pattern: "/",
-    defaults: new { controller = "Articles", action = "Index" });
-
 // FOR COMMENTS
 // Delete
 app.MapControllerRoute(
     name: "default",
     pattern: "/Comments/Delete/{CommentID}",
-    defaults: new { controller = "Articles", action = "Delete" });
+    defaults: new { controller = "Comments", action = "Delete" });
 
 // Edit
 app.MapControllerRoute(
     name: "default",
     pattern: "/Comments/Edit/{CommentID}",
-    defaults: new { controller = "Articles", action = "Edit" });
+    defaults: new { controller = "Comments", action = "Edit" });
+
+//////////////
+// Basic route
+app.MapControllerRoute(
+    name: "default",
+    pattern: "/",
+    defaults: new { controller = "Articles", action = "Index" });
 
 app.MapRazorPages();
 app.Run();

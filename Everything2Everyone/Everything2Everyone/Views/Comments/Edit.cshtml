@@ -1,5 +1,27 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model Everything2Everyone.Models.Comment
+
+<h1>Editing your comment on: '@ViewBag.ArticleCommented.Title'</h1>
+<h2>Maybe reconsider by <a href="/Articles/Show/@ViewBag.ArticleCommented.ArticleID">reading it again.</a></h2>
+<form method="POST" action="/Comments/Edit/@Model.CommentID" class="vw-article-add-comment">
+    <input type="hidden" name="ArticleID" value="@Model.ArticleID" />
+
+    <textarea name="Content" placeholder="Add a comment..." rows="4" id="comment_content">@Model.Content</textarea>
+    @Html.ValidationMessage("Content", null, new { @class = "text-danger"})
+
+    <div class="vw-article-add-comment-btns">
+        <div class="btn-basic btn-delete" id="clear_comment">Clear</div>
+        <button class="btn-basic btn-add" type="submit">Post</button>
+    </div>
+</form>
+
+<script>
+
+    const newCommentContent = document.querySelector("#comment_content");
+    const clearNewComment = document.querySelector("#clear_comment");
+    console.log(clearNewComment);
+
+    clearNewComment.addEventListener("click", () => {
+        newCommentContent.value = "";
+    });
+
+</script>

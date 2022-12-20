@@ -23,12 +23,13 @@ namespace Everything2Everyone.Controllers
             try
             {
                 comment = DataBase.Comments.Where(comment => comment.CommentID == commentID).First();
+                ViewBag.ArticleCommented = DataBase.Articles.Where(article => article.ArticleID == comment.ArticleID).First();
 
             }
             catch
             {
                 TempData["ActionMessage"] = "No comment with specified ID could be found.";
-                return Redirect("/articles/index/filter-sort");
+                return Redirect("/Articles/Index/filter-sort");
             }
 
             // Fetch categories for side menu
@@ -52,7 +53,7 @@ namespace Everything2Everyone.Controllers
                 catch
                 {
                     TempData["ActionMessage"] = "No comment with specified ID could be found.";
-                    return Redirect("/articles/index/filter-sort");
+                    return Redirect("/Articles/Index/filter-sort");
                 }
 
                 comment.Content = commentToBeInserted.Content;
@@ -60,11 +61,13 @@ namespace Everything2Everyone.Controllers
                 comment.DateEdited = DateTime.Now;
                 DataBase.SaveChanges();
 
-                return Redirect("/articles/show/" + comment.ArticleID);
+                return Redirect("/Articles/Show/" + comment.ArticleID);
             }
 
             // Fetch categories for side menu
             FetchCategories();
+            // Complete the ViewBag again
+            ViewBag.ArticleCommented = DataBase.Articles.Where(article => article.ArticleID == commentToBeInserted.ArticleID).First();
 
             return View(commentToBeInserted);
         }
@@ -82,12 +85,12 @@ namespace Everything2Everyone.Controllers
 
                 TempData["ActionMessage"] = "Comment successfully deleted.";
    
-                return Redirect("/articles/show" + commentToBeDeleted.ArticleID);
+                return Redirect("/Articles/Show/" + commentToBeDeleted.ArticleID);
             }
             catch
             {
                 TempData["ActionMessage"] = "No comment with specified ID could be found.";
-                return Redirect("/articles/index/filter-sort");
+                return Redirect("/Articles/Index/filter-sort");
             }
         }
 
