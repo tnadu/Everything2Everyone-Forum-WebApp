@@ -228,7 +228,7 @@ namespace Everything2Everyone.Controllers
                     return Redirect("/users/index");
                 }
 
-                // _userManager.ChangePassord(userToChange, passwordChange.CurrentPassword, passwordChange.NewPassword);
+                // _userManager.ChangePassword(userToChange, passwordChange.CurrentPassword, passwordChange.NewPassword);
 
                 TempData["message"] = "Email successfully changed.";
                 return Redirect("/users/edit" + passwordChange.UserID);
