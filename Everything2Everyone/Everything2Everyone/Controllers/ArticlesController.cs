@@ -241,7 +241,7 @@ namespace Everything2Everyone.Controllers
         public IActionResult Show([FromForm] Comment commentToBeInserted)
         {
             // DEFAULT - TO BE DELETED
-            commentToBeInserted.UserID = "318d855d-4d7a-4b5e-a293-40720ca8faac";
+            commentToBeInserted.UserID = "fa1c312d-549a-42bd-8623-c1071cfd581e";
             // at first, the dates are identical
             commentToBeInserted.DateAdded = DateTime.Now;
             commentToBeInserted.DateEdited = DateTime.Now;
@@ -263,8 +263,8 @@ namespace Everything2Everyone.Controllers
             FetchCategories();
 
             ArticleBundle articleToBeInserted = new ArticleBundle();
-            articleToBeInserted.Categories = StoreCategories();
             articleToBeInserted.Article = new Article();
+            articleToBeInserted.Categories = StoreCategories();
 
             // message received
             if (TempData.ContainsKey("ActionMessage"))
@@ -283,6 +283,12 @@ namespace Everything2Everyone.Controllers
         {
             // Fetch categories for side menu
             FetchCategories();
+
+            // message received
+            if (TempData.ContainsKey("ActionMessage"))
+            {
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
+            }
 
             // when article is firstly published, both dates are identical
             articleBundle.Article.PublicationDate = DateTime.Now;
@@ -333,7 +339,16 @@ namespace Everything2Everyone.Controllers
             // Fetch categories for side menu
             FetchCategories();
 
+            // message received
+            if (TempData.ContainsKey("ActionMessage"))
+            {
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
+            }
+
             ArticleVersionBundle articleVersionBundle = new ArticleVersionBundle();
+            articleVersionBundle.Article = new ArticleVersion();
+            articleVersionBundle.Chapters = new List<ChapterVersion>();
+            articleVersionBundle.Categories = StoreCategories();
 
             // the request involves editing a version other than the most recent version of the article with the provided articleID
             if (versionID != -1)
@@ -361,7 +376,7 @@ namespace Everything2Everyone.Controllers
                 // the most recent version is stored in the ARTICLES table,
                 // which means that, in order to access the info within, an
                 // 'Article' object is required
-                Article article = new Article();
+                Article article;
                 // making sure provided articleID is valid
                 try
                 {
@@ -394,18 +409,14 @@ namespace Everything2Everyone.Controllers
 
                     // adding the chapter into the bundled object
                     articleVersionBundle.Chapters.Add(chapterVersion);
+
+                    Console.WriteLine(articleVersionBundle.Chapters[articleVersionBundle.Chapters.Count-1].ContentUnparsed);
                 }
             }
 
             // storing categories which will be sent in the front
-            // for the dropdown selector
+            // end for the dropdown selector
             articleVersionBundle.Categories = StoreCategories();
-
-            // message received
-            if (TempData.ContainsKey("ActionMessage"))
-            {
-                ViewBag.DisplayedMessage = TempData["ActionMessage"];
-            }
 
             return View(articleVersionBundle);
         }
@@ -422,7 +433,7 @@ namespace Everything2Everyone.Controllers
             // making sure provided bundled object stores a valid articleID
             try
             {
-                currentArticle = DataBase.Articles.Find(articleVersionBundle.Article.ArticleID);
+                currentArticle = DataBase.Articles.Include("Chapters").Where(a => a.ArticleID == articleVersionBundle.Article.ArticleID).First();
             }
             catch
             {
@@ -486,7 +497,7 @@ namespace Everything2Everyone.Controllers
                 // overwriting current article version, based on the 'ArticleVersionBundle' received through the form
                 currentArticle.CategoryID = articleVersionBundle.Article.CategoryID;
                 currentArticle.Title = articleVersionBundle.Article.Title;
-                currentArticle.CommitTitle = articleVersionBundle.Article.Title;
+                currentArticle.CommitTitle = articleVersionBundle.Article.CommitTitle;
                 currentArticle.CommitDate = DateTime.Now;
 
                 DataBase.SaveChanges();
@@ -506,7 +517,7 @@ namespace Everything2Everyone.Controllers
                 }
 
                 TempData["ActionMessage"] = "Article edited successfully.";
-                return View(articleVersionBundle);
+                return Redirect("/Articles/Show/" + articleVersionBundle.Article.ArticleID);
             }
             
             // bundled object wasn't valid, so it is sent back

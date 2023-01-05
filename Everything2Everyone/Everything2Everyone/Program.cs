@@ -77,6 +77,11 @@ app.MapControllerRoute(
     pattern: "Articles/Edit/{articleID}/{versionID}",
     defaults: new { controller = "Articles", action = "Edit" });
 
+app.MapControllerRoute(
+    name: "ArticlesEdit",
+    pattern: "Articles/Edit",
+    defaults: new { controller = "Articles", action = "Edit" });
+
 // DELETE
 app.MapControllerRoute(
     name: "ArticlesDelete",
@@ -139,7 +144,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "/",
-    defaults: new { controller = "Articles", action = "Index" });
+    defaults: new { controller = "Authentication", action = "LogIn" });
 
 app.MapRazorPages();
 app.Run();

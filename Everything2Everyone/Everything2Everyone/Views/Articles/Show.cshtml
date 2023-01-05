@@ -1,5 +1,28 @@
 ﻿@model Everything2Everyone.Models.ArticleBundle
 
+@{
+    if (TempData.ContainsKey("ActionMessage"))
+    {
+        if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
+        {
+            <div class="alert-message alert-message__succeeded"
+         data-aos="fade-down"
+         data-aos-duration="1000">
+                <h4>@TempData["ActionMessage"]</h4>
+            </div>
+        }
+        else
+        {
+            <div class="alert-message alert-message__failed"
+         data-aos="fade-down"
+         data-aos-duration="1000">
+                <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
+            </div>
+        }
+    }
+}
+
+
 <div class="vw-article">
     <!-- Article information -->
     <div class="vw-article-title">@Model.Article.Title</div>
@@ -12,8 +35,9 @@
         </div>
         <div class="vw-centeralized vw-article-details">
             <img src="~/images/Icons/date.png" style="margin-right: 4px;"/>
-            @Model.Article.PublicationDate
+            @Model.Article.PublicationDate.ToString(string.Format("dd.MM.yyyy - HH:mm"))
          </div>
+         <a href="/articles/edit/@Model.Article.ArticleID/-1">Edit</a>
     </div>
 
     <!-- Display chapters-->

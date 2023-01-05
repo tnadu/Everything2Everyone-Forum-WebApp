@@ -8,7 +8,7 @@ namespace Everything2Everyone.Models
     {
         public ArticleVersion Article { get; set; }
 
-        public ICollection<ChapterVersion> Chapters { get; set; }
+        public List<ChapterVersion> Chapters { get; set; }
 
         [NotMapped]
         public IEnumerable<SelectListItem> Categories { get; set; }

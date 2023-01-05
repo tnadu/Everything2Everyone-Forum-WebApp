@@ -2,15 +2,15 @@
 
 namespace Everything2Everyone.Controllers
 {
-    public class RegisterController : Controller
+    public class AuthenticationController : Controller
     {
         public IActionResult SignUp()
         {
-            return View();
+            return Redirect("/identity/account/register");
         }
         public IActionResult LogIn()
         {
-            return View();
+            return Redirect("/identity/account/login");
         }
     }
 }

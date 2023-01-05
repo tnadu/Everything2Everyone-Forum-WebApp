@@ -1,5 +1,28 @@
 ﻿@model Everything2Everyone.Models.ArticleBundle
 
+@{
+    if (TempData.ContainsKey("ActionMessage"))
+    {
+        if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
+        {
+            <div class="alert-message alert-message__succeeded"
+         data-aos="fade-down"
+         data-aos-duration="1000">
+                <h4>@TempData["ActionMessage"]</h4>
+            </div>
+        }
+        else
+        {
+            <div class="alert-message alert-message__failed"
+         data-aos="fade-down"
+         data-aos-duration="1000">
+                <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
+            </div>
+        }
+    }
+}
+
+
 <body>
 
     <form action="/Articles/New" method="post" class="vw-form vw-form-article">
@@ -11,7 +34,7 @@
 
         <div class="vw-form-groups">
             <div class="vw-form-groups-items">
-                <label for="Article.Title" class="vw-form-label">Commit title:</label>
+                <label for="Article.CommitTitle" class="vw-form-label">Commit title:</label>
                 <input type="text" name="Article.CommitTitle" value="@Model.Article.CommitTitle">
                 @Html.ValidationMessageFor(m => m.Article.CommitTitle, null, new { @class = "text-danger" })
             </div>
@@ -55,7 +78,7 @@
         // Inputs of the chapter
         const ChapterTitle = document.querySelector('#ChapterTitleJS');
         const ChapterContent = document.querySelector('#ChapterContentJS');
-        let createdChilds = 0;
+        let numberOfCreatedChildren = 0;
 
         function UpdateChapters() {
             const currentChapters = document.querySelectorAll(".vw-form-article-chapter");
@@ -95,8 +118,8 @@
             // --> Chapters.ChapterID
             const Index = document.createElement("input"), ArticleID = document.createElement("input"), ChapterID = document.createElement("input");
             Index.type = "hidden"; ArticleID.type = "hidden"; ChapterID.type = "hidden";
-            Index.name = "Chapters.Index"; ArticleID.name = "Chapters[" + createdChilds + "].ArticleID"; ChapterID.name = "Chapters[" + createdChilds + "].ChapterID";
-            Index.value = createdChilds; ArticleID.value = -1; ChapterID.value = createdChilds;
+            Index.name = "Chapters.Index"; ArticleID.name = "Chapters[" + numberOfCreatedChildren + "].ArticleID"; ChapterID.name = "Chapters[" + numberOfCreatedChildren + "].ChapterID";
+            Index.value = numberOfCreatedChildren; ArticleID.value = -1; ChapterID.value = numberOfCreatedChildren;
 
             NewFormChapter.appendChild(Index);
             NewFormChapter.appendChild(ArticleID);
@@ -116,9 +139,9 @@
             // the chapter
             const Title = document.createElement("input");
             Title.type = "text";
-            Title.name = "Chapters[" + createdChilds + "].Title";
+            Title.name = "Chapters[" + numberOfCreatedChildren + "].Title";
             Title.value = ChapterTitle.value;
-            Title.readonly = true;
+            Title.disabled = true;
 
             NewFormChapter.appendChild(Title);
 
@@ -132,10 +155,10 @@
 
             // Textarea CONTENT
             const Content = document.createElement("textarea");
-            Content.name = "Chapters[" + createdChilds + "].ContentUnparsed";
+            Content.name = "Chapters[" + numberOfCreatedChildren + "].ContentUnparsed";
             Content.rows = 10;
             Content.value = ChapterContent.value;
-            Content.readonly = true;
+            Content.disabled = true;
 
             NewFormChapter.appendChild(Content);
 
@@ -161,7 +184,7 @@
 
             // Append the new created chapter to the new chapters list
             NewChapters.appendChild(NewFormChapter);
-            createdChilds += 1;
+            numberOfCreatedChildren += 1;
         }
 
         function AddChapter() {
@@ -183,7 +206,7 @@
                 for (let i = 0; i < DeleteBtns.length; i++) {
                     // Delete BTN is clicked => remove that chapter
                     DeleteBtns[i].addEventListener("click", () => {
-                        createdChilds -= 1;
+                        numberOfCreatedChildren -= 1;
                         NewlyCreatedChapters[i].remove();
                         UpdateChapters();
                     });
@@ -193,8 +216,8 @@
                     // => inputs become clickable
                     EditBtns[i].addEventListener("click", () => {
                         NewlyCreatedChapters[i].classList.remove("chapter-added");
-                        NewlyCreatedChapters[i].childNodes[1].disabled = false;
-                        NewlyCreatedChapters[i].childNodes[3].disabled = false;
+                        NewlyCreatedChapters[i].childNodes[5].disabled = false;
+                        NewlyCreatedChapters[i].childNodes[7].disabled = false;
 
                         // Display = none => EDIT & DELETE buttons
                         // Display = block => SAVE button
@@ -209,8 +232,8 @@
                     // => Save btn disappers => display = none;
                     SaveBtns[i].addEventListener("click", () => {
                         NewlyCreatedChapters[i].classList.add("chapter-added");
-                        NewlyCreatedChapters[i].childNodes[1].disabled = true;
-                        NewlyCreatedChapters[i].childNodes[3].disabled = true;
+                        NewlyCreatedChapters[i].childNodes[5].disabled = true;
+                        NewlyCreatedChapters[i].childNodes[7].disabled = true;
 
                         EditBtns[i].style.display = "block";
                         DeleteBtns[i].style.display = "block";
@@ -227,6 +250,14 @@
         document.querySelector("#btn-article-submit").addEventListener("click", () => {
             ChapterTitle.disabled = true;
             ChapterContent.disabled = true;
+
+            const Chapters = document.querySelectorAll(".chapter-added");
+
+            // enable Title and Content fields of every chapter
+            for (let i = 0; i < Chapters.length; i++) {
+                Chapters[i].childNodes[5].disabled = false;
+                Chapters[i].childNodes[7].disabled = false;
+            }
         });
 
     </script>

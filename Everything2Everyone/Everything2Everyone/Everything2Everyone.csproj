@@ -8,23 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Shared\cevacshtml.cshtml" />
+    <Content Remove="wwwroot\js\AddNewChapter.js" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Shared\cevacshtml.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Shared\cevacshtml.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\Shared\cevacshtml.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
