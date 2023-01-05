@@ -29,7 +29,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No comment with specified ID could be found.";
-                return Redirect("/Articles/Index/filter-sort");
+                return Redirect("/articles/index/");
             }
 
             // Fetch categories for side menu
@@ -53,7 +53,7 @@ namespace Everything2Everyone.Controllers
                 catch
                 {
                     TempData["ActionMessage"] = "No comment with specified ID could be found.";
-                    return Redirect("/Articles/Index/filter-sort");
+                    return Redirect("/articles/index/");
                 }
 
                 comment.Content = commentToBeInserted.Content;
@@ -90,7 +90,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No comment with specified ID could be found.";
-                return Redirect("/Articles/Index/filter-sort");
+                return Redirect("/articles/index/");
             }
         }
 

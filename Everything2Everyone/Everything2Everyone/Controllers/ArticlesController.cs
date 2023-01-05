@@ -37,7 +37,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
-                return Redirect("/Articles/Index/filter-sort");
+                return Redirect("/articles/index/");
             }
 
             // fetching all previous article versions from the database
@@ -66,7 +66,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
-                return Redirect("/Articles/Index/filter-sort");
+                return Redirect("/articles/index/");
             }
 
             article.IsRestricted = ! article.IsRestricted;
@@ -80,8 +80,8 @@ namespace Everything2Everyone.Controllers
         // When category is specified, the list of articles can be either unsorted or sorted
         // (chronologically/reverse chronologically/alphabetically/reverse alphabetically).
         // It is accesibile only to signed-in users of all kinds.
-        
-        public IActionResult Index(int? categoryID, int? sort)
+
+        public IActionResult Index(int? categoryID, int? sort, int? userSpecificMode)
         {
             // Fetch categories for side menu
             FetchCategories();
@@ -93,15 +93,17 @@ namespace Everything2Everyone.Controllers
             if (categoryID != null)
             {
                 // making sure provided categoryID is valid
-                try
-                {
-                    returnedArticles = returnedArticles.Where(article => article.CategoryID == categoryID);
-                }
+                returnedArticles = returnedArticles.Where(article => article.CategoryID == categoryID);
+
                 // when provided categoryID is invalid, all articles are returned
-                catch
+                if (!returnedArticles.Any())
                 {
                     returnedArticles = DataBase.Articles.Include("Category").Include("Chapters");
+                    ViewBag.CategoryName = null;
+                    // storing chosen category's title, when categoryID is not null, else storing null            
                 }
+                else
+                    ViewBag.CategoryName = DataBase.Categories.Where(category => category.CategoryID == categoryID).First().Title;
             }
 
             // sort (if specified)
@@ -127,10 +129,18 @@ namespace Everything2Everyone.Controllers
                 returnedArticles = returnedArticles.OrderByDescending(article => article.PublicationDate);
             }
 
+            //if (userSpecificMode != null)
+            //{
+                // will be implemented when roles and permissions are decided upon
+                // returnedArticles = returnedArticles.Where(article => article.UserID == _userManager.GetUserId(User));
+                
+            //}
+
+
             // FOR PAGINATION
             /////////////////
-            // chose how much articles we want to display
-            int _articlesPerPage = 3;
+            // chose how many articles we want to display
+            int _articlesPerPage = 10;
             // because the number of articles is variable, we need to check how many exist
             int totalArticles = returnedArticles.Count();
             // take the current page of articles from the View
@@ -148,15 +158,11 @@ namespace Everything2Everyone.Controllers
             // take the corresponding articles depending on what page are we on
             var paginatedArticles = returnedArticles.Skip(offset).Take(_articlesPerPage);
             // take the number of the last page
-            ViewBag.lastPage = Math.Ceiling((float)totalArticles /(float)_articlesPerPage);
-
+            ViewBag.lastPage = Math.Ceiling((float)totalArticles / (float)_articlesPerPage);
             ViewBag.CurrentArticleQuery = paginatedArticles;
-            // necessary to distinguish the action which returns the view when implementing FE logic
-            ViewBag.Source = "filter-sort";
-            // storing chosen category's title, when categoryID is not null, else storing null            
-            ViewBag.CategoryName = categoryID != null ? DataBase.Categories.Where(category => category.CategoryID == categoryID).First().Title : null;
             ViewBag.CategoryID = categoryID;
             ViewBag.Sorting = sort;
+            ViewBag.UserSpecified = userSpecificMode;
 
             // message received
             if (TempData.ContainsKey("ActionMessage"))
@@ -166,31 +172,6 @@ namespace Everything2Everyone.Controllers
 
             return View();
         }
-
-
-        //// Index method which returns all articles published by the request's sender (editor or admin)
-        //[HttpGet("my-articles")]
-        //public IActionResult Index()
-        //{
-        //    Fetch categories for side menu
-        //    FetchCategories();
-        //
-        //    // will be implemented when roles and permissions are decided upon
-        //    var returnedArticles = DataBase.Articles.Include("Categories").Where(article => article.UserID == _userManager.GetUserId(User));
-
-        //    ViewBag.CurrentArticleQuery = returnedArticles;
-        //    // the same view will be used for both Index actions, which
-        //    // makes this variable necessary in the FE
-        //    ViewBag.Source = "my-articles";
-
-        //    // message received
-        //    if (TempData.ContainsKey("message"))
-        //    {
-        //        ViewBag.DisplayedMessage = TempData["message"];
-        //    }
-
-        //    return View();
-        //}
 
 
         // Method which returns the specified article's content and details, along with its
@@ -214,7 +195,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
-                return Redirect("/Articles/Index/filter-sort");
+                return Redirect("/articles/index/");
             }
 
             // message received
@@ -438,7 +419,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
-                return Redirect("/Articles/Index/filter-sort");
+                return Redirect("/articles/index/");
             }
 
             if (ModelState.IsValid)

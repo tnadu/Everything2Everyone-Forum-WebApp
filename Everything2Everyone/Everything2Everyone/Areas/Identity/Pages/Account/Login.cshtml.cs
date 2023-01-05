@@ -116,7 +116,7 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect("/articles/index/filter-sort");
+                    return LocalRedirect("/articles/index/");
                 }
                 if (result.RequiresTwoFactor)
                 {

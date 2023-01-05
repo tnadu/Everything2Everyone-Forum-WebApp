@@ -56,7 +56,7 @@ app.MapControllerRoute(
 // INDEX
 app.MapControllerRoute(
     name: "ArticlesIndex",
-    pattern: "articles/index/filter-sort/{categoryID?}/{sort?}",
+    pattern: "articles/index/{categoryID?}/{sort?}/{userSpecificMode?}",
     defaults: new { controller = "Articles", action = "Index"});
 
 // SHOW
