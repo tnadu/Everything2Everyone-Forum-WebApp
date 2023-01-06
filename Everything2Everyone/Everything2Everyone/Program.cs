@@ -56,7 +56,7 @@ app.MapControllerRoute(
 // INDEX
 app.MapControllerRoute(
     name: "ArticlesIndex",
-    pattern: "articles/index/filter-sort/{categoryID?}/{sort?}",
+    pattern: "articles/index/{categoryID?}/{sort?}/{userSpecificMode?}",
     defaults: new { controller = "Articles", action = "Index"});
 
 // SHOW
@@ -75,6 +75,11 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "ArticlesEdit",
     pattern: "Articles/Edit/{articleID}/{versionID}",
+    defaults: new { controller = "Articles", action = "Edit" });
+
+app.MapControllerRoute(
+    name: "ArticlesEdit",
+    pattern: "Articles/Edit",
     defaults: new { controller = "Articles", action = "Edit" });
 
 // DELETE
@@ -182,7 +187,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "/",
-    defaults: new { controller = "Articles", action = "Index" });
+    defaults: new { controller = "Authentication", action = "LogIn" });
 
 app.MapRazorPages();
 app.Run();

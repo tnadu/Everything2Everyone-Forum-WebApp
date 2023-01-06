@@ -3,6 +3,16 @@
     NOTE! ActionMessage = the message returned when an action accours
 -->
 @{
+    string baseURL = "/articles/index/?";
+    if (ViewBag.CategoryID != null)
+        baseURL += "categoryID=" + ViewBag.CategoryID + "&&";
+    if (ViewBag.Sorting != null)
+        baseURL += "sort=" + ViewBag.Sorting + "&&";
+    if (ViewBag.UserSpecified != null)
+        baseURL += "userSpecificMode=" + ViewBag.UserSpecified + "&&";
+    baseURL += "page=";
+          
+
     if (TempData.ContainsKey("ActionMessage"))
     {
         if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
@@ -28,6 +38,14 @@
 <div class="articles-filter">
     <div><h4>Filter options:</h4></div>
     <div class="articles-filter-btns">
+        @{
+            string sortingBaseURL = "/articles/index/?";
+            if (ViewBag.CategoryID != null)
+                sortingBaseURL += "categoryID=" + ViewBag.CategoryID + "&&";
+            if (ViewBag.UserSpecified != null)
+                sortingBaseURL += "userSpecificMode=" + ViewBag.UserSpecified + "&&";
+            sortingBaseURL += "sort=";
+        }
 
         @if(ViewBag.Sorting == 0){
             <!-- 
@@ -36,12 +54,12 @@
                 Time search:            up
             -->
             <div class="btn-filter">
-                <a href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=1">
+                <a href="@(sortingBaseURL + 1)">
                     <img src="~/images//Icons//Filter/TimeUp.svg" alt="age" />
                 </a>
             </div>
             <div class="btn-filter">
-                <a href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=2">
+                <a href="@(sortingBaseURL + 2)">
                     <img src="~/images//Icons//Filter/AlphabeticalDown.svg" alt="age" />
                 </a>
             </div>
@@ -53,12 +71,12 @@
                 Time search:            down
             -->
             <div class="btn-filter">
-                <a href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=0">
+                <a href="@(sortingBaseURL + 0)">
                     <img src="~/images//Icons//Filter/TimeDown.svg" alt="age" />
                 </a>
             </div>
             <div class="btn-filter">
-                <a href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=2">
+                <a href="@(sortingBaseURL + 2)">
                     <img src="~/images//Icons//Filter/AlphabeticalDown.svg" alt="age" />
                 </a>
             </div>
@@ -70,12 +88,12 @@
                 Time search:            defaul = down
             -->
             <div class="btn-filter">
-                <a href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=1">
+                <a href="@(sortingBaseURL + 1)">
                     <img src="~/images//Icons//Filter/TimeDown.svg" alt="age" />
                 </a>
             </div>
             <div class="btn-filter">
-                <a href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=3">
+                <a href="@(sortingBaseURL + 3)">
                     <img src="~/images//Icons//Filter/AlphabeticalUp.svg" alt="age" />
                 </a>
             </div>
@@ -87,12 +105,12 @@
                 Time search:            default = down
             -->
             <div class="btn-filter">
-                <a href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=1">
+                <a href="@(sortingBaseURL + 1)">
                     <img src="~/images//Icons//Filter/TimeDown.svg" alt="age" />
                 </a>
             </div>
             <div class="btn-filter">
-                <a href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=2">
+                <a href="@(sortingBaseURL + 2)">
                     <img src="~/images//Icons//Filter/AlphabeticalDown.svg" alt="age" />
                 </a>
             </div>
@@ -114,7 +132,7 @@
                 href="/Articles/Show/@article.ArticleID"> @article.Title </a>
 
             <a class="vw-article-link-category universal-link" 
-                href="/Articles/Index/filter-sort/@article.CategoryID/0">@article.Category.Title</a>
+                href="/articles/index/?categoryID=@article.CategoryID">@article.Category.Title</a>
             
             <div class="vw-article-link-editor">
                 <p>OLAERIU VLAD MIHAI</p>
@@ -130,11 +148,10 @@
 <div>
     <div class="vw-pagination-wrapper">
         <ul class="vw-pagination">
-
             <!-- Previous page-->
             <li class="vw-page-item">
                 <a class="vw-page-link"
-                   href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=@ViewBag.Sorting&&page=1" aria-label="Previous">
+                   href="@(baseURL+1)" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -143,14 +160,14 @@
             {
                 <li class="vw-page-item">
                     <a class="vw-page-link"
-                   href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=@ViewBag.Sorting&&page=@i">@(i)</a>
+                   href="@(baseURL+i)">@(i)</a>
                 </li>
             }
 
             <!-- Next page-->
             <li class="vw-page-item">
                 <a class="vw-page-link"
-                   href="/Articles/Index/filter-sort?categoryID=@ViewBag.CategoryID&&sort=@ViewBag.Sorting&&page=@(ViewBag.lastPage)" arialabel="Next">
+                   href="@(baseURL+ViewBag.lastPage)" arialabel="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

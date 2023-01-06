@@ -38,7 +38,7 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
             if (returnUrl != null)
             {
                 TempData["ActionMessage"] = "You have successfully logged out of the application.";
-                return LocalRedirect("/Articles/Index/filter-sort");
+                return LocalRedirect("/articles/index/");
             }
             else
             {
