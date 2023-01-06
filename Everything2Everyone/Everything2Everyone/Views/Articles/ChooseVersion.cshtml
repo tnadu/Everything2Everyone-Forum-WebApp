@@ -1,5 +1,80 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Everything2Everyone.Models.Article
+
 @{
+    string baseURL = "/Articles/Choose-Version/" + Model.ArticleID + "?page=";
+}
+
+<div class="vw-article-link" 
+    style="margin-bottom: 16px;">
+
+    <a class="vw-article-link-title universal-link"
+       href="/articles/show/@Model.ArticleID"> @Model.Title </a>
+
+    <a class="vw-article-link-category universal-link"
+       href="/articles/index/?categoryID=@Model.CategoryID">@Model.Category.Title</a>
+
+    <div class="vw-article-link-editor">
+        <p>OLAERIU VLAD MIHAI</p>
+        <div class="vw-article-link-date">@Model.PublicationDate</div>
+    </div>
+
+    <div class="vw-article__status">• ACTIVE</div>
+</div>
+
+<!-- ARTICLES GRID, 2 COLUMNS -->
+<div class="vw-articles-links">
+
+    @foreach (ArticleVersion article in ViewBag.articleVersions)
+    {
+
+        <!-- ARTICLE ELEMENT -->
+        <div class="vw-article-link">
+
+            <a class="vw-article-link-title universal-link"
+           href="/articles/edit/@article.ArticleID/@article.VersionID"> @article.Title </a>
+
+            <a class="vw-article-link-category universal-link"
+           href="/articles/index/?categoryID=@article.CategoryID">@article.Category.Title</a>
+
+            <div class="vw-article-link-editor">
+                <p>OLAERIU VLAD MIHAI</p>
+                <div class="vw-article-link-date">Modified on: @article.CommitDate</div>
+            </div>
+        </div>
+
+    }
+
+</div>
+
+<!-- Pagination with Bootstrap-->
+@if (ViewBag.lastPage > 1){
+    <div>
+        <div class="vw-pagination-wrapper">
+            <ul class="vw-pagination">
+                <!-- Previous page-->
+                <li class="vw-page-item">
+                    <a class="vw-page-link"
+                       href="@(baseURL+1)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= ViewBag.lastPage; i++)
+                {
+                    <li class="vw-page-item">
+                        <a class="vw-page-link"
+                       href="@(baseURL+i)">@(i)</a>
+                    </li>
+                }
+
+                <!-- Next page-->
+                <li class="vw-page-item">
+                    <a class="vw-page-link"
+                       href="@(baseURL+ViewBag.lastPage)" arialabel="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 }

@@ -1,8 +1,8 @@
 ﻿@model Everything2Everyone.Models.Comment
 
 <h1>Editing your comment on: '@ViewBag.ArticleCommented.Title'</h1>
-<h2>Maybe reconsider by <a href="/Articles/Show/@ViewBag.ArticleCommented.ArticleID">reading it again.</a></h2>
-<form method="POST" action="/Comments/Edit/@Model.CommentID" class="vw-article-add-comment">
+<h2>Maybe reconsider by <a href="/articles/show/@ViewBag.ArticleCommented.ArticleID">reading it again.</a></h2>
+<form method="POST" action="/comments/edit/@Model.CommentID" class="vw-article-add-comment">
     <input type="hidden" name="ArticleID" value="@Model.ArticleID" />
 
     <textarea name="Content" placeholder="Add a comment..." rows="4" id="comment_content">@Model.Content</textarea>

@@ -27,6 +27,7 @@
 /* ARTICLE IN GRID */
 
 .vw-article-link {
+    position: relative;
     background-color: var(--color-stroke);
     background-image: linear-gradient(to bottom, transparent, var(--bottom-gradient)), url("/images/article-wave.png");
     background-size: cover;
@@ -75,6 +76,15 @@
     color: var(--text-secondary)
 }
 
+.vw-article__status {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: rgb(42, 174, 62);
+    font-weight: 800;
+    font-weight: 20px;
+}
+
 /* //////////////
 ACTUAL ARTICLE
 ////////////// */
@@ -85,14 +95,17 @@ ACTUAL ARTICLE
     color: var(--color-stroke);
 }
 
+.vw-chapter {
+    margin-bottom: 32px;
+}
+
 .vw-article-author,
 .vw-chapter-title {
     font-size: var(--M-text);
     font-weight: 800;
     color: var(--color-menu);
+    text-align: left;
 }
-
-.vw-chapter-title{ text-align: left;}
 
 .vw-article-details {
     font-size: var(--S-text);
@@ -118,10 +131,16 @@ ACTUAL ARTICLE
     margin-bottom: 4px;
 }
 
-    .vw-comment-author span {
-        margin-left: 8px;
-        font-weight: normal;
-    }
+.vw-comment-author a {
+    color: var(--color-stroke);
+    text-decoration: none;
+    font-style: italic;
+}
+
+.vw-comment-author span {
+    margin-left: 8px;
+    font-weight: normal;
+}
 
 .vw-comment-content {
     color: var(--text-primary);

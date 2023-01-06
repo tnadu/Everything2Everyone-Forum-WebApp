@@ -1,0 +1,25 @@
+﻿@model Everything2Everyone.Models.EmailChange
+
+<h1 class="small-title">Edit your email:</h1>
+@using (Html.BeginForm(actionName: "ChangeEmail", controllerName: "Users", method: FormMethod.Post, routeValues: new { UserID = @Model.UserID }))
+{
+    <div style="display: flex; flex-direction: column; margin-bottom: 4px;">
+        <input type="hidden" name="UserID" value="@Model.UserID"/>
+
+        <div class="vw-form-groups-items">
+            <label class="vw-log-sign-label">Enter a new email</label>
+            <input name="NewEmail" type="text" value="@Model.NewEmail" placeholder="Enter a new email..." />
+            @Html.ValidationMessageFor(m => m.NewEmail, null, new { @class = "text-danger" })
+        </div>
+
+        <div class="vw-form-groups-items">
+            <label class="vw-log-sign-label">Current password:</label>
+            <input name="Password" type="password" placeholder="Your password" />
+            @if(TempData.ContainsKey("ActionMessage")){
+                <span style="color: var(--delete); margin-top: 4px;">@TempData["ActionMessage"]</span>
+            }
+        </div>
+
+        <button type="submit" class="btn-basic btn-edit" style="max-width: 5rem;">Edit</button>
+    </div>
+}

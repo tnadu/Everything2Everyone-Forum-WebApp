@@ -1,5 +1,40 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model Everything2Everyone.Models.User
+
+<h1 class="small-title">Edit your profile:</h1>
+@using (Html.BeginForm(actionName: "Edit", controllerName: "Users", method: FormMethod.Post, routeValues: new { UserID = @Model.Id })){
+    <input type="hidden" name="Id" value="@Model.Id"/>
+
+    <div class="vw-form-groups-items">
+        <label class="vw-log-sign-label">First name:</label>
+        <input name="FirstName" type="text" value="@Model.FirstName" />
+        @Html.ValidationMessageFor(m => m.FirstName, null, new { @class = "text-danger" })
+    </div>
+
+    <div class="vw-form-groups-items">
+        <label class="vw-log-sign-label">Last name:</label>
+        <input name="LastName" type="text" value="@Model.LastName" />
+        @Html.ValidationMessageFor(m => m.LastName, null, new { @class = "text-danger" })
+    </div>
+
+    <div class="vw-form-groups">
+        <div class="vw-form-groups-items">
+            <label class="vw-log-sign-label">Nick name:</label>
+            <input name="NickName" type="text" value="@Model.NickName" />
+            @Html.ValidationMessageFor(m => m.NickName, null, new { @class = "text-danger" })
+        </div>
+        <div class="vw-form-groups-items">
+            <label class="vw-log-sign-label" style="visibility:hidden">.</label>
+
+            <div style="display: flex;">
+                <h3 style="color: var(--text-secondary); margin-right: 12px;">Publicity: </h3>
+                <label class="switch-publicity">
+                    <input type="checkbox" name="ShowPublicIdentity" value="true">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+        </div>
+    </div>
+
+    <button type="submit" class="btn-basic btn-edit" style="max-width: 5rem;">Edit</button>
 }

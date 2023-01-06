@@ -13,11 +13,10 @@
         <div class="dropdown">
             <button class="btn-drop">Profile</button>
             <div class="dropdown-content">
-                <a href="#">Profile</a>
-                <a href="#">Help</a>
-                <a href="#">My comments</a>
+                <a href="/users/my-profile">Profile</a>
+                <a href="/comments/my-comments">My comments</a>
                 <a href="#">My articles</a>
-                <a href="#">Manage users</a>
+                <a href="/users/index">Manage users</a>
                 <form style="background-color: var(--delete); color: var(--text-primary); display:flex; align-items: center; justify-content: center;" 
                         asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                     <button type="submit" class="nav-link btn btn-link text-dark" style="text-align:center;">Logout</button>
