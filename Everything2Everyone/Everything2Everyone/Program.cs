@@ -139,6 +139,16 @@ app.MapControllerRoute(
     pattern: "/Comments/Edit/{CommentID}",
     defaults: new { controller = "Comments", action = "Edit" });
 
+app.MapControllerRoute(
+    name: "ForwardedLogin",
+    pattern: "/login",
+    defaults: new { controller = "Authentication", action = "LogIn" });
+
+app.MapControllerRoute(
+    name: "ForwardedSignup",
+    pattern: "/signup",
+    defaults: new { controller = "Authentication", action = "SignUp" });
+
 //////////////
 // Basic route
 app.MapControllerRoute(
