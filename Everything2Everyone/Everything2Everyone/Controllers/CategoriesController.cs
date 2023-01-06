@@ -30,7 +30,8 @@ namespace Everything2Everyone.Controllers
             {
                 TempData["ActionMessage"] = "Title is required. Length must be between 5 and 30 characters.";
             }
-            return Redirect("/Articles/Index/filter-sort");
+
+            return Redirect("/articles/index/");
         }
 
 
@@ -46,7 +47,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No category with specified ID could be found.";
-                return Redirect("/articles/index/filter-sort");
+                return Redirect("/articles/index/");
             }
 
             // Fetch categories for side menu
@@ -78,7 +79,7 @@ namespace Everything2Everyone.Controllers
                     TempData["ActionMessage"] = "No category with specified ID could be found.";
                 }
 
-                return Redirect("/Articles/Index/filter-sort");
+                return Redirect("/articles/index/");
             }
 
             // Fetch categories for side menu
@@ -103,7 +104,7 @@ namespace Everything2Everyone.Controllers
                 TempData["ActionMessage"] = "No category with specified ID could be found.";
             }
 
-            return Redirect("/Articles/Index/filter-sort");
+            return Redirect("/articles/index/");
         }
 
 

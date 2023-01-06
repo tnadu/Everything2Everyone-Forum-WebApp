@@ -9,12 +9,9 @@ namespace Everything2Everyone.Models
 {
     public class ArticleVersion
     {
-        // [Key]
-        //public int ArticleVersionID { get; set; }
-
         public int ArticleID { get; set; }
 
-        //[Required(ErrorMessage = "Category is required.")]
+        [Required(ErrorMessage = "Category is required.")]
         public int? CategoryID { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

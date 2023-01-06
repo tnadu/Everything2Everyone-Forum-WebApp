@@ -45,7 +45,7 @@ namespace Everything2Everyone.Controllers
         {
             // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
             //      TempData["ActionMessage"] = "You don't have permission to access this resource";
-            //      return Redirect("/Articles/Index/filter-sort");
+            //      return Redirect("/Articles/Index/");
             // }
 
             // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
@@ -82,7 +82,7 @@ namespace Everything2Everyone.Controllers
         {
             // if (! User.IsInRole("Admin") && emailChange.UserID != _userManager.GetUserById(User)) {
             //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/Articles/index/filter-sort");
+            //      return Redirect("/articles/index/");
             // }
 
             // if (User.IsInRole("Admin") && emailChange.UserID.IsInRole("Admin)) {
@@ -162,7 +162,7 @@ namespace Everything2Everyone.Controllers
         {
             // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
             //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/filter-sort");
+            //      return Redirect("/articles/index/");
             // }
 
             // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
@@ -200,7 +200,7 @@ namespace Everything2Everyone.Controllers
         {
             // if (! User.IsInRole("Admin") && passwordChange.UserID != _userManager.GetUserById(User)) {
             //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/filter-sort");
+            //      return Redirect("/articles/index/");
             // }
 
             // if (User.IsInRole("Admin") && passwordChange.UserID.IsInRole("Admin)) {
@@ -256,7 +256,7 @@ namespace Everything2Everyone.Controllers
                     return Redirect("/Users/Index");
                 }
 
-                // _userManager.ChangePassord(userToChange, passwordChange.CurrentPassword, passwordChange.NewPassword);
+                // _userManager.ChangePassword(userToChange, passwordChange.CurrentPassword, passwordChange.NewPassword);
 
                 TempData["ActionMessage"] = "Password successfully changed.";
                 return Redirect("/Users/MyProfile");
@@ -289,7 +289,7 @@ namespace Everything2Everyone.Controllers
         {
             // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
             //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/filter-sort");
+            //      return Redirect("/articles/index/");
             // }
 
             // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
@@ -329,7 +329,7 @@ namespace Everything2Everyone.Controllers
         {
             // if (! User.IsInRole("Admin") && userToBeInserted.ID != _userManager.GetUserById(User)) {
             //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/filter-sort");
+            //      return Redirect("/articles/index/");
             // }
 
             // if (User.IsInRole("Admin") && user.IsInRole("Admin)) {
@@ -386,7 +386,7 @@ namespace Everything2Everyone.Controllers
         {
             // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
             //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/filter-sort");
+            //      return Redirect("/articles/index/");
             // }
 
             // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
