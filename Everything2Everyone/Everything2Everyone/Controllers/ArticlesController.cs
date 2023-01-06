@@ -1,10 +1,12 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace Everything2Everyone.Controllers
@@ -42,8 +44,31 @@ namespace Everything2Everyone.Controllers
 
             // fetching all previous article versions from the database
             var articleVersions = DataBase.ArticleVersions.Include("Category").Where(articleVersion => articleVersion.ArticleID == articleID)
-                                                                              .OrderBy(articleVersion => articleVersion.VersionID);
-            ViewBag.articleVersions = articleVersions;
+                                                                              .OrderByDescending(articleVersion => articleVersion.VersionID);
+            // FOR PAGINATION
+            /////////////////
+            // chose how many articles we want to display
+            int _articlesPerPage = 10;
+            // because the number of articles is variable, we need to check how many exist
+            int totalArticles = articleVersions.Count();
+            // take the current page of articles from the View
+            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            // 0th page: offset = 0
+            // 1st page: offset = 10
+            // 2nd page: offset = 20
+            // offset = number of articles already displayed
+            var offset = 0;
+            if (!currentPage.Equals(0))
+            {
+                offset = (currentPage - 1) * _articlesPerPage;
+            }
+
+            // take the corresponding articles depending on what page are we on
+            var paginatedArticles = articleVersions.Skip(offset).Take(_articlesPerPage);
+            // take the number of the last page
+            ViewBag.lastPage = Math.Ceiling((float)totalArticles / (float)_articlesPerPage);
+            ViewBag.articleVersions = paginatedArticles;
+
             return View(currentArticleVersion);
         }
 
@@ -72,7 +97,7 @@ namespace Everything2Everyone.Controllers
             article.IsRestricted = ! article.IsRestricted;
             DataBase.SaveChanges();
 
-            return Redirect("/Articles/Show/" + articleID);
+            return Redirect("/articles/show/" + articleID);
         }
 
 
@@ -90,6 +115,7 @@ namespace Everything2Everyone.Controllers
             var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters"); // Include("Users");
 
             // filter - category is specified
+            ViewBag.CategoryName = categoryID;
             if (categoryID != null)
             {
                 // making sure provided categoryID is valid
@@ -219,10 +245,11 @@ namespace Everything2Everyone.Controllers
         // because Views accept only one Model, we will use the POST Show method to add comments
         // to the corresponding article
         [HttpPost]
+        // [Authorize(Roles = "Editor,Admin")]
         public IActionResult Show([FromForm] Comment commentToBeInserted)
         {
             // DEFAULT - TO BE DELETED
-            commentToBeInserted.UserID = "fa1c312d-549a-42bd-8623-c1071cfd581e";
+            commentToBeInserted.UserID = "318d855d-4d7a-4b5e-a293-40720ca8faac";
             // at first, the dates are identical
             commentToBeInserted.DateAdded = DateTime.Now;
             commentToBeInserted.DateEdited = DateTime.Now;
@@ -234,7 +261,7 @@ namespace Everything2Everyone.Controllers
                 TempData["ActionMessage"] = "Comment added successfully.";
             }
 
-            return Redirect("/Articles/Show/" + commentToBeInserted.ArticleID);
+            return Redirect("/articles/show/" + commentToBeInserted.ArticleID);
         }
 
         // action returning the associated View
@@ -305,7 +332,7 @@ namespace Everything2Everyone.Controllers
                 }
 
                 TempData["ActionMessage"] = "Article added successfully.";
-                return Redirect("/Articles/Show/" + articleBundle.Article.ArticleID);
+                return Redirect("/articles/show/" + articleBundle.Article.ArticleID);
             }
             // provided article and chapters are invalid, so the 'New' View
             // is returned and populated with the said article and chapters
@@ -344,7 +371,7 @@ namespace Everything2Everyone.Controllers
                 catch
                 {
                     TempData["ActionMessage"] = "No article with specified ID and version ID could be found.";
-                    return Redirect("/Articles/Index/my-articles");
+                    return Redirect("/articles/index/my-articles");
                 }
 
                 // storing chosen article's chapters in to bundled object
@@ -366,7 +393,7 @@ namespace Everything2Everyone.Controllers
                 catch
                 {
                     TempData["ActionMessage"] = "No article with specified ID and version ID could be found.";
-                    return Redirect("/Articles/Index/my-articles");
+                    return Redirect("/articles/index/my-articles");
                 }
 
                 // copying values into the newly created 'ArticleVersionBundle' object
@@ -498,7 +525,7 @@ namespace Everything2Everyone.Controllers
                 }
 
                 TempData["ActionMessage"] = "Article edited successfully.";
-                return Redirect("/Articles/Show/" + articleVersionBundle.Article.ArticleID);
+                return Redirect("/articles/show/" + articleVersionBundle.Article.ArticleID);
             }
             
             // bundled object wasn't valid, so it is sent back
@@ -521,14 +548,14 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
-                return Redirect("/Articles/Index/my-articles");
+                return Redirect("/articles/index/my-articles");
             }
 
             DataBase.Articles.Remove(article);
             DataBase.SaveChanges();
 
             TempData["ActionMessage"] = "Article deleted successfully.";
-            return Redirect("/Articles/Index/my-articles");
+            return Redirect("/articles/index/my-articles");
         }
 
 

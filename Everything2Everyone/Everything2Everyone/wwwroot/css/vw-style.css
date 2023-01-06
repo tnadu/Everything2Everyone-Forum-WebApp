@@ -25,14 +25,19 @@ body, input, button, textarea {
     line-height: 1.15;
 }
 .universal-link, .universal-link:hover{ text-decoration: none; color: none; }
+
 /* TITLES */
-.small-title {
+
+.small-title,
+.thick-small-title {
     color: var(--text-secondary);
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 8px;
+    font-size: var(--M-text);
 }
 
+.thick-small-title { font-weight: 800;}
 
 /* GENERAL CSS ELEMENTS DESIGN */
 /* INPUTS: */

@@ -1,0 +1,175 @@
+.vw-users-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(auto, auto);
+    grid-gap: 16px;
+    margin-top: 16px;
+}
+
+.vw-user-card {
+    background-color: var(--color-menu);
+    background-image: linear-gradient(to bottom, transparent, var(--bottom-gradient)), url("/images/user-wave.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: space-between;
+
+    padding: 16px;
+    border-radius: 16px;
+}
+
+.vw-user-card__info{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.vw-user-card__info h3, .vw-user-card__info h5{ margin-block-start: 0; margin-block-end: 0;}
+.vw-user-card__info h3{
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+.vw-user-card__info h5{
+    color: var(--color-stroke);
+}
+
+/* USER CARD BTNS */
+.vw-user-card__btns{ display: flex; justify-content: center; align-items: center;}
+
+.vw-user-card__btns button{
+    background: transparent;
+    border: none;
+}
+.vw-user-card__btns button:nth-child(2){ margin-left: 8px;}
+.vw-user-card__btns button img{ height: 40px; width: 40px;}
+
+/* //////////// */
+/* USER PROFILE */
+/* //////////// */
+
+.vw-user-profile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.vw-user-profile img{ width: 300px; height: 300px;}
+
+.vw-user-profile__info{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+}
+
+.profile__info{
+    flex: 3;
+    padding: 0 32px 0 64px;
+}
+
+.vw-user-profile__btns {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 32px;
+}
+
+.vw-user-profile__btns a {
+    background: var(--color-stroke);
+    border: none;
+    color: var(--text-primary);
+    border-radius: 16px;
+    padding: 16px;
+    transition: 0.4s;
+    opacity: 0.6;
+    text-decoration: none;
+}
+
+.vw-user-profile__btns a:hover {
+    transform: translateY(-2px);
+    opacity: 1;
+    cursor: pointer;
+}
+
+/* //////////////////// */
+/* EDIT FLOATING BUTTON */
+/* //////////////////// */
+
+#edit-profile__img{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+#edit-profile__img img{
+    height: 50px;
+    width: 50px;
+}
+
+/* /////////////////////// */
+/* W3SCHOOLS switch button */
+/* /////////////////////// */
+
+.switch-publicity {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch-publicity input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--color-stroke);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
