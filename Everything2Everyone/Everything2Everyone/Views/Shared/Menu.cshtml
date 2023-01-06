@@ -17,9 +17,7 @@
     {
         <!-- CATEGORY ELEMENT -->
         <div class="vw-sidebar-category-container">
-            <div class="vw-sidebar-category-name">
-                <a href="/articles/index/?categoryID=@category.CategoryID" class="universal-link" style="color: white;">@category.Title</a>
-            </div>
+            <a href="/articles/index/?categoryID=@category.CategoryID" class="universal-link" style="color: white;">@category.Title</a>
             <div class="vw-sidebar-category-edit">
 
                 @using (Html.BeginForm(actionName: "Edit",
