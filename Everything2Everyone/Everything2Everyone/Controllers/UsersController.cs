@@ -36,7 +36,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No user with specified ID could be found!";
-                return Redirect("/Articles/Index/filter-sort");
+                return Redirect("/articles/index");
             }
         }
 
@@ -45,12 +45,12 @@ namespace Everything2Everyone.Controllers
         {
             // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
             //      TempData["ActionMessage"] = "You don't have permission to access this resource";
-            //      return Redirect("/Articles/Index/");
+            //      return Redirect("/articles/index");
             // }
 
             // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
             //      TempData["ActionMessage"] = "You don't have permission to access this resource";
-            //      return Redirect("/Users/Index");
+            //      return Redirect("/users/index");
             // }
 
             EmailChange changeEmail = new EmailChange();
@@ -65,7 +65,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No user with specified ID could be found.";
-                return Redirect("/Users/Index");
+                return Redirect("/users/index");
             }
 
             // Fetch categories for side menu
@@ -87,7 +87,7 @@ namespace Everything2Everyone.Controllers
 
             // if (User.IsInRole("Admin") && emailChange.UserID.IsInRole("Admin)) {
             //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/Users/index");
+            //      return Redirect("/users/index");
             // }
 
             bool correctPassword = true;
@@ -141,12 +141,12 @@ namespace Everything2Everyone.Controllers
                     DataBase.SaveChanges();
 
                     TempData["ActionMessage"] = "Email successfully changed.";
-                    return Redirect("/Users/MyProfile");
+                    return Redirect("/users/my-profile");
                 }
                 catch
                 {
                     TempData["ActionMessage"] = "No user with specified ID could be found.";
-                    return Redirect("/Users/Index");
+                    return Redirect("/users/index");
                 }
             }
 
@@ -253,13 +253,13 @@ namespace Everything2Everyone.Controllers
                 catch
                 {
                     TempData["ActionMessage"] = "No user with specified ID could be found.";
-                    return Redirect("/Users/Index");
+                    return Redirect("/users/index");
                 }
 
                 // _userManager.ChangePassword(userToChange, passwordChange.CurrentPassword, passwordChange.NewPassword);
 
                 TempData["ActionMessage"] = "Password successfully changed.";
-                return Redirect("/Users/MyProfile");
+                return Redirect("/users/my-profile");
             }
 
             // Fetch categories for side menu
@@ -308,7 +308,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No user with specified ID could be found.";
-                return Redirect("/Users/Index");
+                return Redirect("/users/index");
             }
 
             // Fetch categories for side menu
@@ -351,7 +351,7 @@ namespace Everything2Everyone.Controllers
                 catch
                 {
                     TempData["ActionMessage"] = "No user or role with specified ID could be found.";
-                    return Redirect("/Users/Index");
+                    return Redirect("/users/index");
                 }
 
                 // if (User.IsInRole("Admin")) {
@@ -367,7 +367,7 @@ namespace Everything2Everyone.Controllers
                 DataBase.SaveChanges();
 
                 TempData["ActionMessage"] = "You have successfully changed your profile details!";
-                return Redirect("/Users/MyProfile");
+                return Redirect("/users/my-profile");
             }
 
 
@@ -404,7 +404,7 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No user with specified ID could be found.";
-                return Redirect("/Users/Index");
+                return Redirect("/users/index");
             }
 
             DataBase.Users.Remove(userToBeRemoved);

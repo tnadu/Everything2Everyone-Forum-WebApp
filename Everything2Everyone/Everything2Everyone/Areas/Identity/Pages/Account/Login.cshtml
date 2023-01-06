@@ -11,16 +11,21 @@
         <section>
             <form id="account" method="post">
                 <h2>Use a local account to log in.</h2>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div asp-validation-summary="ModelOnly" 
+                    class="text-danger"
+                     style="color: rgb(198, 47, 47)"></div><br />
+
                 <div class="vw-form-groups-items">
                     <label asp-for="Input.Email" class="vw-log-sign-label"></label>
                     <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    <span asp-validation-for="Input.Email"
+                        style="color: rgb(198, 47, 47);"></span>
                 </div>
                 <div class="vw-form-groups-items">
                     <label asp-for="Input.Password" class="vw-log-sign-label"></label>
                     <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    <span asp-validation-for="Input.Password" 
+                        style="color: rgb(198, 47, 47);"></span>
                 </div>
                 <div>
                     <div class="checkbox">

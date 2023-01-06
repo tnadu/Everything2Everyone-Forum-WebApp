@@ -68,36 +68,36 @@ app.MapControllerRoute(
 // NEW
 app.MapControllerRoute(
     name: "ArticlesNew",
-    pattern: "Articles/New",
+    pattern: "articles/new",
     defaults: new { controller = "Articles", action = "New" });
 
 // EDIT
 app.MapControllerRoute(
     name: "ArticlesEdit",
-    pattern: "Articles/Edit/{articleID}/{versionID}",
+    pattern: "articles/edit/{articleID}/{versionID}",
     defaults: new { controller = "Articles", action = "Edit" });
 
 app.MapControllerRoute(
     name: "ArticlesEdit",
-    pattern: "Articles/Edit",
+    pattern: "articles/edit",
     defaults: new { controller = "Articles", action = "Edit" });
 
 // DELETE
 app.MapControllerRoute(
     name: "ArticlesDelete",
-    pattern: "Articles/Delete/{articleID}",
+    pattern: "articles/delete/{articleID}",
     defaults: new { controller = "Articles", action = "Delete" });
 
 // RESTRICT
 app.MapControllerRoute(
     name: "ArticlesRestrict",
-    pattern: "Articles/Restrict/{articleID}",
+    pattern: "articles/restrict/{articleID}",
     defaults: new { controller = "Articles", action = "Restrict" });
 
 // CHOOSE_VERSION
 app.MapControllerRoute(
     name: "ArticlesChooseVersion",
-    pattern: "Articles/Choose-Version/{articleID}",
+    pattern: "articles/choose-version/{articleID}",
     defaults: new { controller = "Articles", action = "ChooseVersion" });
 
 // Search article
@@ -111,75 +111,75 @@ app.MapControllerRoute(
 // NEW
 app.MapControllerRoute(
     name: "CategoriesNew",
-    pattern: "Categories/New",
+    pattern: "categories/new",
     defaults: new { controller = "Categories", action = "New" });
 
 // EDIT
 app.MapControllerRoute(
     name: "CategoriesEdit",
-    pattern: "Categories/Edit/{CategoryID}",
+    pattern: "categories/edit/{CategoryID}",
     defaults: new { controller = "Categories", action = "Edit"});
 
 // DELETE
 app.MapControllerRoute(
     name: "CategoriesDelete",
-    pattern: "Categories/Delete/{CategoryID}",
+    pattern: "categories/delete/{CategoryID}",
     defaults: new { controller = "Categories", action = "Delete" });
 
 // FOR COMMENTS
 // Delete
 app.MapControllerRoute(
     name: "CommentsDelete",
-    pattern: "/Comments/Delete/{CommentID}",
+    pattern: "/comments/delete/{CommentID}",
     defaults: new { controller = "Comments", action = "Delete" });
 
 // Edit
 app.MapControllerRoute(
     name: "CommentsEdit",
-    pattern: "/Comments/Edit/{CommentID}",
+    pattern: "/comments/edit/{CommentID}",
     defaults: new { controller = "Comments", action = "Edit" });
 
 //MyComments
 app.MapControllerRoute(
     name: "MyComments",
-    pattern: "/Comments/MyComments",
+    pattern: "/comments/my-comments",
     defaults: new { controller = "Comments", action = "MyComments" });
 
 // USERS
 // Index - Manage users
 app.MapControllerRoute(
     name: "ManageUsers",
-    pattern: "/Users/Index",
+    pattern: "/users/index",
     defaults: new { controller = "Users", action = "Index" });
 
 // MyProfile
 app.MapControllerRoute(
     name: "MyProfile",
-    pattern: "/Users/MyProfile",
+    pattern: "/users/my-profile",
     defaults: new { controller = "Users", action = "MyProfile" });
 
 // Delete
 app.MapControllerRoute(
     name: "UsersDelete",
-    pattern: "/Users/Delete/{UserID}",
+    pattern: "/users/delete/{UserID}",
     defaults: new { controller = "Users", action = "Delete" });
 
 // Edit
 app.MapControllerRoute(
     name: "UsersEdit",
-    pattern: "/Users/Edit/{UserID}",
+    pattern: "/users/edit/{UserID}",
     defaults: new { controller = "Users", action = "Edit" });
 
 // Change Email
 app.MapControllerRoute(
     name: "UsersChangeEmail",
-    pattern: "/Users/ChangeEmail/{UserID}",
+    pattern: "/users/change-email/{UserID}",
     defaults: new { controller = "Users", action = "ChangeEmail" });
 
 // Change Password
 app.MapControllerRoute(
     name: "UsersChangePassword",
-    pattern: "/Users/ChangePassword/{UserID}",
+    pattern: "/users/change-password/{UserID}",
     defaults: new { controller = "Users", action = "ChangePassword" });
 
 //////////////

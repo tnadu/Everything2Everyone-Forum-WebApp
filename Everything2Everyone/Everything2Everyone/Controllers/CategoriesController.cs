@@ -1,6 +1,8 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Linq;
 
 namespace Everything2Everyone.Controllers
@@ -16,6 +18,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
+        // [Authorize(Roles = "Admin")]
         public IActionResult New(Category categoryToBeInserted)
         {
             // TO DO: Check if there is another category with the name we want to insert
@@ -34,7 +37,7 @@ namespace Everything2Everyone.Controllers
             return Redirect("/articles/index/");
         }
 
-
+        // [Authorize(Roles = "Admin")]
         public IActionResult Edit(int categoryID)
         {
             Category category;
@@ -58,6 +61,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
+        // [Authorize(Roles = "Admin")]
         public IActionResult Edit(Category categoryToBeInserted)
         {
             // TO DO: Check if there is another category with the name we want to insert
@@ -90,6 +94,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
+        // [Authorize(Roles = "Admin")]
         public IActionResult Delete(int categoryID)
         {
             try
