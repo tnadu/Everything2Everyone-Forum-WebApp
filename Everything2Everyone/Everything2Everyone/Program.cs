@@ -124,15 +124,58 @@ app.MapControllerRoute(
 // FOR COMMENTS
 // Delete
 app.MapControllerRoute(
-    name: "default",
+    name: "CommentsDelete",
     pattern: "/Comments/Delete/{CommentID}",
     defaults: new { controller = "Comments", action = "Delete" });
 
 // Edit
 app.MapControllerRoute(
-    name: "default",
+    name: "CommentsEdit",
     pattern: "/Comments/Edit/{CommentID}",
     defaults: new { controller = "Comments", action = "Edit" });
+
+//MyComments
+app.MapControllerRoute(
+    name: "MyComments",
+    pattern: "/Comments/MyComments",
+    defaults: new { controller = "Comments", action = "MyComments" });
+
+// USERS
+// Index - Manage users
+app.MapControllerRoute(
+    name: "ManageUsers",
+    pattern: "/Users/Index",
+    defaults: new { controller = "Users", action = "Index" });
+
+// MyProfile
+app.MapControllerRoute(
+    name: "MyProfile",
+    pattern: "/Users/MyProfile",
+    defaults: new { controller = "Users", action = "MyProfile" });
+
+// Delete
+app.MapControllerRoute(
+    name: "UsersDelete",
+    pattern: "/Users/Delete/{UserID}",
+    defaults: new { controller = "Users", action = "Delete" });
+
+// Edit
+app.MapControllerRoute(
+    name: "UsersEdit",
+    pattern: "/Users/Edit/{UserID}",
+    defaults: new { controller = "Users", action = "Edit" });
+
+// Change Email
+app.MapControllerRoute(
+    name: "UsersChangeEmail",
+    pattern: "/Users/ChangeEmail/{UserID}",
+    defaults: new { controller = "Users", action = "ChangeEmail" });
+
+// Change Password
+app.MapControllerRoute(
+    name: "UsersChangePassword",
+    pattern: "/Users/ChangePassword/{UserID}",
+    defaults: new { controller = "Users", action = "ChangePassword" });
 
 //////////////
 // Basic route

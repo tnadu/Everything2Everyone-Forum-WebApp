@@ -1,5 +1,35 @@
-﻿@*
-    For more information on enavling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<div class="vw-users">
+    <div class="thick-small-title">Manage users:</div>
+    <div class="vw-users-grid">
+        <!-- USER CARD     -->
+        @foreach (User user in ViewBag.Users)
+        {
+            <div class="vw-user-card">
+                <div class="vw-user-card__info">
+                    <h3>@user.NickName</h3>
+                    <h5>ROLUL</h5>
+                </div>
+                <div class="vw-user-card__btns">
+                    <!-- EDIT BUTTON FORM -->
+                    @using (Html.BeginForm(actionName: "Edit",
+                   controllerName: "Users",
+                   method: FormMethod.Get,
+                   routeValues: new { UserID = @user.Id }))
+                    {
+                        <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
+                    }
+
+                    <!-- DELETE BUTTON FORM -->
+                    @using (Html.BeginForm(actionName: "Delete",
+                   controllerName: "Users",
+                   method: FormMethod.Post,
+                   routeValues: new { UserID = @user.Id }))
+                    {
+                        <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
+                    }
+
+                </div>
+            </div>
+        }
+    </div>
+</div>

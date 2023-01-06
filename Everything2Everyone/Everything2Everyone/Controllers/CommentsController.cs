@@ -1,7 +1,9 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Everything2Everyone.Controllers
@@ -13,6 +15,26 @@ namespace Everything2Everyone.Controllers
         public CommentsController(ApplicationDbContext context)
         {
             DataBase = context;
+        }
+
+        public IActionResult MyComments()
+        {
+            // The user will be the user who is currently using the app => TO DO 
+            var userID = "318d855d-4d7a-4b5e-a293-40720ca8faac";
+
+            FetchCategories();
+
+            try
+            {
+                var comments = DataBase.Comments.Where(comment => comment.UserID == userID);
+                ViewBag.UserComments = comments;
+                return View();
+            }
+            catch
+            {
+                TempData["ActionMessage"] = "No user with specified ID could be found!";
+                return Redirect("/Articles/Index/filter-sort");
+            }
         }
 
         public IActionResult Edit(int commentID)
