@@ -139,17 +139,6 @@ app.MapControllerRoute(
     pattern: "/comments/edit/{CommentID}",
     defaults: new { controller = "Comments", action = "Edit" });
 
-<<<<<<< HEAD
-app.MapControllerRoute(
-    name: "ForwardedLogin",
-    pattern: "/login",
-    defaults: new { controller = "Authentication", action = "LogIn" });
-
-app.MapControllerRoute(
-    name: "ForwardedSignup",
-    pattern: "/signup",
-    defaults: new { controller = "Authentication", action = "SignUp" });
-=======
 //MyComments
 app.MapControllerRoute(
     name: "MyComments",
@@ -192,7 +181,16 @@ app.MapControllerRoute(
     name: "UsersChangePassword",
     pattern: "/users/change-password/{UserID}",
     defaults: new { controller = "Users", action = "ChangePassword" });
->>>>>>> wero
+
+app.MapControllerRoute(
+    name: "ForwardedLogin",
+    pattern: "/login",
+    defaults: new { controller = "Authentication", action = "LogIn" });
+
+app.MapControllerRoute(
+    name: "ForwardedSignup",
+    pattern: "/signup",
+    defaults: new { controller = "Authentication", action = "SignUp" });
 
 //////////////
 // Basic route
