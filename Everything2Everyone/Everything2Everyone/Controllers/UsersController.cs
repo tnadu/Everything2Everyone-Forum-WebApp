@@ -4,9 +4,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Security.Cryptography;
 
 namespace Everything2Everyone.Controllers
 {
@@ -20,38 +23,10 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        public IActionResult MyProfile()
-        {
-            // The user will be the user who is currently using the app => TO DO 
-            var userID = "318d855d-4d7a-4b5e-a293-40720ca8faac";
-
-            FetchCategories();
-
-            try
-            {
-                var user = DataBase.Users.Where(user => user.Id == userID).First();
-                ViewBag.UserProfile = user;
-                return View();
-            }
-            catch
-            {
-                TempData["ActionMessage"] = "No user with specified ID could be found!";
-                return Redirect("/articles/index");
-            }
-        }
-
         // [Authorize(Roles = "User,Editor,Admin")]
         public IActionResult ChangeEmail(string userID)
         {
-            // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
-            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index");
-            // }
-
-            // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
-            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
-            //      return Redirect("/users/index");
-            // }
+            Authorize(userID);
 
             EmailChange changeEmail = new EmailChange();
 
@@ -62,10 +37,27 @@ namespace Everything2Everyone.Controllers
                 changeEmail.UserID = userID;
                 changeEmail.NewEmail = DataBase.Users.Where(user => user.Id == userID).First().Email;
             }
+            // generating mock email
             catch
             {
-                TempData["ActionMessage"] = "No user with specified ID could be found.";
-                return Redirect("/users/index");
+                var random = new Random();
+
+                string MockEmail;
+
+                string[] nickNames = {"johndoe123", "jane_smith2000", "robert.doe", "sarahm33", "mike.jones", "samuel.brown", "lisa_taylor", "william.johnson",
+                    "emmam41", "michael_baker", "david.taylor", "sarah_lee", "susan.brown", "mike_taylor", "john.lee", "davidm42", "sarah.jones", "robert_lee",
+                    "lisa.smith", "michael.brown", "jane_doe", "samuel_taylor", "johnm34", "david.johnson", "susan_lee", "william_taylor", "emma.jones", "mike.brown",
+                    "sarah.doe", "robert_smith", "lisa.taylor", "michael_johnson", "jane.lee", "samuel.doe", "john.smith", "david_taylor", "susan.jones", "william.brown", "emma_lee"};
+
+                MockEmail = nickNames[random.Next(nickNames.Length)] + "@";
+
+                string[] emailDomains = {"aol.com", "gmail.com", "hotmail.com", "yahoo.com", "outlook.com", "zoho.com", "icloud.com", 
+                    "protonmail.com", "gmx.com", "mail.com", "inbox.com", "hushmail.com", "tutanota.com", "posteo.de", "openmailbox.org",
+                    "yandex.com", "keemail.me", "mymail.com", "mac.com"};
+
+                MockEmail += emailDomains[random.Next(emailDomains.Length)];
+
+                changeEmail.NewEmail = MockEmail;
             }
 
             // Fetch categories for side menu
@@ -80,48 +72,19 @@ namespace Everything2Everyone.Controllers
         // [Authorize(Roles = "User,Editor,Admin")]
         public IActionResult ChangeEmail(EmailChange emailChange)
         {
-            // if (! User.IsInRole("Admin") && emailChange.UserID != _userManager.GetUserById(User)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/");
-            // }
-
-            // if (User.IsInRole("Admin") && emailChange.UserID.IsInRole("Admin)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/users/index");
-            // }
+            Authorize(emailChange.UserID);
 
             bool correctPassword = true;
 
-            // verifying regular-user's/editor's password
-            if (!User.IsInRole("Admin"))
-            {
-                var hasher = new PasswordHasher<User>();
+            var hasher = new PasswordHasher<User>();
 
-                // hashed provided password must be identical to that stored in the database
-                if (hasher.VerifyHashedPassword(DataBase.Users.Where(user => user.Id == emailChange.UserID).First(),
-                         DataBase.Users.Where(user => user.Id == emailChange.UserID).First().PasswordHash,
-                         emailChange.Password) == 0)
-                {
-                    TempData["ActionMessage"] = "Wrong password.";
-                    correctPassword = false;
-                }
-            }
-
-            // verifying admin's password
-            else
-            {
-                var hasher = new PasswordHasher<User>();
-
-                // // hashed provided password must be identical to that stored in the database
-                // 
-                // if (hasher.VerifyHashedPassword(DataBase.Users.Where(user => user.Id == emailChange.UserID).First(),
-                //                              DataBase.Users.Where(user => user.Id == _userManager.GetUserId(User)).First().PasswordHash,
-                //                              emailChange.Password) == 0)
-                // {
-                TempData["ActionMessage"] = "Wrong password.";
-                correctPassword = false;
-                // }
-            }
+            // the hash of the provided password must be identical to that stored in the database
+            //if (hasher.VerifyHashedPassword(DataBase.Users.Where(user => user.Id == User.Id).First().PasswordHash,
+            //            emailChange.Password) == PasswordVerificationResult.Failed)
+            //{
+            //    TempData["ActionMessage"] = "Wrong password.";
+            //    correctPassword = false;
+            //}
 
             if (ModelState.IsValid && correctPassword)
             {
@@ -141,7 +104,7 @@ namespace Everything2Everyone.Controllers
                     DataBase.SaveChanges();
 
                     TempData["ActionMessage"] = "Email successfully changed.";
-                    return Redirect("/users/my-profile");
+                    return Redirect("/users/edit/" + emailChange.UserID);
                 }
                 catch
                 {
@@ -160,29 +123,11 @@ namespace Everything2Everyone.Controllers
         // [Authorize(Roles = "User,Editor,Admin")]
         public IActionResult ChangePassword(string userID)
         {
-            // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/");
-            // }
-
-            // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/users/index");
-            // }
+            Authorize(userID);
 
             PasswordChange changePassword = new PasswordChange();
 
-            // for ADMINS
-            // making sure provided ID is valid
-            try
-            {
-                changePassword.UserID = userID;
-            }
-            catch
-            {
-                TempData["ActionMessage"] = "No user with specified ID could be found.";
-                return Redirect("/users/index");
-            }
+            changePassword.UserID = userID;
 
             // Fetch categories for side menu
             FetchCategories();
@@ -198,47 +143,19 @@ namespace Everything2Everyone.Controllers
         // [Authorize(Roles = "User,Editor,Admin")]
         public IActionResult ChangePassword(PasswordChange passwordChange)
         {
-            // if (! User.IsInRole("Admin") && passwordChange.UserID != _userManager.GetUserById(User)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/");
-            // }
-
-            // if (User.IsInRole("Admin") && passwordChange.UserID.IsInRole("Admin)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/users/index");
-            // }
+            Authorize(passwordChange.UserID);
 
             bool correctPassword = true;
 
-            // verifying regular-user's/editor's password
-            if (!User.IsInRole("Admin"))
-            {
-                var hasher = new PasswordHasher<User>();
+            var hasher = new PasswordHasher<User>();
 
-                // hashed provided password must be identical to that stored in the database
-                if (hasher.VerifyHashedPassword(DataBase.Users.Where(user => user.Id == passwordChange.UserID).First(),
-                         DataBase.Users.Where(user => user.Id == passwordChange.UserID).First().PasswordHash,
-                         passwordChange.CurrentPassword) == 0)
-                {
-                    TempData["ActionMessage"] = "Wrong password.";
-                    correctPassword = false;
-                }
-            }
-
-            // verifying admin's password
-            else
-            {
-                var hasher = new PasswordHasher<User>();
-
-                // // hashed provided password must be identical to that stored in the database
-                // if (hasher.VerifyHashedPassword(DataBase.Users.Where(user => user.Id == passwordChange.UserID).First(),
-                //                              DataBase.Users.Where(user => user.Id == _userManager.GetUserId(User)).First().PasswordHash,
-                //                              passwordChange.Password) == 0)
-                // {
-                TempData["ActionMessage"] = "Wrong password.";
-                correctPassword = false;
-                // }
-            }
+            // the hash of the provided password must be identical to that stored in the database
+            //if (hasher.VerifyHashedPassword(DataBase.Users.Where(user => user.Id == User.Id).First().PasswordHash,
+            //            emailChange.Password) == PasswordVerificationResult.Failed)
+            //{
+            //    TempData["ActionMessage"] = "Wrong password.";
+            //    correctPassword = false;
+            //}
 
             if (ModelState.IsValid && correctPassword)
             {
@@ -248,18 +165,17 @@ namespace Everything2Everyone.Controllers
                 // making sure provided ID is valid
                 try
                 {
-                    userToChange = DataBase.Users.Find(passwordChange.CurrentPassword);
+                    userToChange = DataBase.Users.Find(passwordChange.UserID);
+                    // _userManager.ChangePassword(userToChange, passwordChange.CurrentPassword, passwordChange.NewPassword);
+
+                    TempData["ActionMessage"] = "Password successfully changed.";
+                    return Redirect("/users/edit" + passwordChange.UserID);
                 }
                 catch
                 {
                     TempData["ActionMessage"] = "No user with specified ID could be found.";
                     return Redirect("/users/index");
                 }
-
-                // _userManager.ChangePassword(userToChange, passwordChange.CurrentPassword, passwordChange.NewPassword);
-
-                TempData["ActionMessage"] = "Password successfully changed.";
-                return Redirect("/users/my-profile");
             }
 
             // Fetch categories for side menu
@@ -272,13 +188,34 @@ namespace Everything2Everyone.Controllers
         // [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
-            ViewBag.Users = DataBase.Users;
-
             // Fetch categories for side menu
             FetchCategories();
 
             if (TempData.ContainsKey("ActionMessage"))
                 ViewBag.DisplayedMessage = TempData["ActionMessage"];
+
+            var currentUsers = DataBase.Users;
+
+            // pagination
+            int usersPerPage = 10;
+            int numberOfUsers = currentUsers.Count();
+            var currentPageNumber = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            var lastPage = Convert.ToInt32(Math.Ceiling((float)numberOfUsers / (float)usersPerPage));
+
+            // <=1st page: offset = 0
+            // 2nd page: offset = 10
+            // ...
+            // >=last page: offset = 10 * (last page - 1)
+            var offset = 0;
+            if (lastPage > 1)
+            {
+                if (currentPageNumber >= lastPage)
+                    offset = (lastPage - 1) * usersPerPage;
+                else if (currentPageNumber > 1)
+                    offset = (currentPageNumber - 1) * usersPerPage;
+            }
+            ViewBag.Users = currentUsers.Skip(offset).Take(usersPerPage);
+            ViewBag.lastPage = lastPage;
 
             return View();
         }
@@ -287,15 +224,7 @@ namespace Everything2Everyone.Controllers
         // [Authorize(Roles = "User,Editor,Admin")]
         public IActionResult Edit(string userID)
         {
-            // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/");
-            // }
-
-            // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/users/index");
-            // }
+            Authorize(userID);
 
             User user;
 
@@ -304,11 +233,50 @@ namespace Everything2Everyone.Controllers
             try
             {
                 user = DataBase.Users.Where(user => user.Id == userID).First();
+                //ViewBag.CurrentUserRole = ((RolePrincipal)User).GetRoles()[0];
             }
+            // generating mock user
             catch
             {
-                TempData["ActionMessage"] = "No user with specified ID could be found.";
-                return Redirect("/users/index");
+                user = new User();
+                user.Id = userID;
+
+                var random = new Random();
+
+                // first name generation
+                string[] firstNames = { "Emily", "Olivia", "Sophia", "Abigail", "Madison", "Elizabeth", "Charlotte", "Avery", "Chloe", "Ella",
+                    "Harper", "Isabella", "Ava", "Mia", "Emily", "Elizabeth", "Sophia", "Olivia", "Ava", "Isabella", "Liam", "Noah", "William",
+                    "James", "Oliver", "Benjamin", "Elijah", "Lucas", "Mason", "Logan", "Jacob", "Michael", "Alexander", "Ethan", "Daniel", "Matthew", "Aiden", "Henry" };
+
+                user.FirstName = firstNames[random.Next(firstNames.Length)];
+
+                // last name generation
+                string[] lastNames = { "Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor", "Anderson",
+                    "Thomas", "Jackson", "White", "Harris", "Martin", "Thompson", "Garcia", "Martinez", "Robinson", "Clark", "Rodriguez", "Lewis",
+                    "Lee", "Walker", "Hall", "Allen", "Young", "King", "Wright", "Scott", "Green", "Baker", "Adams", "Nelson", "Carter", "Mitchell" };
+
+                user.LastName = lastNames[random.Next(lastNames.Length)];
+
+                // random public identity
+                user.ShowPublicIdentity = random.Next(2) == 1 ? true : false;
+
+                // nickname
+                string[] nickNames = {"johndoe123", "jane_smith2000", "robert.doe", "sarahm33", "mike.jones", "samuel.brown", "lisa_taylor", "william.johnson",
+                    "emmam41", "michael_baker", "david.taylor", "sarah_lee", "susan.brown", "mike_taylor", "john.lee", "davidm42", "sarah.jones", "robert_lee",
+                    "lisa.smith", "michael.brown", "jane_doe", "samuel_taylor", "johnm34", "david.johnson", "susan_lee", "william_taylor", "emma.jones", "mike.brown",
+                    "sarah.doe", "robert_smith", "lisa.taylor", "michael_johnson", "jane.lee", "samuel.doe", "john.smith", "david_taylor", "susan.jones", "william.brown", "emma_lee"};
+
+                user.NickName = nickNames[random.Next(nickNames.Length)];
+
+                // random role picker
+                //string[] roles = DataBase.Roles.Select(r => r.Name).ToArray();
+                //ViewBag.CurrentUserRole = roles[random.Next(roles.Length)];
+
+                // join date generation
+                DateTime firstRegisterDay = new DateTime(2022, 10, 1);                              // the date the platform went public and registration was open
+                int validJoinDateInterval = (DateTime.Now - firstRegisterDay).Days;                 // computing the number of days that have passed since
+                user.JoinDate = firstRegisterDay.AddDays(random.Next(validJoinDateInterval + 1));   // the join date will be generated by adding a random number of
+                                                                                                    // days, with a max value equal to that generated earlier
             }
 
             // Fetch categories for side menu
@@ -327,15 +295,7 @@ namespace Everything2Everyone.Controllers
         // [Authorize(Roles = "User,Editor,Admin")]
         public IActionResult Edit(User userToBeInserted)
         {
-            // if (! User.IsInRole("Admin") && userToBeInserted.ID != _userManager.GetUserById(User)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/");
-            // }
-
-            // if (User.IsInRole("Admin") && user.IsInRole("Admin)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/users/index");
-            // }
+            Authorize(userToBeInserted.Id);
 
             if (ModelState.IsValid)
             {
@@ -356,6 +316,10 @@ namespace Everything2Everyone.Controllers
 
                 // if (User.IsInRole("Admin")) {
                 //      string CurrentRoleID = DataBase.UserRoles.Where(userRole => userRole.UserId == userToBeInserted.ID).First().RoleID;
+                //      
+                //      if (userToBeInserted.NewRoleID == null)
+                //          userToBeInserted.NewRoleID = Database.Roles.Where(r => r.Name == "User").First().Id;
+                //      
                 //      _userManager.RemoveFromRole(userToBeInserted.ID, CurrentRoleID);
                 //      _userManager.AddToRole(userToBeInserted.ID, userToBeInserted.NewRoleID);
                 // }
@@ -366,10 +330,8 @@ namespace Everything2Everyone.Controllers
                 user.NickName = userToBeInserted.NickName;
                 DataBase.SaveChanges();
 
-                TempData["ActionMessage"] = "You have successfully changed your profile details!";
-                return Redirect("/users/my-profile");
+                TempData["ActionMessage"] = "You have successfully changed the profile details!";
             }
-
 
             // Fetch categories for side menu
             FetchCategories();
@@ -384,16 +346,8 @@ namespace Everything2Everyone.Controllers
         // [Authorize(Roles = "User,Editor,Admin")]
         public IActionResult Delete(string userID)
         {
-            // if (! User.IsInRole("Admin") && userID != _userManager.GetUserById(User)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/index/");
-            // }
+            Authorize(userID);
 
-            // if (User.IsInRole("Admin") && userID.IsInRole("Admin)) {
-            //      TempData["message"] = "You don't have permission to access this resource";
-            //      return Redirect("/users/index");
-            // }
-            
             User userToBeRemoved;
 
             // making sure provided userID is valid - ADMIN
@@ -410,12 +364,13 @@ namespace Everything2Everyone.Controllers
             DataBase.Users.Remove(userToBeRemoved);
             DataBase.SaveChanges();
 
-            // if (User.IsInRole("Admin")) {
+            // admins won't be prompted to create a new account, unless they deleted their own account
+            // if (User.Id != userID) {
             //      TempData["message"] = "Account successfully deleted.";
             //      return Redirect("/users/index");
             // }
 
-            TempData["ActionMessage"] = "Your account was successfully deleted.";
+            TempData["ActionMessage"] = "Account successfully deleted.";
             return Redirect("/sign-up");
         }
 
@@ -443,6 +398,36 @@ namespace Everything2Everyone.Controllers
             }
 
             return returnedRoles;
+        }
+
+
+        [NonAction]
+        public IActionResult Authorize(string userID)
+        {
+            // if (! User.IsInRole("Admin") && userID != User.FindFirst(ClaimTypes.NameIdentifier)) {
+            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
+            //      return Redirect("/users/edit/" + userID);
+            // }
+
+            // when the provided userID doesn't exist, the IsInRole() method throws an exception;
+            // if an admin's account was compromised and the bad actor intends to do reconnaissance
+            // by trying random ID's, they won't be prompted an error message which would clearly
+            // indicate that the user doesn't exist, making it more difficult for them to script
+            // such a technique (they have to also some browser automation to fill in the inputs,
+            // before finally being prompted with the error message)
+            try
+            {
+                // if (User.IsInRole("Admin") && _userManager.IsInRole(userID, "Admin) && User.FindFirst(ClaimTypes.NameIdentifier)) {
+                //      TempData["ActionMessage"] = "You don't have permission to access this resource";
+                //      return Redirect("/users/index");
+                // }
+            }
+            catch
+            {
+            }
+
+            // the user was successfully authorized
+            return new StatusCodeResult(200);
         }
     }
 }

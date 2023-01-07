@@ -1,14 +1,10 @@
 ﻿@model Everything2Everyone.Models.Category
 
 <h1 class="small-title">Edit category:</h1>
-@using (Html.BeginForm(actionName: "Edit",
-                   controllerName: "Categories",
-                   method: FormMethod.Post,
-                   routeValues: new { CategoryID = @Model.CategoryID })){
+<form action="/categories/edit/@Model.CategoryID" method="post">
     <div style="display: flex; align-items: center; margin-bottom: 4px;">
-        <input name="Title" type="text" value="@Model.Title" placeholder="Type a new name for this category..." />
+        <input name="Title" type="text" value="@Model.Title" />
         <button type="submit" class="btn-basic btn-edit" style="margin-left: 8px;">Edit</button>
     </div>
     @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger" })
-}
-
+</form>

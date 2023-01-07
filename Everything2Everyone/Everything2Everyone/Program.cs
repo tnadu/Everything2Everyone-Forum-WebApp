@@ -143,7 +143,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "MyComments",
     pattern: "/comments/my-comments",
-    defaults: new { controller = "Comments", action = "MyComments" });
+    defaults: new { controller = "Comments", action = "Index" });
 
 // USERS
 // Index - Manage users
@@ -151,12 +151,6 @@ app.MapControllerRoute(
     name: "ManageUsers",
     pattern: "/users/index",
     defaults: new { controller = "Users", action = "Index" });
-
-// MyProfile
-app.MapControllerRoute(
-    name: "MyProfile",
-    pattern: "/users/my-profile",
-    defaults: new { controller = "Users", action = "MyProfile" });
 
 // Delete
 app.MapControllerRoute(
