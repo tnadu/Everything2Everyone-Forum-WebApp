@@ -182,6 +182,16 @@ app.MapControllerRoute(
     pattern: "/users/change-password/{UserID}",
     defaults: new { controller = "Users", action = "ChangePassword" });
 
+app.MapControllerRoute(
+    name: "ForwardedLogin",
+    pattern: "/login",
+    defaults: new { controller = "Authentication", action = "LogIn" });
+
+app.MapControllerRoute(
+    name: "ForwardedSignup",
+    pattern: "/signup",
+    defaults: new { controller = "Authentication", action = "SignUp" });
+
 //////////////
 // Basic route
 app.MapControllerRoute(
