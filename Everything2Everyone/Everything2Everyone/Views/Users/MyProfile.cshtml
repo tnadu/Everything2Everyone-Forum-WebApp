@@ -1,24 +1,4 @@
-﻿@{
-    if (TempData.ContainsKey("ActionMessage"))
-    {
-        if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
-        {
-            <div class="alert-message alert-message__succeeded"
-         data-aos="fade-down"
-         data-aos-duration="1000">
-                <h4>@TempData["ActionMessage"]</h4>
-            </div>
-        }
-        else
-        {
-            <div class="alert-message alert-message__failed"
-         data-aos="fade-down"
-         data-aos-duration="1000">
-                <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
-            </div>
-        }
-    }
-}
+﻿<partial name="ErrorMessagePartial" />
 
 <div class="vw-user-profile">
     <a href="/users/edit/@ViewBag.UserProfile.Id" id="edit-profile__img">
