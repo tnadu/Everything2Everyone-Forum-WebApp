@@ -1,4 +1,8 @@
-﻿<div class="vw-users">
+﻿@{
+    string baseURL = "/users/index?page=";
+}
+
+<div class="vw-users">
     <div class="thick-small-title">Manage users:</div>
     <div class="vw-users-grid">
         <!-- USER CARD     -->
@@ -33,3 +37,38 @@
         }
     </div>
 </div>
+
+
+<!-- Pagination with Bootstrap-->
+@if (ViewBag.lastPage > 1)
+{
+    <div>
+        <div class="vw-pagination-wrapper">
+            <ul class="vw-pagination">
+                <!-- First page-->
+                <li class="vw-page-item">
+                    <a class="vw-page-link"
+                   href="@(baseURL+1)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= ViewBag.lastPage; i++)
+                {
+                    <li class="vw-page-item">
+                        <a class="vw-page-link"
+                   href="@(baseURL+i)">@(i)</a>
+                    </li>
+                }
+
+                <!-- Last page-->
+                <li class="vw-page-item">
+                    <a class="vw-page-link"
+                   href="@(baseURL+ViewBag.lastPage)" arialabel="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+}

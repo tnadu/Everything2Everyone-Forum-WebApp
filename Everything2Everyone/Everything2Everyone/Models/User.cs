@@ -27,6 +27,7 @@ namespace Everything2Everyone.Models
         [MaxLength(30, ErrorMessage = "Nickname is required. Length must be between 5 and 30 characters.")]
         public string NickName { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
         public DateTime JoinDate { get; set; }
 
         public virtual ICollection<Role>? Roles { get; set; }

@@ -39,37 +39,37 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
-                return Redirect("/articles/index/");
+                return Redirect("/articles/index");
             }
 
             // fetching all previous article versions from the database
             var articleVersions = DataBase.ArticleVersions.Include("Category").Where(articleVersion => articleVersion.ArticleID == articleID)
                                                                               .OrderByDescending(articleVersion => articleVersion.VersionID);
-            // FOR PAGINATION
-            /////////////////
-            // chose how many articles we want to display
-            int _articlesPerPage = 10;
-            // because the number of articles is variable, we need to check how many exist
-            int totalArticles = articleVersions.Count();
-            // take the current page of articles from the View
-            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
-            // 0th page: offset = 0
-            // 1st page: offset = 10
-            // 2nd page: offset = 20
-            // offset = number of articles already displayed
+
+            // pagination
+            int articlesPerPage = 10;
+            int numberOfArticles = articleVersions.Count();
+            var currentPageNumber = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            var lastPage = Convert.ToInt32(Math.Ceiling((float)numberOfArticles / (float)articlesPerPage));
+
+            // <=1st page: offset = 0
+            // 2nd page: offset = 10
+            // ...
+            // >=last page: offset = 10 * (last page - 1)
             var offset = 0;
-            if (!currentPage.Equals(0))
-            {
-                offset = (currentPage - 1) * _articlesPerPage;
-            }
+            if (currentPageNumber <= 1 || lastPage == 1 || lastPage == 0)
+                ViewBag.CurrentArticleVersion = currentArticleVersion;
+            else if (currentPageNumber >= lastPage)
+                offset = (lastPage - 1) * articlesPerPage;
+            else
+                offset = (currentPageNumber - 1) * articlesPerPage;
+            articleVersions = (IOrderedQueryable<ArticleVersion>)articleVersions.Skip(offset).Take(articlesPerPage);
 
-            // take the corresponding articles depending on what page are we on
-            var paginatedArticles = articleVersions.Skip(offset).Take(_articlesPerPage);
-            // take the number of the last page
-            ViewBag.lastPage = Math.Ceiling((float)totalArticles / (float)_articlesPerPage);
-            ViewBag.articleVersions = paginatedArticles;
+            ViewBag.articleVersions = articleVersions;
+            ViewBag.articleID = articleID;
+            ViewBag.lastPage = lastPage;
 
-            return View(currentArticleVersion);
+            return View();
         }
 
 
@@ -157,38 +157,37 @@ namespace Everything2Everyone.Controllers
 
             //if (userSpecificMode != null)
             //{
-                // will be implemented when roles and permissions are decided upon
-                // returnedArticles = returnedArticles.Where(article => article.UserID == _userManager.GetUserId(User));
-                
+            // will be implemented when roles and permissions are decided upon
+            // returnedArticles = returnedArticles.Where(article => article.UserID == _userManager.GetUserId(User));
+
             //}
 
 
-            // FOR PAGINATION
-            /////////////////
-            // chose how many articles we want to display
-            int _articlesPerPage = 10;
-            // because the number of articles is variable, we need to check how many exist
-            int totalArticles = returnedArticles.Count();
-            // take the current page of articles from the View
-            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
-            // 0th page: offset = 0
-            // 1st page: offset = 10
-            // 2nd page: offset = 20
-            // offset = number of articles already displayed
-            var offset = 0;
-            if (!currentPage.Equals(0))
-            {
-                offset = (currentPage - 1) * _articlesPerPage;
-            }
+            // pagination
+            int articlesPerPage = 10;
+            int numberOfArticles = returnedArticles.Count();
+            var currentPageNumber = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            var lastPage = Convert.ToInt32(Math.Ceiling((float)numberOfArticles / (float)articlesPerPage));
 
-            // take the corresponding articles depending on what page are we on
-            var paginatedArticles = returnedArticles.Skip(offset).Take(_articlesPerPage);
-            // take the number of the last page
-            ViewBag.lastPage = Math.Ceiling((float)totalArticles / (float)_articlesPerPage);
-            ViewBag.CurrentArticleQuery = paginatedArticles;
+            // <=1st page: offset = 0
+            // 2nd page: offset = 10
+            // ...
+            // >=last page: offset = 10 * (last page - 1)
+            var offset = 0;
+            if (lastPage > 1)
+            {
+                if (currentPageNumber >= lastPage)
+                    offset = (lastPage - 1) * articlesPerPage;
+                else if (currentPageNumber > 1)
+                    offset = (currentPageNumber - 1) * articlesPerPage;
+            }
+            returnedArticles = returnedArticles.Skip(offset).Take(articlesPerPage);
+
+            ViewBag.CurrentArticleQuery = returnedArticles;
             ViewBag.CategoryID = categoryID;
             ViewBag.Sorting = sort;
             ViewBag.UserSpecified = userSpecificMode;
+            ViewBag.lastPage = lastPage;
 
             // message received
             if (TempData.ContainsKey("ActionMessage"))
@@ -249,7 +248,7 @@ namespace Everything2Everyone.Controllers
         public IActionResult Show([FromForm] Comment commentToBeInserted)
         {
             // DEFAULT - TO BE DELETED
-            commentToBeInserted.UserID = "318d855d-4d7a-4b5e-a293-40720ca8faac";
+            commentToBeInserted.UserID = "fa1c312d-549a-42bd-8623-c1071cfd581e";
             // at first, the dates are identical
             commentToBeInserted.DateAdded = DateTime.Now;
             commentToBeInserted.DateEdited = DateTime.Now;

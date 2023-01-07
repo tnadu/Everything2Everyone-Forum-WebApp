@@ -1,25 +1,31 @@
-﻿@model Everything2Everyone.Models.Article
-
-@{
-    string baseURL = "/Articles/Choose-Version/" + Model.ArticleID + "?page=";
+﻿@{
+    string paginationBaseURL = "/articles/choose-version/" + ViewBag.articleID + "?page=";
+    string editingBaseURL = "/articles/edit?articleID=" + ViewBag.articleID + "&&versionID=";
+    string categoryBaseURL = "/articles/index/?categoryID=";
 }
 
-<div class="vw-article-link" 
+@if (ViewBag.CurrentArticleVersion != null)
+{
+    <div class="vw-article-link" 
     style="margin-bottom: 16px;">
 
-    <a class="vw-article-link-title universal-link"
-       href="/articles/show/@Model.ArticleID"> @Model.Title </a>
+        <a class="vw-article-link-title universal-link"
+       href="@(editingBaseURL+(-1))"> @ViewBag.CurrentArticleVersion.Title </a>
 
-    <a class="vw-article-link-category universal-link"
-       href="/articles/index/?categoryID=@Model.CategoryID">@Model.Category.Title</a>
+       <div class="vw-article-link-editor">
+            <a class="vw-article-link-category universal-link"
+                href="@(categoryBaseURL+ViewBag.CurrentArticleVersion.CategoryID)">@ViewBag.CurrentArticleVersion.Category.Title</a>
+            <div class="vw-article-link-date"> '@ViewBag.CurrentArticleVersion.CommitTitle' on</div>
+        </div>
 
-    <div class="vw-article-link-editor">
-        <p>OLAERIU VLAD MIHAI</p>
-        <div class="vw-article-link-date">@Model.PublicationDate</div>
+        <div class="vw-article-link-editor">
+            <p>OLAERIU VLAD MIHAI</p>
+            <div class="vw-article-link-date">@ViewBag.CurrentArticleVersion.CommitDate</div>
+        </div>
+
+        <div class="vw-article__status">• CURRENT</div>
     </div>
-
-    <div class="vw-article__status">• ACTIVE</div>
-</div>
+}
 
 <!-- ARTICLES GRID, 2 COLUMNS -->
 <div class="vw-articles-links">
@@ -31,10 +37,13 @@
         <div class="vw-article-link">
 
             <a class="vw-article-link-title universal-link"
-           href="/articles/edit/@article.ArticleID/@article.VersionID"> @article.Title </a>
+           href="@(editingBaseURL+article.VersionID)"> @article.Title </a>
 
-            <a class="vw-article-link-category universal-link"
-           href="/articles/index/?categoryID=@article.CategoryID">@article.Category.Title</a>
+            <div class="vw-article-link-editor">
+               <a class="vw-article-link-category universal-link"
+                href="@(categoryBaseURL+article.CategoryID)">@article.Category.Title</a>
+               <div class="vw-article-link-date">'@article.CommitTitle' on</div>
+            </div>
 
             <div class="vw-article-link-editor">
                 <p>OLAERIU VLAD MIHAI</p>
@@ -51,10 +60,10 @@
     <div>
         <div class="vw-pagination-wrapper">
             <ul class="vw-pagination">
-                <!-- Previous page-->
+                <!-- First page-->
                 <li class="vw-page-item">
                     <a class="vw-page-link"
-                       href="@(baseURL+1)" aria-label="Previous">
+                       href="@(paginationBaseURL+1)" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -63,14 +72,14 @@
                 {
                     <li class="vw-page-item">
                         <a class="vw-page-link"
-                       href="@(baseURL+i)">@(i)</a>
+                       href="@(paginationBaseURL+i)">@(i)</a>
                     </li>
                 }
 
-                <!-- Next page-->
+                <!-- Last page-->
                 <li class="vw-page-item">
                     <a class="vw-page-link"
-                       href="@(baseURL+ViewBag.lastPage)" arialabel="Next">
+                       href="@(paginationBaseURL+ViewBag.lastPage)" arialabel="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>

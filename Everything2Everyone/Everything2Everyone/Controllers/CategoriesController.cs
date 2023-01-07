@@ -21,7 +21,6 @@ namespace Everything2Everyone.Controllers
         // [Authorize(Roles = "Admin")]
         public IActionResult New(Category categoryToBeInserted)
         {
-            // TO DO: Check if there is another category with the name we want to insert
             if (ModelState.IsValid)
             {
                 DataBase.Categories.Add(categoryToBeInserted);
@@ -64,8 +63,6 @@ namespace Everything2Everyone.Controllers
         // [Authorize(Roles = "Admin")]
         public IActionResult Edit(Category categoryToBeInserted)
         {
-            // TO DO: Check if there is another category with the name we want to insert
-            // If all validations were passed successfully
             if (ModelState.IsValid)
             {
                 Category category;
@@ -102,7 +99,7 @@ namespace Everything2Everyone.Controllers
                 Category category = DataBase.Categories.Find(categoryID);
                 DataBase.Categories.Remove(category);
                 DataBase.SaveChanges();
-                TempData["ActionMessage"] = "Category deleted successfully!";
+                TempData["ActionMessage"] = "Category successfully delete.";
             }
             catch
             {
@@ -113,7 +110,8 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        // method which stores all categories into a viewbag item, in order to be shown in the side-menu partial view
+        // method which stores all categories into a viewbag item,
+        // in order to be displayed in the side-menu partial view
         [NonAction]
         public void FetchCategories()
         {

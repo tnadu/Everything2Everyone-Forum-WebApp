@@ -2,6 +2,7 @@
 
 namespace Everything2Everyone.Controllers
 {
+    // only used for forwarding requests to the Identity Controller
     public class AuthenticationController : Controller
     {
         public IActionResult SignUp()
