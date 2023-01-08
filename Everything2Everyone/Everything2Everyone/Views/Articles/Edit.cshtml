@@ -24,11 +24,10 @@
 
 
 <body>
-
     <form action="/Articles/Edit" method="post" class="vw-form vw-form-article">
         <div class="vw-form-groups-items">
             <input type="hidden" name="Article.ArticleID" value="@Model.Article.ArticleID" />
-            <input type="hidden" name="Article.VersionID" value="-1" />
+            
 
             <label for="Article.Title" class="vw-form-label">Article title:</label>
             <input type="text" name="Article.Title" value="@Model.Article.Title">
@@ -49,7 +48,6 @@
             </div>
         </div>
 
-        <!-- ADD NEW CHAPTER -->
         <div id="chapters-added">
              @for (int i = 0; i < Model.Chapters.Count; i++) {
                 <div class="vw-form-article-chapter chapter-added">
@@ -74,6 +72,7 @@
         </div>
 
 
+        <!-- ADD NEW CHAPTER -->
         <div class="vw-form-label">New chapter</div>
         <div class="vw-form-article-chapter">
             <label for="ChapterTitle" class="vw-form-label">Chapter title:</label>
@@ -152,7 +151,7 @@
         }
 
         function UpdateChapters() {
-            const currentChapters = document.querySelectorAll(".vw-form-article-chapter");
+            const currentChapters = document.querySelectorAll(".chapter-added");
             // For every chapter:
             for (let i = 0; i < currentChapters.length; i++) {
                 // Set the Chapters.Index field
