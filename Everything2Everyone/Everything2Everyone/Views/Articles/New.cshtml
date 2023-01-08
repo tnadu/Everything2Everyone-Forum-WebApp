@@ -24,7 +24,6 @@
 
 
 <body>
-
     <form action="/Articles/New" method="post" class="vw-form vw-form-article">
         <div class="vw-form-groups-items">
             <label for="Article.Title" class="vw-form-label">Article title:</label>
@@ -46,10 +45,9 @@
             </div>
         </div>
 
-        <!-- ADD NEW CHAPTER -->
         <div id="chapters-added"></div>
 
-
+        <!-- ADD NEW CHAPTER -->
         <div class="vw-form-label">New chapter</div>
         <div class="vw-form-article-chapter">
             <label for="ChapterTitle" class="vw-form-label">Chapter title:</label>
@@ -81,7 +79,7 @@
         let numberOfCreatedChildren = 0;
 
         function UpdateChapters() {
-            const currentChapters = document.querySelectorAll(".vw-form-article-chapter");
+            const currentChapters = document.querySelectorAll(".chapter-added");
             // For every chapter:
             console.log(currentChapters);
             for (let i = 0; i < currentChapters.length; i++) {
