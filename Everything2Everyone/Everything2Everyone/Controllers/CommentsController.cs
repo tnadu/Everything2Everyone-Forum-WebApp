@@ -25,7 +25,7 @@ namespace Everything2Everyone.Controllers
             FetchCategories();
 
             var comments = DataBase.Comments.Where(comment => comment.UserID == "fa1c312d-549a-42bd-8623-c1071cfd581e");
-            //var comments = DataBase.Comments.Where(comment => comment.UserID == User.FindFirst(ClaimTypes.NameIdentifier);
+            //var comments = DataBase.Comments.Where(comment => comment.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value;
             ViewBag.UserComments = comments;
             return View();
         }
@@ -40,7 +40,7 @@ namespace Everything2Everyone.Controllers
             {
                 comment = DataBase.Comments.Where(comment => comment.CommentID == commentID).First();
 
-                //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier))
+                //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 // {
                 //    TempData["ActionMessage"] = "You do not have permission to edit this comment!";
                 //    return Redirect("/articles/show/" + comment.ArticleID);
@@ -75,7 +75,7 @@ namespace Everything2Everyone.Controllers
                 {
                     comment = DataBase.Comments.Find(commentToBeInserted.CommentID);
 
-                    //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier))
+                    //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                     // {
                     //    TempData["ActionMessage"] = "You do not have permission to edit this comment!";
                     //    return Redirect("/articles/show/" + comment.ArticleID);
@@ -114,7 +114,7 @@ namespace Everything2Everyone.Controllers
             {
                 Comment commentToBeDeleted = DataBase.Comments.Find(commentID);
 
-                //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier))
+                //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 // {
                 //    TempData["ActionMessage"] = "You do not have permission to delete this comment!";
                 //    return Redirect("/articles/show/" + comment.ArticleID);

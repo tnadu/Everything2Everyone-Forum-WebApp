@@ -388,7 +388,7 @@ namespace Everything2Everyone.Controllers
         {
             List<SelectListItem> returnedRoles = new List<SelectListItem>();
 
-            foreach (Role role in DataBase.Roles) 
+            foreach (IdentityRole role in DataBase.Roles) 
             {
                 returnedRoles.Add(new SelectListItem
                 {
@@ -404,7 +404,7 @@ namespace Everything2Everyone.Controllers
         [NonAction]
         public IActionResult Authorize(string userID)
         {
-            // if (! User.IsInRole("Admin") && userID != User.FindFirst(ClaimTypes.NameIdentifier)) {
+            // if (! User.IsInRole("Admin") && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
             //      TempData["ActionMessage"] = "You don't have permission to access this resource";
             //      return Redirect("/users/edit/" + userID);
             // }
@@ -417,7 +417,7 @@ namespace Everything2Everyone.Controllers
             // before finally being prompted with the error message)
             try
             {
-                // if (User.IsInRole("Admin") && _userManager.IsInRole(userID, "Admin) && User.FindFirst(ClaimTypes.NameIdentifier)) {
+                // if (User.IsInRole("Admin") && _userManager.IsInRole(userID, "Admin) && User.FindFirst(ClaimTypes.NameIdentifier).Value) {
                 //      TempData["ActionMessage"] = "You don't have permission to access this resource";
                 //      return Redirect("/users/index");
                 // }
