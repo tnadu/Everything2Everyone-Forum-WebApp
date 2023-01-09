@@ -49,10 +49,34 @@
     }
 
     <!-- Display comments: -->
-    @foreach ( Comment comment in Model.Article.Comments){
+    @foreach ( var comment in ViewBag.ArticleComments)
+    {
         <div class="vw-article-comment">
             <div>
-                <div class="vw-comment-author">Toma<span>4h</span></div>
+
+                <div class="vw-comment-author">
+                <!-- Verify if the user wants his name to be publicly displayed-->
+                @if (comment.User.ShowPublicIdentity == true){
+                    @comment.User.FirstName @comment.User.LastName <span>@comment.User.NickName -
+                        <!-- Check if the comment was edited or not-->
+                        @if( comment.DateEdited != null){
+                            @comment.DateEdited.ToString("MM/dd/yyyy")
+                        } else{
+                            @comment.DateAdded.ToString("MM/dd/yyyy")
+                        }
+                    </span>
+                } else {
+                    @comment.User.NickName<span>
+                        <!-- Check if the comment was edited or not-->
+                        @if (comment.DateEdited != null)
+                        {
+                            @comment.DateEdited.ToString("MM/dd/yyyy")
+                        } else {
+                            @comment.DateAdded.ToString("MM/dd/yyyy")
+                        }
+                    </span>
+                }
+                </div>
                 <div class="vw-comment-content">
                     @comment.Content
                 </div>

@@ -174,8 +174,33 @@ namespace Everything2Everyone.Controllers
 
             //}
 
+            // Search engine
+            var searchInput = "";
 
-            // pagination
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+                // Eliminate white spaces
+                searchInput = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                // Search in Articles for Title or Content matching
+                List<int> articleIDs = DataBase.Articles.Include("Chapters").Where(
+                        article => article.Title.Contains(searchInput) || article.Chapters.Any(chapter => chapter.ContentUnparsed.Contains(searchInput))
+                    ).Select(article => article.ArticleID).ToList();
+
+                // Search in Comments for Content matching
+                List<int> articleIDsFromCommentsSearching = DataBase.Comments.Where(
+                        comment => comment.Content.Contains(searchInput)
+                    ).Select(comment => comment.ArticleID).ToList();
+
+                // Merge both lists into one
+                List<int> mergedArticleIDs = articleIDs.Union(articleIDsFromCommentsSearching).ToList();
+
+                // Find articles that match with the merge IDs
+                returnedArticles = DataBase.Articles.Where(article => mergedArticleIDs.Contains(article.ArticleID))
+                    .Include("Category").Include("Chapters");
+            }
+
+            // Pagination
             int articlesPerPage = 10;
             int numberOfArticles = returnedArticles.Count();
             var currentPageNumber = Convert.ToInt32(HttpContext.Request.Query["page"]);
@@ -199,6 +224,7 @@ namespace Everything2Everyone.Controllers
             ViewBag.CategoryID = categoryID;
             ViewBag.Sorting = sort;
             ViewBag.UserSpecified = userSpecificMode;
+            ViewBag.searchInput = searchInput;
             ViewBag.lastPage = lastPage;
 
             // message received
@@ -229,6 +255,7 @@ namespace Everything2Everyone.Controllers
                 returnedArticle = DataBase.Articles.Include("Category").Include("Chapters")
                                                       .Include("Comments").Include("User").Where(article => article.ArticleID == articleID).First();
                 returnedChapters = DataBase.Chapters.Where(returnedArticle => returnedArticle.ArticleID == articleID).ToList();
+                ViewBag.ArticleComments =  DataBase.Comments.Include("User").Where(comment => comment.ArticleID == articleID);
             }
             catch
             {

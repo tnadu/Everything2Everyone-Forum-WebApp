@@ -10,6 +10,9 @@
         baseURL += "sort=" + ViewBag.Sorting + "&&";
     if (ViewBag.UserSpecified != null)
         baseURL += "userSpecificMode=" + ViewBag.UserSpecified + "&&";
+    if (ViewBag.searchInput != null)
+        baseURL += "search=" + ViewBag.searchInput + "&&"; 
+
     baseURL += "page=";
     
 }
