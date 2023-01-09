@@ -1,5 +1,6 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,9 +16,10 @@ namespace Everything2Everyone.Controllers
     {
         private readonly ApplicationDbContext DataBase;
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public ArticlesController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<Role> roleManager)
+
+        public ArticlesController (ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             DataBase = context;
             _userManager = userManager;
@@ -27,7 +29,7 @@ namespace Everything2Everyone.Controllers
 
         // intermediary method intended to guide the user through the process
         // of choosing a version based on which to modify their article
-        // [Authorize(Roles = "Editor,Admin")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult ChooseVersion(int articleID)
         {
             // fetching current article version from the database
@@ -92,11 +94,9 @@ namespace Everything2Everyone.Controllers
             Article article;
 
             // making sure provided articleID is valid
-            try
-            {
-                article = DataBase.Articles.Find(articleID);
-            }
-            catch
+            article = DataBase.Articles.Find(articleID);
+            
+            if (article == null)
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
                 return Redirect("/articles/index/");
@@ -106,7 +106,7 @@ namespace Everything2Everyone.Controllers
             // editor validation will be pointlessly performed
             Authorize(article.UserID, articleID, article.IsRestricted);
 
-            article.IsRestricted = !article.IsRestricted;
+            article.IsRestricted = ! article.IsRestricted;
             DataBase.SaveChanges();
 
             return Redirect("/articles/show/" + articleID);
@@ -127,7 +127,7 @@ namespace Everything2Everyone.Controllers
             var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters"); // Include("Users");
 
             // filter - category is specified
-            ViewBag.CategoryName = categoryID;
+            ViewBag.CategoryName = null;
             if (categoryID != null)
             {
                 // making sure provided categoryID is valid
@@ -137,8 +137,6 @@ namespace Everything2Everyone.Controllers
                 if (!returnedArticles.Any())
                 {
                     returnedArticles = DataBase.Articles.Include("Category").Include("Chapters");
-                    ViewBag.CategoryName = null;
-                    // storing chosen category's title, when categoryID is not null, else storing null            
                 }
                 else
                     ViewBag.CategoryName = DataBase.Categories.Where(category => category.CategoryID == categoryID).First().Title;
@@ -258,7 +256,7 @@ namespace Everything2Everyone.Controllers
         // because Views accept only one Model, we will use the POST Show method to add comments
         // to the corresponding article
         [HttpPost]
-        // [Authorize(Roles = "User,Editor,Admin")]
+        // [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Show([FromForm] Comment commentToBeInserted)
         {
             commentToBeInserted.UserID = "fa1c312d-549a-42bd-8623-c1071cfd581e";
@@ -501,8 +499,8 @@ namespace Everything2Everyone.Controllers
 
                 // computing the currentVersionID, based on entries in ARTICLE_VERSIONS
                 int currentVersionID = (from articleVersion in DataBase.ArticleVersions
-                                        where articleVersion.ArticleID == articleVersionBundle.Article.ArticleID
-                                        select articleVersion.VersionID).Max();
+                                       where articleVersion.ArticleID == articleVersionBundle.Article.ArticleID
+                                       select articleVersion.VersionID).Max();
 
                 // processing each previously most recent chapter
                 foreach (Chapter oldChapter in currentArticle.Chapters)
@@ -566,11 +564,9 @@ namespace Everything2Everyone.Controllers
             Article article;
 
             // making sure provided articleID is valid
-            try
-            {
-                article = DataBase.Articles.Find(articleID);
-            }
-            catch
+            article = DataBase.Articles.Find(articleID);
+            
+            if (article == null)
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
                 return Redirect("/articles/index/my-articles");
@@ -583,7 +579,7 @@ namespace Everything2Everyone.Controllers
 
             TempData["ActionMessage"] = "Article deleted successfully.";
 
-            // when an Admin deletes an article of a user other
+            // when an Administrator deletes an article of a user other
             // than himself, he is redirected to the Index page
             // if (article.UserId != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
             //      return Redirect("/articles/index");
@@ -629,7 +625,7 @@ namespace Everything2Everyone.Controllers
             //      return Redirect("/articles/show/" + articleID);
             // }
 
-            // if (User.IsInRole("Admin") && _userManager.IsInRole(userID, "Admin) && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
+            // if (User.IsInRole("Administrator") && _userManager.IsInRole(userID, "Administrator) && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
             //      TempData["ActionMessage"] = "You don't have permission to access this resource";
             //      return Redirect("/articles/show/" + articleID);
             // }

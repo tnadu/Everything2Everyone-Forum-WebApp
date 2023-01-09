@@ -101,42 +101,43 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
 
             // CUSTOM FIELDS FOR OUR USER CLASS
             // First name:
-            [Required(ErrorMessage = "First name is required. Length must be between 5 and 30 characters.")]
-            [MinLength(5, ErrorMessage = "First name is required. Length must be between 5 and 30 characters.")]
-            [MaxLength(30, ErrorMessage = "First name is required. Length must be between 5 and 30 characters.")]
+            [Required(ErrorMessage = "First name is required. Length must be between 1 and 30 characters.")]
+            [MinLength(1, ErrorMessage = "First name is required. Length must be between 1 and 30 characters.")]
+            [MaxLength(30, ErrorMessage = "First name is required. Length must be between 1 and 30 characters.")]
             [Display(Name = "First name:")]
             public string FirstName { get; set; }
 
             // Last name:
-            [Required(ErrorMessage = "Last name is required. Length must be between 5 and 30 characters.")]
-            [MinLength(5, ErrorMessage = "Last name is required. Length must be between 5 and 30 characters.")]
-            [MaxLength(30, ErrorMessage = "Last name is required. Length must be between 5 and 30 characters.")]
+            [Required(ErrorMessage = "Last name is required. Length must be between 1 and 30 characters.")]
+            [MinLength(1, ErrorMessage = "Last name is required. Length must be between 1 and 30 characters.")]
+            [MaxLength(30, ErrorMessage = "Last name is required. Length must be between 1 and 30 characters.")]
             [Display(Name = "Last name:")]
             public string LastName { get; set; }
 
             // Nick name:
-            [Required(ErrorMessage = "Nickname is required. Length must be between 5 and 30 characters.")]
-            [MinLength(5, ErrorMessage = "Nickname is required. Length must be between 5 and 30 characters.")]
-            [MaxLength(30, ErrorMessage = "Nickname is required. Length must be between 5 and 30 characters.")]
+            [Required(ErrorMessage = "Nickname is required. Length must be between 3 and 30 characters.")]
+            [MinLength(3, ErrorMessage = "Nickname is required. Length must be between 3 and 30 characters.")]
+            [MaxLength(30, ErrorMessage = "Nickname is required. Length must be between 3 and 30 characters.")]
             [Display(Name = "Nick name:")]
             public string NickName { get; set; }
 
             // JoinDate & ShowPublicIdentity - implicit values
             public DateTime JoinDate { get; set; } = DateTime.Now;
 
-            public bool ShowPublicIdentity { get; set; } = false;
+            public bool ShowPublicIdentity { get; set; }
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            ReturnUrl = returnUrl;
+            ReturnUrl = "/articles/index";
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+            returnUrl = "/articles/index";
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -147,12 +148,14 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
                 user.LastName = Input.LastName;
                 user.NickName = Input.NickName;
                 user.JoinDate = DateTime.Now;
-                user.ShowPublicIdentity = true;
+                user.ShowPublicIdentity = false;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                                
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                user.EmailConfirmed = true;
+
 
                 if (result.Succeeded)
                 {
@@ -160,27 +163,8 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
 
                     await _userManager.AddToRoleAsync(user, "User");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
-
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = "/articles/index/" });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return LocalRedirect(returnUrl);
                 }
                 foreach (var error in result.Errors)
                 {

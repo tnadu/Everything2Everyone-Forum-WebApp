@@ -1,5 +1,7 @@
 ﻿@model Everything2Everyone.Models.Category
 
+@if (ViewBag.GlobalCategories != null)
+{
 <div class="vw-sidebar">
     <div class="small-title">Categories</div>
 
@@ -42,3 +44,4 @@
     }
 
 </div>
+}
