@@ -122,7 +122,13 @@
                 href="/articles/index/?categoryID=@article.CategoryID">@article.Category.Title</a>
             
             <div class="vw-article-link-editor">
-                <!--  <p> numele autorului</p> -->
+                <p> 
+                    @if( article.User.ShowPublicIdentity == true){
+                        @article.User.FirstName @article.User.LastName
+                    } else{
+                        @article.User.NickName
+                    }
+                </p>
                 <div class="vw-article-link-date">@article.PublicationDate</div>
             </div>
         </div>

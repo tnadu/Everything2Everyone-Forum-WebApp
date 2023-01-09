@@ -131,6 +131,15 @@ namespace Everything2Everyone.Controllers
             article.IsRestricted = ! article.IsRestricted;
             DataBase.SaveChanges();
 
+            if (article.IsRestricted == true)
+            {
+                TempData["ActionMessage"] = "You have successfully restricted this article!";
+            }
+            else
+            {
+                TempData["ActionMessage"] = "You have successfully unrestricted this article!";
+            }
+
             return Redirect("/articles/show/" + articleID);
         }
 
