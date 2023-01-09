@@ -129,7 +129,7 @@ namespace Everything2Everyone.Migrations
                     b.Property<string>("ContentParsed")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ContentUnparsed")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(8000)
                         .HasColumnType("nvarchar(max)");
@@ -160,7 +160,7 @@ namespace Everything2Everyone.Migrations
                     b.Property<string>("ContentParsed")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ContentUnparsed")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(8000)
                         .HasColumnType("nvarchar(max)");

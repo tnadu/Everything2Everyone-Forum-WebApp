@@ -22,15 +22,24 @@ namespace Everything2Everyone.Controllers
             _roleManager = roleManager;
         }
 
+
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Index()
         {
             FetchCategories();
 
             var comments = DataBase.Comments.Where(comment => comment.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            if (!comments.Any())
+            {
+                TempData["ActionMessage"] = "You haven't posted any comments yet.";
+                return Redirect("/articles/index");
+            }
+
             ViewBag.UserComments = comments;
             return View();
         }
+
 
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Edit(int commentID)
@@ -42,6 +51,7 @@ namespace Everything2Everyone.Controllers
             {
                 comment = DataBase.Comments.Where(comment => comment.CommentID == commentID).First();
 
+                // users can only modify their own comments
                 if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 {
                     TempData["ActionMessage"] = "You do not have permission to edit this comment!";
@@ -81,6 +91,7 @@ namespace Everything2Everyone.Controllers
                     return Redirect("/articles/index/");
                 }
 
+                // users can only edit their own comments
                 if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 {
                     TempData["ActionMessage"] = "You do not have permission to edit this comment!";
@@ -107,6 +118,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Delete(int commentID)
         {
             // making sure specified ID is valid
@@ -118,9 +130,9 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index/");
             }
 
-            if(commentToBeDeleted.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            if (!User.IsInRole("Administrator") && commentToBeDeleted.Article.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value && commentToBeDeleted.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
             {
-                TempData["ActionMessage"] = "You do not have permission to delete this comment!";
+                TempData["ActionMessage"] = "You do not have permission to delete this comment.";
                 return Redirect("/articles/show/" + commentToBeDeleted.ArticleID);
             }
 

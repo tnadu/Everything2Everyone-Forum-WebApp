@@ -96,8 +96,8 @@
 
                 // Set the Title
                 currentChapters[i].childNodes[5].name = "Chapters[" + i + "].Title";
-                // Set the ContentUnparsed
-                currentChapters[i].childNodes[7].name = "Chapters[" + i + "].ContentUnparsed";
+                // Set the Content
+                currentChapters[i].childNodes[7].name = "Chapters[" + i + "].Content";
             }
         }
 
@@ -155,7 +155,7 @@
 
             // Textarea CONTENT
             const Content = document.createElement("textarea");
-            Content.name = "Chapters[" + numberOfCreatedChildren + "].ContentUnparsed";
+            Content.name = "Chapters[" + numberOfCreatedChildren + "].Content";
             Content.rows = 10;
             Content.value = ChapterContent.value;
             Content.disabled = true;

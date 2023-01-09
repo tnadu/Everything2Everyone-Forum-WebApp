@@ -10,11 +10,11 @@ namespace Everything2Everyone.Models
         public string CurrentPassword { get; set; }
 
         [Required(ErrorMessage = "New password is required.")]
-        [DataType(DataType.Password, ErrorMessage = "Provided password is invalid")]
+        [DataType(DataType.Password, ErrorMessage = "Provided password is invalid.")]
         public string NewPassword { get; set; }
 
         [Required(ErrorMessage = "New password is required.")]
-        [DataType(DataType.Password, ErrorMessage = "Provided password is invalid")]
+        [DataType(DataType.Password, ErrorMessage = "Provided password is invalid.")]
         [Compare("NewPassword")]
         public string ConfirmNewPassword { get; set; }
     }

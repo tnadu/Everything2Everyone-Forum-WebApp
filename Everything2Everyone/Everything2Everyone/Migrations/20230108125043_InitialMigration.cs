@@ -238,7 +238,7 @@ namespace Everything2Everyone.Migrations
                     ChapterID = table.Column<int>(type: "int", nullable: false),
                     ArticleID = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    ContentUnparsed = table.Column<string>(type: "nvarchar(max)", maxLength: 8000, nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 8000, nullable: false),
                     ContentParsed = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -288,7 +288,7 @@ namespace Everything2Everyone.Migrations
                     ArticleID = table.Column<int>(type: "int", nullable: false),
                     VersionID = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    ContentUnparsed = table.Column<string>(type: "nvarchar(max)", maxLength: 8000, nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 8000, nullable: false),
                     ContentParsed = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
