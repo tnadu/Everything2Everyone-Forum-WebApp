@@ -33,8 +33,30 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <!-- AOS animation -->
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <!-- Summernote && jQuery-->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 
 </head>
+
+<style>
+    .note-editor.note-frame .note-editing-area .note-editable, .note-toolbar{ background: var(--bottom-gradient); color: white;}
+
+    .note-editor.note-frame {
+        margin-bottom: 16px;
+        border: 3px solid var(--color-menu);
+    }
+
+
+    .note-editor 
+    .note-toolbar{
+        padding: 16px 16px 16px 16px;
+        border: none;
+        border-bottom: 3px solid;
+        border-color: var(--color-menu);
+    }
+</style>
+
 <body>
     <div class="vw-navbar">
         <div class="vw-navbar-logo">
@@ -66,6 +88,18 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Summernote initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.summernote').summernote({
+                height: 300,
+                minHeight: 200,
+                focus: true,
+         });
+        });
+    </script>
 
     <!-- AOS initialization-->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>

@@ -9,22 +9,46 @@
         <div class="vw-article-title">@Model.Article.Title</div>
         @if (ViewBag.ShowEditDeleteButtons)
         {
-            <div style="display:flex">
-            <a href="/articles/choose-version/@Model.Article.ArticleID">
-                <img src="~/images/Icons/edit.png" 
-                style="height: 64px; width:64px;"/>
-            </a>
+            <div style="display:flex; align-items: center;">
+                @if(this.User.IsInRole("Administrator")){
+                    <form method="get" action="/articles/restrict/@Model.Article.ArticleID">
+                        <button type="submit" class="btn-basic" style="background:var(--top-gradient); border:none">
+                            <img src="~/images/Icons/restrict.svg"
+                            style="height: 52px; width: 52px;" />
+                        </button>
+                    </form>
+                }
+                
+                <!-- Check if article is not restricted and the user is the publisher of the article-->
+                <!-- If the user is administrator display it anyway-->
+                @if ( (Model.Article.IsRestricted == false && Model.Article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value) ||
+                    this.User.IsInRole("Administrator")
+                )
+                {
+                    <a href="/Articles/Choose-Version/@Model.Article.ArticleID">
+                        <img src="~/images/Icons/edit.png"
+                        style="height: 64px; width:64px;" />
+                    </a>
 
-            <form method="post" action="/articles/delete/@Model.Article.ArticleID">
-                <button style="background:var(--top-gradient); border:none" type="submit">
-                    <img src="/Images/Icons/delete.png" style="height: 50px; width:50px;">
-                </button>
-            </form>
+                    <form method="post" action="/articles/delete/@Model.Article.ArticleID">
+                        <button style="background:var(--top-gradient); border:none" type="submit">
+                            <img src="/Images/Icons/delete.png" style="height: 50px; width:50px;">
+                        </button>
+                    </form>
+                }
+
             </div>
         }
     </div>
 
-    <div class="vw-article-author">posted by Autor</div>
+    <div class="vw-article-author">
+        posted by 
+        @if( Model.Article.User.ShowPublicIdentity == true){
+            @Model.Article.User.FirstName @Model.Article.User.LastName
+        } else{
+            @Model.Article.User.NickName
+        }
+    </div>
     <div class="vw-article-link-editor"
          style="margin: 8px 0px;">
         <div class="vw-centeralized">
