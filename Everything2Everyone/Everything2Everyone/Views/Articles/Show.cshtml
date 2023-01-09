@@ -65,7 +65,7 @@
     @foreach (Chapter chapter in Model.Chapters){
         <div class="vw-chapter">
             <h2 class="vw-chapter-title">@chapter.Title</h2>
-            <p>@chapter.ContentUnparsed</p>
+            <p>@Html.Raw(@chapter.ContentUnparsed)</p>
         </div>
     }
 

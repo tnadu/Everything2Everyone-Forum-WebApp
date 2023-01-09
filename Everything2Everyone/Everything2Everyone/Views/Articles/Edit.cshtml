@@ -5,19 +5,19 @@
     {
         if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
         {
-            <div class="alert-message alert-message__succeeded"
-         data-aos="fade-down"
-         data-aos-duration="1000">
-                <h4>@TempData["ActionMessage"]</h4>
-            </div>
+    <div class="alert-message alert-message__succeeded"
+             data-aos="fade-down"
+             data-aos-duration="1000">
+                    <h4>@TempData["ActionMessage"]</h4>
+    </div>
         }
         else
         {
-            <div class="alert-message alert-message__failed"
-         data-aos="fade-down"
-         data-aos-duration="1000">
-                <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
-            </div>
+    <div class="alert-message alert-message__failed"
+             data-aos="fade-down"
+             data-aos-duration="1000">
+                    <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
+    </div>
         }
     }
 }
@@ -59,7 +59,7 @@
                     <input type="text" name="@("Chapters["+i+"].Title")" value="@Model.Chapters[i].Title">
 
                     <label for="ChapterContent" class="vw-form-label">Chapter content:</label>
-                    <textarea type="text" name="@("Chapters["+i+"].ContentUnparsed")" rows="10">@Model.Chapters[i].ContentUnparsed</textarea>
+                    <textarea type="text" name="@("Chapters["+i+"].ContentUnparsed")" rows="10" class="summernote">@Model.Chapters[i].ContentUnparsed</textarea>
 
                     <div class="chapter-added-btns">
                         <button class="btn-basic btn-edit" type="button">EDIT</button>
@@ -78,7 +78,7 @@
             <input type="text" name="ChapterTitle" id="ChapterTitleJS" style="margin-bottom: 8px;">
 
             <label for="ChapterContent" class="vw-form-label">Content:</label>
-            <textarea name="ChapterContent" rows="10" id="ChapterContentJS" style="margin-bottom: 8px;"></textarea>
+            <textarea name="ChapterContent" rows="10" id="ChapterContentJS" style="margin-bottom: 8px;" class="summernote"></textarea>
 
             <button type="button" class="btn-basic btn-log-in" id="add-chapter">ADD</button>
         </div>
@@ -105,6 +105,22 @@
         buttonsInit();
 
         function buttonsInit() {
+            // Make all summernotes besides the last one unclickable
+            let Summernotes;
+
+            $(document).ready(async function () {
+                await $('.summernote').summernote({
+                    height: 300,
+                    minHeight: 200,
+                    focus: true,
+                });
+
+                Summernotes = document.querySelectorAll(".note-editor");
+                for (let i = 0; i < Summernotes.length - 1; i++) {
+                    Summernotes[i].classList.add("not-clickable");
+                }
+            });
+
             // We need to update the delete & edit buttons
             const ExistingChapters = document.querySelectorAll(".chapter-added");
 
@@ -126,6 +142,7 @@
                 // => background is changed by removing the state of the chapter ( added => editable)
                 // => inputs become clickable
                 EditBtns[i].addEventListener("click", () => {
+                    Summernotes[i].classList.remove("not-clickable");
                     ExistingChapters[i].classList.remove("chapter-added");
 
                     // Display = none => EDIT & DELETE buttons
@@ -140,6 +157,7 @@
                 // => inputs become again disabled
                 // => Save btn disappers => display = none;
                 SaveBtns[i].addEventListener("click", () => {
+                    Summernotes[i].classList.add("not-clickable");
                     ExistingChapters[i].classList.add("chapter-added");
 
                     EditBtns[i].style.display = "block";
@@ -228,6 +246,7 @@
 
             // Textarea CONTENT
             const Content = document.createElement("textarea");
+            Content.classList.add("summernote");
             Content.name = "Chapters[" + numberOfCreatedChildren + "].ContentUnparsed";
             Content.rows = 10;
             Content.value = ChapterContent.value;
@@ -267,6 +286,22 @@
             } else {
                 CreateNewChapter();
 
+                // Make all summernotes besides the last one unclickable
+                let Summernotes;
+
+                $(document).ready(async function () {
+                    await $('.summernote').summernote({
+                        height: 300,
+                        minHeight: 200,
+                        focus: true,
+                    });
+
+                    Summernotes = document.querySelectorAll(".note-editor");
+                    for (let i = 0; i < Summernotes.length - 1; i++) {
+                        Summernotes[i].classList.add("not-clickable");
+                    }
+                });
+
                 // We need to update the delete & edit buttons
                 const NewlyCreatedChapters = document.querySelectorAll(".chapter-added");
 
@@ -288,6 +323,7 @@
                     // => background is changed by removing the state of the chapter ( added => editable)
                     // => inputs become clickable
                     EditBtns[i].addEventListener("click", () => {
+                        Summernotes[i].classList.remove("not-clickable");
                         NewlyCreatedChapters[i].classList.remove("chapter-added");
                         NewlyCreatedChapters[i].childNodes[6].disabled = false;
                         NewlyCreatedChapters[i].childNodes[8].disabled = false;
@@ -304,6 +340,7 @@
                     // => inputs become again disabled
                     // => Save btn disappers => display = none;
                     SaveBtns[i].addEventListener("click", () => {
+                        Summernotes[i].classList.add("not-clickable");
                         NewlyCreatedChapters[i].classList.add("chapter-added");
                         NewlyCreatedChapters[i].childNodes[6].disabled = true;
                         NewlyCreatedChapters[i].childNodes[8].disabled = true;

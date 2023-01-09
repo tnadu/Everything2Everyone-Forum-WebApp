@@ -178,3 +178,8 @@ input, textarea {
     justify-content: center;
     text-align: center;
 }
+
+.not-clickable {
+    pointer-events: none;
+    cursor: none;
+}
