@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 
@@ -13,7 +14,7 @@
         <div class="dropdown">
             <button class="btn-drop">...</button>
             <div class="dropdown-content">
-                <a href="/users/edit/fa1c312d-549a-42bd-8623-c1071cfd581e">Profile</a>
+                <a href="/users/edit/@User.FindFirst(ClaimTypes.NameIdentifier).Value">Profile</a>
                 <a href="/comments/my-comments">My comments</a>
                 <a href="#">My articles</a>
                 <a href="/users/index">Manage users</a>

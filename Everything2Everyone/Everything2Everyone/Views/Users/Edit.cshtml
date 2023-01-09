@@ -59,12 +59,13 @@
     </div>
 
     <div class="vw-form-groups-items">
-        @if (!User.IsInRole("Admin"))
+        @if (!User.IsInRole("Administrator"))
         {
             <label class="vw-log-sign-label">Role:</label>
-            <input name="CurrentRole" type="text" value="@ViewBag.CurrentUserRole" disabled/>
+            <input name="CurrentRole" type="text" value="@ViewBag.CurrentUserRoleName" disabled/>
+            <input name="NewRoleID" type="text" value="@ViewBag.CurrentUserRoleId" hidden/>
         }
-        @if (User.IsInRole("Admin"))
+        @if (User.IsInRole("Administrator"))
         {
             <label for="NewRoleID" class="vw-log-sign-label">Role:</label>
             @Html.DropDownListFor(m => m.NewRoleID, new SelectList(Model.FetchedRoles, "Value", "Text"), "Choose a role")
@@ -82,6 +83,9 @@
     <div class="vw-user-profile__btns">
     <a href="/users/change-password/@Model.Id">Change password</a>
     <a href="/users/change-email/@Model.Id">Change email</a>
-    <a href="/users/delete/@Model.Id">Permanently delete account</a>
+    <form name="DeleteMe" method="post" action="/users/delete/@Model.Id">
+        <input type="hidden">
+        <a href="javascript:document.DeleteMe.submit()">Permanently delete account</a>
+    </form>
     </div>
 }

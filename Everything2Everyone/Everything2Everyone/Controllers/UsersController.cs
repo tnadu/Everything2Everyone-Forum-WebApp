@@ -1,39 +1,59 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Cryptography;
+using System.Security.Claims;
 
 namespace Everything2Everyone.Controllers
 {
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext DataBase;
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersController(ApplicationDbContext context)
+        public UsersController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             DataBase = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
 
-        // [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult ChangeEmail(string userID)
         {
-            Authorize(userID);
+            if (!User.IsInRole("Administrator") && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
 
             EmailChange changeEmail = new EmailChange();
 
-            // for ADMINS
-            // making sure provided ID is valid
+            // when the provided userID doesn't exist, the IsInRole() method throws an exception;
+            // if an Administrator's account was compromised and the bad actor intends to do reconnaissance
+            // by trying random ID's, they won't be prompted an error message which would clearly
+            // indicate that the user doesn't exist, making it more difficult for them to script
+            // such a technique (they have to also some browser automation to fill in the inputs,
+            // before finally being prompted with the error message)
             try
             {
+                bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == userID).Select(u => u.RoleId).First() ==
+                                                 DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
+
+                if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                {
+                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    return Redirect("/users/index");
+                }
+
+                // userID exists and the Administrator/Editor passed authorization
                 changeEmail.UserID = userID;
                 changeEmail.NewEmail = DataBase.Users.Where(user => user.Id == userID).First().Email;
             }
@@ -69,48 +89,59 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult ChangeEmail(EmailChange emailChange)
         {
-            Authorize(emailChange.UserID);
+            if (!User.IsInRole("Administrator") && emailChange.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
+
+            try
+            {
+                bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == emailChange.UserID).Select(u => u.RoleId).First() ==
+                                                 DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
+
+                if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && emailChange.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                {
+                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    return Redirect("/users/index");
+                }
+            }
+            catch
+            {
+                TempData["ActionMessage"] = "No user with the specified ID could be found.";
+                return Redirect("/users/index");
+            }
 
             bool correctPassword = true;
 
             var hasher = new PasswordHasher<User>();
 
+            User requestingUser = DataBase.Users.Where(user => user.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value).First();
             // the hash of the provided password must be identical to that stored in the database
-            //if (hasher.VerifyHashedPassword(DataBase.Users.Where(user => user.Id == User.Id).First().PasswordHash,
-            //            emailChange.Password) == PasswordVerificationResult.Failed)
-            //{
-            //    TempData["ActionMessage"] = "Wrong password.";
-            //    correctPassword = false;
-            //}
+            if (hasher.VerifyHashedPassword(requestingUser, requestingUser.PasswordHash, emailChange.Password) == PasswordVerificationResult.Failed)
+            {
+                TempData["ActionMessage"] = "Wrong password.";
+                correctPassword = false;
+            }
 
             if (ModelState.IsValid && correctPassword)
             {
                 User userToChange;
 
-                // for ADMINS
-                // making sure provided ID is valid
-                try
-                {
-                    userToChange = DataBase.Users.Find(emailChange.UserID);
+                userToChange = DataBase.Users.Find(emailChange.UserID);
 
-                    userToChange.UserName = emailChange.NewEmail;
-                    userToChange.NormalizedUserName = emailChange.NewEmail.ToUpper();
-                    userToChange.Email = emailChange.NewEmail;
-                    userToChange.NormalizedEmail = emailChange.NewEmail.ToUpper();
+                userToChange.UserName = emailChange.NewEmail;
+                userToChange.NormalizedUserName = emailChange.NewEmail.ToUpper();
+                userToChange.Email = emailChange.NewEmail;
+                userToChange.NormalizedEmail = emailChange.NewEmail.ToUpper();
 
-                    DataBase.SaveChanges();
+                DataBase.SaveChanges();
 
-                    TempData["ActionMessage"] = "Email successfully changed.";
-                    return Redirect("/users/edit/" + emailChange.UserID);
-                }
-                catch
-                {
-                    TempData["ActionMessage"] = "No user with specified ID could be found.";
-                    return Redirect("/users/index");
-                }
+                TempData["ActionMessage"] = "Email successfully changed.";
+                return Redirect("/users/edit/" + emailChange.UserID);
             }
 
             // Fetch categories for side menu
@@ -120,10 +151,31 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        // [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult ChangePassword(string userID)
         {
-            Authorize(userID);
+            if (!User.IsInRole("Administrator") && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
+
+            try
+            {
+                bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == userID).Select(u => u.RoleId).First() ==
+                                                 DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
+
+                if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                {
+                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    return Redirect("/users/index");
+                }
+            }
+            catch
+            {
+                TempData["ActionMessage"] = "No user with the specified ID could be found.";
+                return Redirect("/users/index");
+            }
 
             PasswordChange changePassword = new PasswordChange();
 
@@ -140,42 +192,54 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult ChangePassword(PasswordChange passwordChange)
         {
-            Authorize(passwordChange.UserID);
+            if (!User.IsInRole("Administrator") && passwordChange.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
+
+            try
+            {
+                bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == passwordChange.UserID).Select(u => u.RoleId).First() ==
+                                                 DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
+
+                if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && passwordChange.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                {
+                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    return Redirect("/users/index");
+                }
+            }
+            catch
+            {
+                TempData["ActionMessage"] = "No user with the specified ID could be found.";
+                return Redirect("/users/index");
+            }
 
             bool correctPassword = true;
 
             var hasher = new PasswordHasher<User>();
 
+            User requestingUser = DataBase.Users.Where(user => user.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value).First();
             // the hash of the provided password must be identical to that stored in the database
-            //if (hasher.VerifyHashedPassword(DataBase.Users.Where(user => user.Id == User.Id).First().PasswordHash,
-            //            emailChange.Password) == PasswordVerificationResult.Failed)
-            //{
-            //    TempData["ActionMessage"] = "Wrong password.";
-            //    correctPassword = false;
-            //}
+            if (hasher.VerifyHashedPassword(requestingUser, requestingUser.PasswordHash, passwordChange.CurrentPassword) == PasswordVerificationResult.Failed)
+            {
+                TempData["ActionMessage"] = "Wrong password.";
+                correctPassword = false;
+            }
 
             if (ModelState.IsValid && correctPassword)
             {
-                User userToChange;
+                string hashedNewPassword = hasher.HashPassword(requestingUser, passwordChange.NewPassword);
 
-                // for ADMINS
-                // making sure provided ID is valid
-                try
-                {
-                    userToChange = DataBase.Users.Find(passwordChange.UserID);
-                    // _userManager.ChangePassword(userToChange, passwordChange.CurrentPassword, passwordChange.NewPassword);
+                User userToChange = DataBase.Users.Find(passwordChange.UserID);
+                userToChange.PasswordHash = hashedNewPassword;
+                DataBase.SaveChanges();
 
-                    TempData["ActionMessage"] = "Password successfully changed.";
-                    return Redirect("/users/edit" + passwordChange.UserID);
-                }
-                catch
-                {
-                    TempData["ActionMessage"] = "No user with specified ID could be found.";
-                    return Redirect("/users/index");
-                }
+                TempData["ActionMessage"] = "Password successfully changed.";
+                return Redirect("/users/edit/" + passwordChange.UserID);
             }
 
             // Fetch categories for side menu
@@ -185,7 +249,7 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Index()
         {
             // Fetch categories for side menu
@@ -221,19 +285,39 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        // [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Edit(string userID)
         {
-            Authorize(userID);
+            if (!User.IsInRole("Administrator") && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
 
             User user;
 
-            // for ADMINS
-            // making sure provided ID is valid
+            // when the provided userID doesn't exist, the IsInRole() method throws an exception;
+            // if an Administrator's account was compromised and the bad actor intends to do reconnaissance
+            // by trying random ID's, they won't be prompted an error message which would clearly
+            // indicate that the user doesn't exist, making it more difficult for them to script
+            // such a technique (they have to also some browser automation to fill in the inputs,
+            // before finally being prompted with the error message)
             try
             {
+                bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == userID).Select(u => u.RoleId).First() ==
+                                                 DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
+
+                if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                {
+                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    return Redirect("/users/index");
+                }
+
+                // userID exists and the Administrator/Editor passed authorization
                 user = DataBase.Users.Where(user => user.Id == userID).First();
-                //ViewBag.CurrentUserRole = ((RolePrincipal)User).GetRoles()[0];
+                var roleID = DataBase.UserRoles.Where(u => u.UserId == userID).Select(u => u.RoleId).First();
+                ViewBag.CurrentUserRoleName = DataBase.Roles.Where(r => r.Id == roleID).Select(r => r.Name).FirstOrDefault();
+                ViewBag.CurrentUserRoleId = roleID;
             }
             // generating mock user
             catch
@@ -269,8 +353,8 @@ namespace Everything2Everyone.Controllers
                 user.NickName = nickNames[random.Next(nickNames.Length)];
 
                 // random role picker
-                //string[] roles = DataBase.Roles.Select(r => r.Name).ToArray();
-                //ViewBag.CurrentUserRole = roles[random.Next(roles.Length)];
+                string[] roles = DataBase.Roles.Select(r => r.Name).ToArray();
+                ViewBag.CurrentUserRoleName = roles[random.Next(roles.Length)];
 
                 // join date generation
                 DateTime firstRegisterDay = new DateTime(2022, 10, 1);                              // the date the platform went public and registration was open
@@ -292,37 +376,62 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Edit(User userToBeInserted)
         {
-            Authorize(userToBeInserted.Id);
+            if (!User.IsInRole("Administrator") && userToBeInserted.Id != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
+
+            try
+            {
+                bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == userToBeInserted.Id).Select(u => u.RoleId).First() ==
+                                                 DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
+
+                if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && userToBeInserted.Id != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                {
+                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    return Redirect("/users/index");
+                }
+            }
+            catch
+            {
+                TempData["ActionMessage"] = "No user with the specified ID could be found.";
+                return Redirect("/users/index");
+            }
+
+            // making sure provided roleID is valid            
+            if (DataBase.Roles.Find(userToBeInserted.NewRoleID) == null)
+            {
+                TempData["ActionMessage"] = "No user or role with specified ID could be found.";
+                return Redirect("/users/index");
+            }
+
 
             if (ModelState.IsValid)
             {
-                User user;
+                User user = DataBase.Users.Find(userToBeInserted.Id);
 
-                // making sure provided userID and roleID are valid - ADMIN
-                try
-                {
-                    user = DataBase.Users.Find(userToBeInserted.Id);
-                    if (userToBeInserted.NewRoleID != null) 
-                        DataBase.Roles.Find(userToBeInserted.NewRoleID);
-                }
-                catch
-                {
-                    TempData["ActionMessage"] = "No user or role with specified ID could be found.";
-                    return Redirect("/users/index");
-                }
+                if (User.IsInRole("Administrator")) {
+                    string CurrentRoleId = DataBase.UserRoles.Where(userRole => userRole.UserId == userToBeInserted.Id).Select(u => u.RoleId).First();
 
-                // if (User.IsInRole("Admin")) {
-                //      string CurrentRoleID = DataBase.UserRoles.Where(userRole => userRole.UserId == userToBeInserted.ID).First().RoleID;
-                //      
-                //      if (userToBeInserted.NewRoleID == null)
-                //          userToBeInserted.NewRoleID = Database.Roles.Where(r => r.Name == "User").First().Id;
-                //      
-                //      _userManager.RemoveFromRole(userToBeInserted.ID, CurrentRoleID);
-                //      _userManager.AddToRole(userToBeInserted.ID, userToBeInserted.NewRoleID);
-                // }
+                    if (userToBeInserted.NewRoleID == null)
+                        userToBeInserted.NewRoleID = DataBase.Roles.Where(r => r.Name == "User").Select(r => r.Id).First();
+
+                    // removing previous role
+                    IdentityUserRole<string> userRole = DataBase.UserRoles.Find(userToBeInserted.Id, CurrentRoleId);
+                    DataBase.UserRoles.Remove(userRole);
+                    DataBase.SaveChanges();
+
+                    // adding new role
+                    userRole = new IdentityUserRole<string>();
+                    userRole.UserId = userToBeInserted.Id;
+                    userRole.RoleId = userToBeInserted.NewRoleID;
+                    DataBase.UserRoles.Add(userRole);
+                    DataBase.SaveChanges();
+                }
 
                 user.FirstName = userToBeInserted.FirstName;
                 user.LastName = userToBeInserted.LastName;
@@ -335,27 +444,29 @@ namespace Everything2Everyone.Controllers
 
             // Fetch categories for side menu
             FetchCategories();
-
+            string roleId = DataBase.UserRoles.Where(userRole => userRole.UserId == userToBeInserted.Id).Select(u => u.RoleId).First();
+            userToBeInserted.JoinDate = DataBase.Users.Where(u => u.Id == userToBeInserted.Id).Select(u => u.JoinDate).First();
             userToBeInserted.FetchedRoles = FetchRoles();
+
+            ViewBag.CurrentUserRoleName = DataBase.Roles.Where(r => r.Id == roleId).Select(r => r.Name).FirstOrDefault();
+            ViewBag.CurrentUserRoleId = roleId;          
 
             return View(userToBeInserted);
         }
 
 
         [HttpPost]
-        // [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Delete(string userID)
         {
-            Authorize(userID);
+            //Authorize(userID);
 
             User userToBeRemoved;
 
-            // making sure provided userID is valid - ADMIN
-            try
-            {
-                userToBeRemoved = DataBase.Users.Find(userID);
-            }
-            catch
+            // making sure provided userID is valid - Administrator
+            userToBeRemoved = DataBase.Users.Find(userID);
+            
+            if (userToBeRemoved==null)
             {
                 TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
@@ -363,12 +474,13 @@ namespace Everything2Everyone.Controllers
 
             DataBase.Users.Remove(userToBeRemoved);
             DataBase.SaveChanges();
+            Console.WriteLine("Success!!!!!!!!!!!!!!");
 
             // admins won't be prompted to create a new account, unless they deleted their own account
-            // if (User.Id != userID) {
-            //      TempData["message"] = "Account successfully deleted.";
-            //      return Redirect("/users/index");
-            // }
+            if (User.FindFirst(ClaimTypes.NameIdentifier).Value != userID) {
+                TempData["message"] = "Account successfully deleted.";
+                return Redirect("/users/index");
+            }
 
             TempData["ActionMessage"] = "Account successfully deleted.";
             return Redirect("/sign-up");
@@ -398,36 +510,6 @@ namespace Everything2Everyone.Controllers
             }
 
             return returnedRoles;
-        }
-
-
-        [NonAction]
-        public IActionResult Authorize(string userID)
-        {
-            // if (! User.IsInRole("Admin") && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
-            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
-            //      return Redirect("/users/edit/" + userID);
-            // }
-
-            // when the provided userID doesn't exist, the IsInRole() method throws an exception;
-            // if an admin's account was compromised and the bad actor intends to do reconnaissance
-            // by trying random ID's, they won't be prompted an error message which would clearly
-            // indicate that the user doesn't exist, making it more difficult for them to script
-            // such a technique (they have to also some browser automation to fill in the inputs,
-            // before finally being prompted with the error message)
-            try
-            {
-                // if (User.IsInRole("Admin") && _userManager.IsInRole(userID, "Admin) && User.FindFirst(ClaimTypes.NameIdentifier).Value) {
-                //      TempData["ActionMessage"] = "You don't have permission to access this resource";
-                //      return Redirect("/users/index");
-                // }
-            }
-            catch
-            {
-            }
-
-            // the user was successfully authorized
-            return new StatusCodeResult(200);
         }
     }
 }
