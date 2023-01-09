@@ -18,7 +18,7 @@
             <div class="dropdown-content">
                 <a href="/users/edit/@User.FindFirst(ClaimTypes.NameIdentifier).Value">Profile</a>
                 <a href="/comments/my-comments">My comments</a>
-                <a href="/articles/index/?userSpecificMode=@User.FindFirst(ClaimTypes.NameIdentifier).Value">My articles</a>
+                <a href="/articles/index/?userSpecificMode=1">My articles</a>
 
                 <!-- Display user management link only for administrators-->
                 @if (this.User.IsInRole("Administrator"))

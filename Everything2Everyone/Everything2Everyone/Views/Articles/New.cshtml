@@ -1,5 +1,5 @@
 ﻿@model Everything2Everyone.Models.ArticleBundle
-
+@using System.Security.Claims
 @{
     if (TempData.ContainsKey("ActionMessage"))
     {
@@ -25,6 +25,8 @@
 
 <body>
     <form action="/Articles/New" method="post" class="vw-form vw-form-article">
+        <input type="hidden" name="Article.UserID" value="@User.FindFirst(ClaimTypes.NameIdentifier).Value"/>
+
         <div class="vw-form-groups-items">
             <label for="Article.Title" class="vw-form-label">Article title:</label>
             <input type="text" name="Article.Title" value="@Model.Article.Title">

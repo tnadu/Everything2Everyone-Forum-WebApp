@@ -83,6 +83,11 @@ app.MapControllerRoute(
     pattern: "articles/edit/{articleID}/{versionID}",
     defaults: new { controller = "Articles", action = "Edit" });
 
+app.MapControllerRoute(
+    name: "ArticlesEdit",
+    pattern: "articles/edit",
+    defaults: new { controller = "Articles", action = "Edit" });
+
 // DELETE
 app.MapControllerRoute(
     name: "ArticlesDelete",

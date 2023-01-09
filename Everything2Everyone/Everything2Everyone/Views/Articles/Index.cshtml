@@ -29,6 +29,8 @@
                 sortingBaseURL += "categoryID=" + ViewBag.CategoryID + "&&";
             if (ViewBag.UserSpecified != null)
                 sortingBaseURL += "userSpecificMode=" + ViewBag.UserSpecified + "&&";
+            if (ViewBag.searchInput != null)
+                sortingBaseURL += "search=" + ViewBag.searchInput + "&&";
             sortingBaseURL += "sort=";
         }
 
@@ -108,7 +110,7 @@
 <!-- ARTICLES GRID, 2 COLUMNS -->
 <div class="vw-articles-links">
     
-    @foreach (Article article in ViewBag.CurrentArticleQuery){
+    @foreach (var article in ViewBag.CurrentArticleQuery){
 
         <!-- ARTICLE ELEMENT -->
         <div class="vw-article-link">
@@ -120,7 +122,7 @@
                 href="/articles/index/?categoryID=@article.CategoryID">@article.Category.Title</a>
             
             <div class="vw-article-link-editor">
-                <p>OLAERIU VLAD MIHAI</p>
+                <!--  <p> numele autorului</p> -->
                 <div class="vw-article-link-date">@article.PublicationDate</div>
             </div>
         </div>

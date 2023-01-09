@@ -125,7 +125,7 @@ namespace Everything2Everyone.Controllers
             FetchCategories();
 
             // query returns a list of all the articles in the database
-            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters"); // Include("Users");
+            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters").Include("User");
 
             // filter - category is specified
             ViewBag.CategoryName = null;
@@ -193,8 +193,7 @@ namespace Everything2Everyone.Controllers
                 List<int> mergedArticleIDs = articleIDs.Union(articleIDsFromCommentsSearching).ToList();
 
                 // Find articles that match with the merge IDs
-                returnedArticles = DataBase.Articles.Where(article => mergedArticleIDs.Contains(article.ArticleID))
-                    .Include("Category").Include("Chapters");
+                returnedArticles = returnedArticles.Where(article => mergedArticleIDs.Contains(article.ArticleID));
             }
 
             // Pagination
