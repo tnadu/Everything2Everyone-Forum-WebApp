@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Everything2Everyone.Controllers
 {
@@ -17,7 +18,6 @@ namespace Everything2Everyone.Controllers
         private readonly ApplicationDbContext DataBase;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-
 
         public ArticlesController (ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -46,12 +46,28 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index");
             }
 
-            Authorize(currentArticleVersion.UserID, articleID, currentArticleVersion.IsRestricted);
+
+            // user, editor authorization
+            if (!User.IsInRole("Administrator") && currentArticleVersion.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
+                return Redirect("/articles/show/" + articleID);
+            }
+
+            // admin authorization => fails when admin attempts to change another admin's article
+            bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == currentArticleVersion.UserID).Select(u => u.RoleId).First() ==
+                                                DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
+
+            if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && currentArticleVersion.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
+                return Redirect("/articles/show/" + articleID);
+            }
+
 
             // fetching all previous article versions from the database
             var articleVersions = DataBase.ArticleVersions.Include("Category").Where(articleVersion => articleVersion.ArticleID == articleID)
                                                                               .OrderByDescending(articleVersion => articleVersion.VersionID);
-
             // pagination
             int articlesPerPage = 10;
             int numberOfArticles = articleVersions.Count();
@@ -85,7 +101,7 @@ namespace Everything2Everyone.Controllers
         // when a request is issued, the 'IsRestricted' attribute
         // of the specified article is set to its opposite, acting
         // like an on/off switch
-        // [Authorize(Roles="Administrator")]
+        [Authorize(Roles="Administrator")]
         public IActionResult Restrict(int articleID)
         {
             // Fetch categories for side menu
@@ -102,9 +118,15 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index/");
             }
 
-            // the same method can be reused, even though the
-            // editor validation will be pointlessly performed
-            Authorize(article.UserID, articleID, article.IsRestricted);
+            // admin authorization => fails when admin attempts to change another admin's article
+            bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == article.UserID).Select(u => u.RoleId).First() ==
+                                                DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
+
+            if (isTheRequestedUserAnAdmin && article.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
+                return Redirect("/articles/show/" + articleID);
+            }
 
             article.IsRestricted = ! article.IsRestricted;
             DataBase.SaveChanges();
@@ -113,18 +135,18 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        // Index method which returns most recently published articles, when category is unspecified.
-        // When category is specified, the list of articles can be either unsorted or sorted
-        // (chronologically/reverse chronologically/alphabetically/reverse alphabetically).
+        // Index method which returns the list of published articles filtered by category and
+        // sorted chronologically/alphabetically. Under the user-specific-mode, only the articles
+        // belonging to the user making the request are returned. All parameters are optional.
         // It is accesibile only to signed-in users of all kinds.
-        // [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Index(int? categoryID, int? sort, int? userSpecificMode)
         {
             // Fetch categories for side menu
             FetchCategories();
 
             // query returns a list of all the articles in the database
-            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters"); // Include("Users");
+            var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters").Include("User");
 
             // filter - category is specified
             ViewBag.CategoryName = null;
@@ -135,42 +157,24 @@ namespace Everything2Everyone.Controllers
 
                 // when provided categoryID is invalid, all articles are returned
                 if (!returnedArticles.Any())
-                {
-                    returnedArticles = DataBase.Articles.Include("Category").Include("Chapters");
-                }
+                    returnedArticles = DataBase.Articles.Include("Category").Include("Chapters").Include("User");
                 else
-                    ViewBag.CategoryName = DataBase.Categories.Where(category => category.CategoryID == categoryID).First().Title;
+                    ViewBag.CategoryName = DataBase.Categories.Where(category => category.CategoryID == categoryID).Select(c => c.Title).First();
             }
 
             // sort (if specified)
             if (sort == 0)
-            {
                 returnedArticles = returnedArticles.OrderBy(article => article.PublicationDate);
-            }
             else if (sort == 1)
-            {
                 returnedArticles = returnedArticles.OrderByDescending(article => article.PublicationDate);
-            }
             else if (sort == 2)
-            {
                 returnedArticles = returnedArticles.OrderBy(article => article.Title);
-            }
             else if (sort == 3)
-            {
-                returnedArticles = returnedArticles.OrderByDescending(article => article.Title);
-            }
-            // when invalid or null sort value is provided, the default behaviour occurs
-            else
-            {
-                returnedArticles = returnedArticles.OrderByDescending(article => article.PublicationDate);
-            }
+                returnedArticles = returnedArticles.OrderByDescending(article => article.Title);    
 
-            //if (userSpecificMode != null)
-            //{
-            // will be implemented when roles and permissions are decided upon
-            // returnedArticles = returnedArticles.Where(article => article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
-            //}
+            // filter articles by the user making the request
+            if (userSpecificMode != null)
+                returnedArticles = returnedArticles.Where(article => article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
 
             // pagination
@@ -212,7 +216,7 @@ namespace Everything2Everyone.Controllers
         // Method which returns the specified article's content and details, along with its
         // associated comments, category and user. From this view, the restrict, edit and
         // delete actions are accessible
-        // [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Show(int articleID)
         {
             // Fetch categories for side menu
@@ -225,7 +229,8 @@ namespace Everything2Everyone.Controllers
             try
             {
                 returnedArticle = DataBase.Articles.Include("Category").Include("Chapters")
-                                                      .Include("Comments").Include("User").Where(article => article.ArticleID == articleID).First();
+                                                   .Include("Comments").Include("User").Where(article => article.ArticleID == articleID).First();
+
                 returnedChapters = DataBase.Chapters.Where(returnedArticle => returnedArticle.ArticleID == articleID).ToList();
             }
             catch
@@ -240,7 +245,15 @@ namespace Everything2Everyone.Controllers
                 ViewBag.DisplayedMessage = TempData["ActionMessage"];
             }
 
-            // mechanism to show/hide edit-delete buttons on article and comments depending on the user who made the request
+            // mechanism to show/hide edit-delete-restrict buttons on article and comments depending on the user who made the request           
+            bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == returnedArticle.UserID).Select(u => u.RoleId).First() ==
+                                                DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
+
+            ViewBag.ShowEditDeleteButtons = (!User.IsInRole("Administrator") && returnedArticle.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value) ||
+                (User.IsInRole("Administrator") && !(isTheRequestedUserAnAdmin && returnedArticle.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
+            ViewBag.ShowRestrictButton = ViewBag.ShowEditDeleteButtons && User.IsInRole("Administrator");
+
 
             ArticleBundle returnedArticleBundle = new ArticleBundle();
             returnedArticleBundle.Article = returnedArticle;
@@ -317,6 +330,7 @@ namespace Everything2Everyone.Controllers
             articleBundle.Article.CommitDate = DateTime.Now;
             // and it is not restricted by an administrator
             articleBundle.Article.IsRestricted = false;
+            articleBundle.Article.UserID = User.FindFirst(ClaimTypes.NameIdentifier).Value; 
 
             // provided article and chapters are valid
             if (ModelState.IsValid)
@@ -376,7 +390,7 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index?userSpecificMode=1");
             }
 
-            Authorize(article.UserID, articleID, article.IsRestricted);
+            //Authorize(article.UserID, articleID, article.IsRestricted);
 
 
             ArticleVersionBundle articleVersionBundle = new ArticleVersionBundle();
@@ -469,7 +483,7 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index/");
             }
 
-            Authorize(currentArticle.UserID, currentArticle.ArticleID, currentArticle.IsRestricted);
+            //Authorize(currentArticle.UserID, currentArticle.ArticleID, currentArticle.IsRestricted);
 
             if (ModelState.IsValid)
             {
@@ -572,7 +586,7 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index/my-articles");
             }
 
-            Authorize(article.UserID, articleID, article.IsRestricted);
+            //Authorize(article.UserID, articleID, article.IsRestricted);
 
             DataBase.Articles.Remove(article);
             DataBase.SaveChanges();
@@ -614,24 +628,6 @@ namespace Everything2Everyone.Controllers
         public void FetchCategories()
         {
             ViewBag.GlobalCategories = DataBase.Categories.OrderBy(category => category.Title);
-        }
-
-
-        [NonAction]
-        public IActionResult Authorize(string userID, int articleID, bool isRestricted)
-        {
-            // if (User.IsInRole("Editor") && (userID != User.FindFirst(ClaimTypes.NameIdentifier).Value || isRestricted)) {
-            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/show/" + articleID);
-            // }
-
-            // if (User.IsInRole("Administrator") && _userManager.IsInRole(userID, "Administrator) && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
-            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
-            //      return Redirect("/articles/show/" + articleID);
-            // }
-
-            // the user was successfully authorized
-            return new StatusCodeResult(200);
         }
     }
 }

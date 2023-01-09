@@ -80,6 +80,14 @@ namespace Everything2Everyone.Data
                 c.ArticleID,
                 c.VersionID
             });
+
+
+            // Users (1) - Articles (m)
+            modelBuilder.Entity<User>()
+            .HasMany(u => u.Articles)
+            .WithOne(a => a.User)
+            .HasForeignKey(u => u.UserID)
+            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

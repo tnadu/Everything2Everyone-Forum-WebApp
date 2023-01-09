@@ -27,10 +27,21 @@
     <!-- Article information -->
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div class="vw-article-title">@Model.Article.Title</div>
-        <a href="/Articles/Choose-Version/@Model.Article.ArticleID">
-            <img src="~/images/Icons/edit.png" 
+        @if (ViewBag.ShowEditDeleteButtons)
+        {
+            <div style="display:flex">
+            <a href="/Articles/Choose-Version/@Model.Article.ArticleID">
+                <img src="~/images/Icons/edit.png" 
                 style="height: 64px; width:64px;"/>
-        </a>
+            </a>
+
+            <form method="post" action="/articles/delete/@Model.Article.ArticleID">
+                <button style="background:var(--top-gradient); border:none" type="submit">
+                    <img src="/Images/Icons/delete.png" style="height: 50px; width:50px;">
+                </button>
+            </form>
+            </div>
+        }
     </div>
 
     <div class="vw-article-author">posted by Olaeriu Vlad Mihai</div>
@@ -55,7 +66,7 @@
     }
 
     <!-- Add comment, only if user is authentificated -->
-    @if( User.Identity.IsAuthenticated == true){
+    @if( User.Identity.IsAuthenticated == true) {
         <form method="POST" action="/Articles/Show/@Model.Article.ArticleID" class="vw-article-add-comment">
             <input type="hidden" name="ArticleID" value="@Model.Article.ArticleID" />
 
@@ -70,7 +81,7 @@
     }
 
     <!-- Display comments: -->
-    @foreach ( Comment comment in Model.Article.Comments){
+    @foreach ( Comment comment in Model.Article.Comments) {
         <div class="vw-article-comment">
             <div>
                 <div class="vw-comment-author">Toma<span>4h</span></div>
