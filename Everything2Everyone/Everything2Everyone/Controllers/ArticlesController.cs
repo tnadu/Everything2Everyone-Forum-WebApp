@@ -470,7 +470,6 @@ namespace Everything2Everyone.Controllers
                     chapterVersion.ArticleID = chapter.ArticleID;
                     chapterVersion.Title = chapter.Title;
                     chapterVersion.Content = chapter.Content;
-                    chapterVersion.ContentParsed = chapter.ContentParsed;
 
                     // adding the chapter into the bundled object
                     articleVersionBundle.Chapters.Add(chapterVersion);
@@ -574,7 +573,6 @@ namespace Everything2Everyone.Controllers
                     oldChapterToBeInserted.VersionID = currentVersionID;
                     oldChapterToBeInserted.Title = oldChapter.Title;
                     oldChapterToBeInserted.Content = oldChapter.Content;
-                    oldChapterToBeInserted.ContentParsed = oldChapter.ContentParsed;
 
                     // on of the previously most recent chapter successfully stored in the database
                     DataBase.ChapterVersions.Add(oldChapterToBeInserted);
@@ -603,7 +601,6 @@ namespace Everything2Everyone.Controllers
                     newChapter.ArticleID = newChapterVersion.ArticleID;
                     newChapter.Title = newChapterVersion.Title;
                     newChapter.Content = newChapterVersion.Content;
-                    newChapter.ContentParsed = newChapterVersion.ContentParsed;
 
                     DataBase.Chapters.Add(newChapter);
                     DataBase.SaveChanges();

@@ -10,7 +10,7 @@
         @if (ViewBag.ShowEditDeleteButtons)
         {
             <div style="display:flex">
-            <a href="/Articles/Choose-Version/@Model.Article.ArticleID">
+            <a href="/articles/choose-version/@Model.Article.ArticleID">
                 <img src="~/images/Icons/edit.png" 
                 style="height: 64px; width:64px;"/>
             </a>
@@ -45,7 +45,7 @@
         </div>
     }
 
-    <form method="POST" action="/Articles/Show/@Model.Article.ArticleID" class="vw-article-add-comment">
+    <form method="POST" action="/articles/show/@Model.Article.ArticleID" class="vw-article-add-comment">
         <input type="hidden" name="ArticleID" value="@Model.Article.ArticleID" />
 
         <textarea name="Content" placeholder="Add a comment..." rows="4" id="comment_content"></textarea>
@@ -98,14 +98,14 @@
                 <!-- Display edit options only if current comment belongs to requesting user-->
                 @if (User.FindFirst(ClaimTypes.NameIdentifier).Value == comment.User.Id)
                 {
-                    <form method="GET" action="/Comments/Edit/@comment.CommentID">
+                    <form method="GET" action="/comments/edit/@comment.CommentID">
                         <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
                     </form>
                 }
 
                 @if (User.IsInRole("Administrator") || Model.Article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value || User.FindFirst(ClaimTypes.NameIdentifier).Value == comment.User.Id)
                 {
-                    <form method="POST" action="/Comments/Delete/@comment.CommentID">
+                    <form method="POST" action="/comments/delete/@comment.CommentID">
                         <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
                     </form>
                 }

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,18 +46,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Just to test if the LayoutRegister works
-app.MapControllerRoute(
-    name: "MyRegisterLogIn",
-    pattern: "MyRegister/LogIn",
-    defaults: new { controller = "Register", action = "LogIn" });
 
-app.MapControllerRoute(
-    name: "MyRegisterSignUp",
-    pattern: "MyRegister/SignUp",
-    defaults: new { controller = "Register", action = "SignUp" });
-
-// Articles routes
+// Article routes
 // INDEX
 app.MapControllerRoute(
     name: "ArticlesIndex",
@@ -106,7 +95,8 @@ app.MapControllerRoute(
     pattern: "articles/choose-version/{articleID}",
     defaults: new { controller = "Articles", action = "ChooseVersion" });
 
-// Categories routes
+
+// Category routes
 // NEW
 app.MapControllerRoute(
     name: "CategoriesNew",
@@ -125,7 +115,8 @@ app.MapControllerRoute(
     pattern: "categories/delete/{CategoryID}",
     defaults: new { controller = "Categories", action = "Delete" });
 
-// FOR COMMENTS
+
+// Comment routes
 // Delete
 app.MapControllerRoute(
     name: "CommentsDelete",
@@ -144,7 +135,8 @@ app.MapControllerRoute(
     pattern: "/comments/my-comments",
     defaults: new { controller = "Comments", action = "Index" });
 
-// USERS
+
+// User routes
 // Index - Manage users
 app.MapControllerRoute(
     name: "ManageUsers",
@@ -185,8 +177,8 @@ app.MapControllerRoute(
     pattern: "/signup",
     defaults: new { controller = "Authentication", action = "SignUp" });
 
-//////////////
-// Basic route
+
+// Default route
 app.MapControllerRoute(
     name: "default",
     pattern: "/",

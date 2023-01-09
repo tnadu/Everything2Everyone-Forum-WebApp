@@ -37,8 +37,7 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
             {
-                TempData["ActionMessage"] = "You have successfully logged out of the application.";
-                return LocalRedirect("/articles/index/");
+                return LocalRedirect("/users/login/");
             }
             else
             {

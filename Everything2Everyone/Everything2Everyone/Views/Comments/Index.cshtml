@@ -7,7 +7,7 @@
     {
         <div class="vw-article-comment">
             <div>
-                <div class="vw-comment-author vw-comment-author-article">On <a href="/Articles/Show/@comment.ArticleID">this article</a> ...</div>
+                <div class="vw-comment-author vw-comment-author-article">On <a href="/articles/show/@comment.ArticleID">this article</a> ...</div>
                 <div class="vw-comment-content">
                     @comment.Content
                 </div>
@@ -15,11 +15,11 @@
 
             <div class="vw-sidebar-category-edit">
 
-                <form method="GET" action="/Comments/Edit/@comment.CommentID">
+                <form method="GET" action="/comments/edit/@comment.CommentID">
                     <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
                 </form>
 
-                <form method="POST" action="/Comments/Delete/@comment.CommentID">
+                <form method="POST" action="/comments/delete/@comment.CommentID">
                     <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
                 </form>
             </div>

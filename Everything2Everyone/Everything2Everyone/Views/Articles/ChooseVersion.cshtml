@@ -15,12 +15,7 @@
        <div class="vw-article-link-editor">
             <a class="vw-article-link-category universal-link"
                 href="@(categoryBaseURL+ViewBag.CurrentArticleVersion.CategoryID)">@ViewBag.CurrentArticleVersion.Category.Title</a>
-            <div class="vw-article-link-date"> '@ViewBag.CurrentArticleVersion.CommitTitle' on</div>
-        </div>
-
-        <div class="vw-article-link-editor">
-            <p>OLAERIU VLAD MIHAI</p>
-            <div class="vw-article-link-date">@ViewBag.CurrentArticleVersion.CommitDate</div>
+            <div class="vw-article-link-date"> '@ViewBag.CurrentArticleVersion.CommitTitle' on @ViewBag.CurrentArticleVersion.CommitDate</div>
         </div>
 
         <div class="vw-article__status">• CURRENT</div>
@@ -42,12 +37,7 @@
             <div class="vw-article-link-editor">
                <a class="vw-article-link-category universal-link"
                 href="@(categoryBaseURL+article.CategoryID)">@article.Category.Title</a>
-               <div class="vw-article-link-date">'@article.CommitTitle' on</div>
-            </div>
-
-            <div class="vw-article-link-editor">
-                <p>OLAERIU VLAD MIHAI</p>
-                <div class="vw-article-link-date">Modified on: @article.CommitDate</div>
+               <div class="vw-article-link-date">'@article.CommitTitle' on @article.CommitDate</div>
             </div>
         </div>
 
