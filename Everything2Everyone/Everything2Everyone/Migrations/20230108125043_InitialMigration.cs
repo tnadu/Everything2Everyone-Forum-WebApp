@@ -28,11 +28,11 @@ namespace Everything2Everyone.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
-                    NickName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
-                    JoinDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    ShowPublicIdentity = table.Column<bool>(type: "bit", nullable: false),
+                    NickName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    JoinDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -209,7 +209,7 @@ namespace Everything2Everyone.Migrations
                     ArticleID = table.Column<int>(type: "int", nullable: false),
                     VersionID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryID = table.Column<int>(type: "int", nullable: true),
+                    CategoryID = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CommitTitle = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     CommitDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -260,7 +260,9 @@ namespace Everything2Everyone.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ArticleID = table.Column<int>(type: "int", nullable: false),
                     UserID = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Content = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    Content = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateEdited = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -1,6 +1,7 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Linq;
@@ -10,15 +11,18 @@ namespace Everything2Everyone.Controllers
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext DataBase;
-
-        public CategoriesController(ApplicationDbContext context)
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public CategoriesController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             DataBase = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
 
         [HttpPost]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult New(Category categoryToBeInserted)
         {
             if (ModelState.IsValid)
@@ -36,7 +40,7 @@ namespace Everything2Everyone.Controllers
             return Redirect("/articles/index/");
         }
 
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Edit(int categoryID)
         {
             Category category;
@@ -60,25 +64,24 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Edit(Category categoryToBeInserted)
         {
             if (ModelState.IsValid)
             {
                 Category category;
 
-                try
-                {
-                    category = DataBase.Categories.Find(categoryToBeInserted.CategoryID);
-                    category.Title = categoryToBeInserted.Title;
-                    DataBase.SaveChanges();
+                category = DataBase.Categories.Find(categoryToBeInserted.CategoryID);
 
-                    TempData["ActionMessage"] = "Category edited successfully";
-                }
-                catch
+                if (category == null)
                 {
                     TempData["ActionMessage"] = "No category with specified ID could be found.";
                 }
+
+                category.Title = categoryToBeInserted.Title;
+                DataBase.SaveChanges();
+
+                TempData["ActionMessage"] = "Category edited successfully";
 
                 return Redirect("/articles/index/");
             }
@@ -91,21 +94,20 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Delete(int categoryID)
         {
-            try
-            {
-                Category category = DataBase.Categories.Find(categoryID);
-                DataBase.Categories.Remove(category);
-                DataBase.SaveChanges();
-                TempData["ActionMessage"] = "Category successfully delete.";
-            }
-            catch
+            Category category = DataBase.Categories.Find(categoryID);
+
+            if (category == null)
             {
                 TempData["ActionMessage"] = "No category with specified ID could be found.";
             }
 
+            DataBase.Categories.Remove(category);
+            DataBase.SaveChanges();
+            TempData["ActionMessage"] = "Category successfully delete.";
+            
             return Redirect("/articles/index/");
         }
 

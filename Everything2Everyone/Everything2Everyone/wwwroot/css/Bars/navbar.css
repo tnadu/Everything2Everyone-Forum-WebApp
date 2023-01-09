@@ -35,15 +35,15 @@ NAVBAR LINKS */
 
 /* PROFILE DROPDOWN */
 .btn-drop {
-    background-color: var(--top-gradient);
-    ;
+    background: transparent;
     color: white;
-    padding: 16px;
     font-size: 16px;
     border: none;
     cursor: pointer;
     text-transform: uppercase;
 }
+
+.btn-drop img{ height: 40px; width: 40px;}
 
 .dropdown {
     position: relative;

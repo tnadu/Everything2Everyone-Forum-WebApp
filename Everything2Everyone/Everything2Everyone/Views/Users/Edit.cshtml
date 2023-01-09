@@ -39,11 +39,13 @@
     </div>
 
     <div class="vw-form-groups">
+
         <div class="vw-form-groups-items">
             <label class="vw-log-sign-label">Nick name:</label>
             <input name="NickName" type="text" value="@Model.NickName" />
             @Html.ValidationMessageFor(m => m.NickName, null, new { @class = "text-danger" })
         </div>
+
         <div class="vw-form-groups-items">
             <label class="vw-log-sign-label" style="visibility:hidden">.</label>
 
@@ -59,12 +61,13 @@
     </div>
 
     <div class="vw-form-groups-items">
-        @if (!User.IsInRole("Admin"))
+        @if (!User.IsInRole("Administrator"))
         {
             <label class="vw-log-sign-label">Role:</label>
-            <input name="CurrentRole" type="text" value="@ViewBag.CurrentUserRole" disabled/>
+            <input name="CurrentRole" type="text" value="@ViewBag.CurrentUserRoleName" disabled/>
+            <input name="NewRoleID" type="text" value="@ViewBag.CurrentUserRoleId" hidden/>
         }
-        @if (User.IsInRole("Admin"))
+        @if (User.IsInRole("Administrator"))
         {
             <label for="NewRoleID" class="vw-log-sign-label">Role:</label>
             @Html.DropDownListFor(m => m.NewRoleID, new SelectList(Model.FetchedRoles, "Value", "Text"), "Choose a role")
@@ -77,11 +80,20 @@
     </div>
 
     <button type="submit" class="btn-basic btn-edit" style="max-width: 5rem;">EDIT</button>
-    <br /><br />
-    <h1 class="small-title">Security:</h1>
-    <div class="vw-user-profile__btns">
-    <a href="/users/change-password/@Model.Id">Change password</a>
-    <a href="/users/change-email/@Model.Id">Change email</a>
-    <a href="/users/delete/@Model.Id">Permanently delete account</a>
-    </div>
 }
+
+<br /><br />
+<h1 class="small-title">Security:</h1>
+<div class="vw-user-profile__btns">
+<form action="/users/change-email/@Model.Id" method="get">
+    <button type="submit" class="btn-basic btn-edit" style="max-width: 7rem;">Change Email</button>
+</form>
+
+<form action="/users/change-password/@Model.Id" method="get">
+        <button type="submit" class="btn-basic btn-edit" style="max-width: 10rem;">Change Password</button>
+</form>
+
+<form id = "DeleteMe" method="post" action="/users/delete/@Model.Id">
+        <button type="submit" class="btn-basic btn-edit" style="max-width: 12rem;">Permanently Delete Account</button>
+</form>
+</div>

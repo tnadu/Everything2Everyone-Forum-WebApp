@@ -1,5 +1,6 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Everything2Everyone.Controllers
 {
@@ -15,9 +17,10 @@ namespace Everything2Everyone.Controllers
     {
         private readonly ApplicationDbContext DataBase;
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public ArticlesController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<Role> roleManager)
+
+        public ArticlesController (ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             DataBase = context;
             _userManager = userManager;
@@ -27,7 +30,7 @@ namespace Everything2Everyone.Controllers
 
         // intermediary method intended to guide the user through the process
         // of choosing a version based on which to modify their article
-        // [Authorize(Roles = "Editor,Admin")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult ChooseVersion(int articleID)
         {
             // fetching current article version from the database
@@ -83,7 +86,7 @@ namespace Everything2Everyone.Controllers
         // when a request is issued, the 'IsRestricted' attribute
         // of the specified article is set to its opposite, acting
         // like an on/off switch
-        // [Authorize(Roles="Administrator")]
+        [Authorize(Roles="Administrator")]
         public IActionResult Restrict(int articleID)
         {
             // Fetch categories for side menu
@@ -92,11 +95,9 @@ namespace Everything2Everyone.Controllers
             Article article;
 
             // making sure provided articleID is valid
-            try
-            {
-                article = DataBase.Articles.Find(articleID);
-            }
-            catch
+            article = DataBase.Articles.Find(articleID);
+            
+            if (article == null)
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
                 return Redirect("/articles/index/");
@@ -106,7 +107,7 @@ namespace Everything2Everyone.Controllers
             // editor validation will be pointlessly performed
             Authorize(article.UserID, articleID, article.IsRestricted);
 
-            article.IsRestricted = !article.IsRestricted;
+            article.IsRestricted = ! article.IsRestricted;
             DataBase.SaveChanges();
 
             return Redirect("/articles/show/" + articleID);
@@ -117,7 +118,7 @@ namespace Everything2Everyone.Controllers
         // When category is specified, the list of articles can be either unsorted or sorted
         // (chronologically/reverse chronologically/alphabetically/reverse alphabetically).
         // It is accesibile only to signed-in users of all kinds.
-        // [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Index(int? categoryID, int? sort, int? userSpecificMode)
         {
             // Fetch categories for side menu
@@ -127,7 +128,7 @@ namespace Everything2Everyone.Controllers
             var returnedArticles = DataBase.Articles.Include("Category").Include("Chapters"); // Include("Users");
 
             // filter - category is specified
-            ViewBag.CategoryName = categoryID;
+            ViewBag.CategoryName = null;
             if (categoryID != null)
             {
                 // making sure provided categoryID is valid
@@ -137,8 +138,6 @@ namespace Everything2Everyone.Controllers
                 if (!returnedArticles.Any())
                 {
                     returnedArticles = DataBase.Articles.Include("Category").Include("Chapters");
-                    ViewBag.CategoryName = null;
-                    // storing chosen category's title, when categoryID is not null, else storing null            
                 }
                 else
                     ViewBag.CategoryName = DataBase.Categories.Where(category => category.CategoryID == categoryID).First().Title;
@@ -167,12 +166,10 @@ namespace Everything2Everyone.Controllers
                 returnedArticles = returnedArticles.OrderByDescending(article => article.PublicationDate);
             }
 
-            //if (userSpecificMode != null)
-            //{
-            // will be implemented when roles and permissions are decided upon
-            // returnedArticles = returnedArticles.Where(article => article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
-            //}
+            if (userSpecificMode != null)
+            {
+               returnedArticles = returnedArticles.Where(article => article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
 
             // Search engine
             var searchInput = "";
@@ -240,7 +237,7 @@ namespace Everything2Everyone.Controllers
         // Method which returns the specified article's content and details, along with its
         // associated comments, category and user. From this view, the restrict, edit and
         // delete actions are accessible
-        // [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Show(int articleID)
         {
             // Fetch categories for side menu
@@ -275,6 +272,9 @@ namespace Everything2Everyone.Controllers
             returnedArticleBundle.Article = returnedArticle;
             returnedArticleBundle.Chapters = returnedChapters;
 
+            // variable that will hold the current userID
+            ViewBag.currentUserID = _userManager.GetUserId(User);
+
             // Fetch categories for side menu
             FetchCategories();
 
@@ -285,11 +285,10 @@ namespace Everything2Everyone.Controllers
         // because Views accept only one Model, we will use the POST Show method to add comments
         // to the corresponding article
         [HttpPost]
-        // [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Show([FromForm] Comment commentToBeInserted)
         {
-            commentToBeInserted.UserID = "fa1c312d-549a-42bd-8623-c1071cfd581e";
-            // commentToBeInserted.UserID = User.FindFirst(ClaimTypes.NameIdentifier).Value
+            commentToBeInserted.UserID = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             // at first, the dates are identical
             commentToBeInserted.DateAdded = DateTime.Now;
             commentToBeInserted.DateEdited = DateTime.Now;
@@ -306,7 +305,7 @@ namespace Everything2Everyone.Controllers
 
 
         // action returning the associated View
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult New()
         {
             // Fetch categories for side menu
@@ -329,7 +328,7 @@ namespace Everything2Everyone.Controllers
         // action inserting the new article and its associated
         // chapters into the database
         [HttpPost]
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult New(ArticleBundle articleBundle)
         {
             // Fetch categories for side menu
@@ -385,7 +384,7 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult Edit(int articleID, int versionID)
         {
             // the most recent version of the article is required, in order
@@ -479,7 +478,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult Edit(ArticleVersionBundle articleVersionBundle)
         {
             // Fetch categories for side menu
@@ -528,8 +527,8 @@ namespace Everything2Everyone.Controllers
 
                 // computing the currentVersionID, based on entries in ARTICLE_VERSIONS
                 int currentVersionID = (from articleVersion in DataBase.ArticleVersions
-                                        where articleVersion.ArticleID == articleVersionBundle.Article.ArticleID
-                                        select articleVersion.VersionID).Max();
+                                       where articleVersion.ArticleID == articleVersionBundle.Article.ArticleID
+                                       select articleVersion.VersionID).Max();
 
                 // processing each previously most recent chapter
                 foreach (Chapter oldChapter in currentArticle.Chapters)
@@ -587,17 +586,15 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult Delete(int articleID)
         {
             Article article;
 
             // making sure provided articleID is valid
-            try
-            {
-                article = DataBase.Articles.Find(articleID);
-            }
-            catch
+            article = DataBase.Articles.Find(articleID);
+            
+            if (article == null)
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
                 return Redirect("/articles/index/my-articles");
@@ -610,7 +607,7 @@ namespace Everything2Everyone.Controllers
 
             TempData["ActionMessage"] = "Article deleted successfully.";
 
-            // when an Admin deletes an article of a user other
+            // when an Administrator deletes an article of a user other
             // than himself, he is redirected to the Index page
             // if (article.UserId != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
             //      return Redirect("/articles/index");
@@ -656,7 +653,7 @@ namespace Everything2Everyone.Controllers
             //      return Redirect("/articles/show/" + articleID);
             // }
 
-            // if (User.IsInRole("Admin") && _userManager.IsInRole(userID, "Admin) && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
+            // if (User.IsInRole("Administrator") && _userManager.IsInRole(userID, "Administrator) && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
             //      TempData["ActionMessage"] = "You don't have permission to access this resource";
             //      return Redirect("/articles/show/" + articleID);
             // }

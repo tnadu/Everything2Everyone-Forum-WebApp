@@ -8,19 +8,19 @@
     <div class="thick-small-title">Manage users:</div>
     <div class="vw-users-grid">
         <!-- USER CARD     -->
-        @foreach (User user in ViewBag.Users)
+        @foreach (var user in ViewBag.Users)
         {
             <div class="vw-user-card">
                 <div class="vw-user-card__info">
-                    <h3>@user.NickName</h3>
-                    <h5>ROLUL</h5>
+                    <h3>@user.UserName</h3>
+                    <h5>@user.RoleName</h5>
                 </div>
                 <div class="vw-user-card__btns">
                     <!-- EDIT BUTTON FORM -->
                     @using (Html.BeginForm(actionName: "Edit",
                    controllerName: "Users",
                    method: FormMethod.Get,
-                   routeValues: new { UserID = @user.Id }))
+                   routeValues: new { UserID = @user.UserId }))
                     {
                         <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
                     }
@@ -29,7 +29,7 @@
                     @using (Html.BeginForm(actionName: "Delete",
                    controllerName: "Users",
                    method: FormMethod.Post,
-                   routeValues: new { UserID = @user.Id }))
+                   routeValues: new { UserID = @user.UserId }))
                     {
                         <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
                     }

@@ -1,7 +1,7 @@
 ﻿using Everything2Everyone.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Everything2Everyone.Data
 {
@@ -12,6 +12,7 @@ namespace Everything2Everyone.Data
         {
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<IdentityRole> Roles { get; set; }
         public DbSet<Article> Articles { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -55,12 +56,6 @@ namespace Everything2Everyone.Data
             .HasForeignKey(av => av.CategoryID)
             .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<Category>()
-            //.HasMany(c => c.ArticleVersions)
-            //.WithOne(av => av.Category)
-            //.HasForeignKey(c => c.CategoryID)
-            //.OnDelete(DeleteBehavior.ClientSetNull);
-
 
             // Chapters composite key
             modelBuilder.Entity<Chapter>()
@@ -82,15 +77,6 @@ namespace Everything2Everyone.Data
             .HasKey(c => new
             {
                 c.ChapterID,
-                c.ArticleID,
-                c.VersionID
-            });
-
-            modelBuilder.Entity<ChapterVersion>()
-            .HasOne(c => c.Article)
-            .WithMany(a => a.Chapters)
-            .HasForeignKey(c => new
-            {
                 c.ArticleID,
                 c.VersionID
             });

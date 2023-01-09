@@ -84,13 +84,17 @@
             
             <div class="vw-sidebar-category-edit">
 
-                <form method="GET" action="/Comments/Edit/@comment.CommentID">
-                    <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
-                </form>
+                <!-- Display edit options only if user is Administrator OR the one who posted-->
+                @if(ViewBag.currentUserID == comment.User.Id || this.User.IsInRole("Administrator")){
+                    <form method="GET" action="/Comments/Edit/@comment.CommentID">
+                        <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
+                    </form>
 
-                <form method="POST" action="/Comments/Delete/@comment.CommentID">
-                    <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
-                </form>
+                    <form method="POST" action="/Comments/Delete/@comment.CommentID">
+                        <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
+                    </form>
+                }
+
             </div>
         </div>
     }

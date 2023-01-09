@@ -4,7 +4,7 @@
 
 namespace Everything2Everyone.Migrations
 {
-    public partial class AddedUsersTable : Migration
+    public partial class RolesUpdate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

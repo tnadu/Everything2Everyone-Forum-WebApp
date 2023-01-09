@@ -16,7 +16,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<Role>()
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 var app = builder.Build();
@@ -83,11 +83,6 @@ app.MapControllerRoute(
     pattern: "articles/edit/{articleID}/{versionID}",
     defaults: new { controller = "Articles", action = "Edit" });
 
-app.MapControllerRoute(
-    name: "ArticlesEdit",
-    pattern: "articles/edit",
-    defaults: new { controller = "Articles", action = "Edit" });
-
 // DELETE
 app.MapControllerRoute(
     name: "ArticlesDelete",
@@ -105,13 +100,6 @@ app.MapControllerRoute(
     name: "ArticlesChooseVersion",
     pattern: "articles/choose-version/{articleID}",
     defaults: new { controller = "Articles", action = "ChooseVersion" });
-
-// Search article
-// TO DO 
-// app.MapControllerRoute(
-//    name: "ArticlesSearch",
-//    pattern: "Articles/Search/Search-string/{query?}",
-//    defaults: new { controller = "Articles", action = "Search" });
 
 // Categories routes
 // NEW

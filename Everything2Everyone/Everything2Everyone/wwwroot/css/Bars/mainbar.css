@@ -53,15 +53,19 @@
     text-decoration: none;
 }
 
-    .vw-article-link-title:hover {
-        text-decoration: underline;
-        cursor: pointer;
-    }
-
 .vw-article-link-category,
 .vw-article-link-title {
     font-weight: 600;
 }
+
+.vw-article-link-title:hover,
+.vw-article-link-category:hover {
+    text-decoration: underline;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.vw-article-link-category:hover { color: var(--color-stroke); }
 
 .vw-article-link-editor {
     display: flex;

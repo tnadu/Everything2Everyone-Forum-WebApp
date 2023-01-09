@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Everything2Everyone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221214141050_AddedPublicIdentity")]
-    partial class AddedPublicIdentity
+    [Migration("20230109120659_RolesUpdate")]
+    partial class RolesUpdate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "6.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -79,6 +79,7 @@ namespace Everything2Everyone.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VersionID"), 1L, 1);
 
                     b.Property<int?>("CategoryID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CommitDate")
@@ -307,10 +308,6 @@ namespace Everything2Everyone.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -327,8 +324,6 @@ namespace Everything2Everyone.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -413,17 +408,11 @@ namespace Everything2Everyone.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<string>");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -445,35 +434,6 @@ namespace Everything2Everyone.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("Everything2Everyone.Models.Role", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("UserId");
-
-                    b.HasDiscriminator().HasValue("Role");
-                });
-
-            modelBuilder.Entity("Everything2Everyone.Models.UserRole", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
-
-                    b.Property<string>("RoleId1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("RoleId1");
-
-                    b.HasIndex("UserId1");
-
-                    b.HasDiscriminator().HasValue("UserRole");
                 });
 
             modelBuilder.Entity("Everything2Everyone.Models.Article", b =>
@@ -504,7 +464,8 @@ namespace Everything2Everyone.Migrations
                     b.HasOne("Everything2Everyone.Models.Category", "Category")
                         .WithMany("ArticleVersions")
                         .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Article");
 
@@ -601,28 +562,6 @@ namespace Everything2Everyone.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Everything2Everyone.Models.Role", b =>
-                {
-                    b.HasOne("Everything2Everyone.Models.User", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("Everything2Everyone.Models.UserRole", b =>
-                {
-                    b.HasOne("Everything2Everyone.Models.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId1");
-
-                    b.HasOne("Everything2Everyone.Models.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId1");
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Everything2Everyone.Models.Article", b =>
                 {
                     b.Navigation("Chapters");
@@ -649,15 +588,6 @@ namespace Everything2Everyone.Migrations
                     b.Navigation("Articles");
 
                     b.Navigation("Comments");
-
-                    b.Navigation("Roles");
-
-                    b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("Everything2Everyone.Models.Role", b =>
-                {
-                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
