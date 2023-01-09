@@ -1,7 +1,29 @@
 ﻿@model Everything2Everyone.Models.User
 
-<h1 class="small-title">Edit your profile:</h1>
-@using (Html.BeginForm(actionName: "Edit", controllerName: "Users", method: FormMethod.Post, routeValues: new { UserID = @Model.Id })){
+@{
+    if (TempData.ContainsKey("ActionMessage"))
+    {
+        if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
+        {
+            <div class="alert-message alert-message__succeeded"
+         data-aos="fade-down"
+         data-aos-duration="1000">
+                <h4>@TempData["ActionMessage"]</h4>
+            </div>
+        }
+        else
+        {
+            <div class="alert-message alert-message__failed"
+         data-aos="fade-down"
+         data-aos-duration="1000">
+                <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
+            </div>
+        }
+    }
+}
+
+<h1 class="small-title">Current Profile:</h1>
+@using (Html.BeginForm(actionName: "Edit", controllerName: "Users", method: FormMethod.Post, routeValues: new { UserID = @Model.Id })) {
     <input type="hidden" name="Id" value="@Model.Id"/>
 
     <div class="vw-form-groups-items">
@@ -26,7 +48,7 @@
             <label class="vw-log-sign-label" style="visibility:hidden">.</label>
 
             <div style="display: flex;">
-                <h3 style="color: var(--text-secondary); margin-right: 12px;">Publicity: </h3>
+                <h3 style="color: var(--text-secondary); margin-right: 8px;">Show public identity:  </h3>
                 <label class="switch-publicity">
                     <input type="checkbox" name="ShowPublicIdentity" value="true">
                     <span class="slider round"></span>
@@ -36,5 +58,30 @@
         </div>
     </div>
 
-    <button type="submit" class="btn-basic btn-edit" style="max-width: 5rem;">Edit</button>
+    <div class="vw-form-groups-items">
+        @if (!User.IsInRole("Admin"))
+        {
+            <label class="vw-log-sign-label">Role:</label>
+            <input name="CurrentRole" type="text" value="@ViewBag.CurrentUserRole" disabled/>
+        }
+        @if (User.IsInRole("Admin"))
+        {
+            <label for="NewRoleID" class="vw-log-sign-label">Role:</label>
+            @Html.DropDownListFor(m => m.NewRoleID, new SelectList(Model.FetchedRoles, "Value", "Text"), "Choose a role")
+        }
+    </div>
+
+    <div class="vw-form-groups-items">
+        <label class="vw-log-sign-label">Join Date:</label>
+        <input name="DateJoined" type="text" value="@Html.DisplayFor(m => m.JoinDate)" disabled/>
+    </div>
+
+    <button type="submit" class="btn-basic btn-edit" style="max-width: 5rem;">EDIT</button>
+    <br /><br />
+    <h1 class="small-title">Security:</h1>
+    <div class="vw-user-profile__btns">
+    <a href="/users/change-password/@Model.Id">Change password</a>
+    <a href="/users/change-email/@Model.Id">Change email</a>
+    <a href="/users/delete/@Model.Id">Permanently delete account</a>
+    </div>
 }

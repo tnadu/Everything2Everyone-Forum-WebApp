@@ -22,13 +22,16 @@ namespace Everything2Everyone.Models
         [MinLength(5, ErrorMessage = "Title is required. Length must be between 5 and 50 characters.")]
         public string Title { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy - HH:mm}")]
         public DateTime PublicationDate { get; set; }
 
         [Required(ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
         [MaxLength(20, ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
         [MinLength(5, ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy - HH:mm}")]
         public string CommitTitle { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy - HH:mm}")]
         public DateTime CommitDate { get; set; }
 
         public bool IsRestricted { get; set; }

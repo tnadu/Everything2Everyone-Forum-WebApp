@@ -1,6 +1,6 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,20 +14,22 @@ namespace Everything2Everyone.Controllers
     public class ArticlesController : Controller
     {
         private readonly ApplicationDbContext DataBase;
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<Role> _roleManager;
 
-        public ArticlesController (ApplicationDbContext context)
+        public ArticlesController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             DataBase = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
 
         // intermediary method intended to guide the user through the process
         // of choosing a version based on which to modify their article
+        // [Authorize(Roles = "Editor,Admin")]
         public IActionResult ChooseVersion(int articleID)
         {
-            // Fetch categories for side menu
-            FetchCategories();
-
             // fetching current article version from the database
             Article currentArticleVersion;
 
@@ -39,43 +41,49 @@ namespace Everything2Everyone.Controllers
             catch
             {
                 TempData["ActionMessage"] = "No article with specified ID could be found.";
-                return Redirect("/articles/index/");
+                return Redirect("/articles/index");
             }
+
+            Authorize(currentArticleVersion.UserID, articleID, currentArticleVersion.IsRestricted);
 
             // fetching all previous article versions from the database
             var articleVersions = DataBase.ArticleVersions.Include("Category").Where(articleVersion => articleVersion.ArticleID == articleID)
                                                                               .OrderByDescending(articleVersion => articleVersion.VersionID);
-            // FOR PAGINATION
-            /////////////////
-            // chose how many articles we want to display
-            int _articlesPerPage = 10;
-            // because the number of articles is variable, we need to check how many exist
-            int totalArticles = articleVersions.Count();
-            // take the current page of articles from the View
-            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
-            // 0th page: offset = 0
-            // 1st page: offset = 10
-            // 2nd page: offset = 20
-            // offset = number of articles already displayed
+
+            // pagination
+            int articlesPerPage = 10;
+            int numberOfArticles = articleVersions.Count();
+            var currentPageNumber = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            var lastPage = Convert.ToInt32(Math.Ceiling((float)numberOfArticles / (float)articlesPerPage));
+
+            // <=1st page: offset = 0
+            // 2nd page: offset = 10
+            // ...
+            // >=last page: offset = 10 * (last page - 1)
             var offset = 0;
-            if (!currentPage.Equals(0))
-            {
-                offset = (currentPage - 1) * _articlesPerPage;
-            }
+            if (currentPageNumber <= 1 || lastPage == 1 || lastPage == 0)
+                ViewBag.CurrentArticleVersion = currentArticleVersion;
+            else if (currentPageNumber >= lastPage)
+                offset = (lastPage - 1) * articlesPerPage;
+            else
+                offset = (currentPageNumber - 1) * articlesPerPage;
+            articleVersions = (IOrderedQueryable<ArticleVersion>)articleVersions.Skip(offset).Take(articlesPerPage);
 
-            // take the corresponding articles depending on what page are we on
-            var paginatedArticles = articleVersions.Skip(offset).Take(_articlesPerPage);
-            // take the number of the last page
-            ViewBag.lastPage = Math.Ceiling((float)totalArticles / (float)_articlesPerPage);
-            ViewBag.articleVersions = paginatedArticles;
+            ViewBag.articleVersions = articleVersions;
+            ViewBag.articleID = articleID;
+            ViewBag.lastPage = lastPage;
 
-            return View(currentArticleVersion);
+            // Fetch categories for side menu
+            FetchCategories();
+
+            return View();
         }
 
 
         // when a request is issued, the 'IsRestricted' attribute
         // of the specified article is set to its opposite, acting
         // like an on/off switch
+        // [Authorize(Roles="Administrator")]
         public IActionResult Restrict(int articleID)
         {
             // Fetch categories for side menu
@@ -94,7 +102,11 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index/");
             }
 
-            article.IsRestricted = ! article.IsRestricted;
+            // the same method can be reused, even though the
+            // editor validation will be pointlessly performed
+            Authorize(article.UserID, articleID, article.IsRestricted);
+
+            article.IsRestricted = !article.IsRestricted;
             DataBase.SaveChanges();
 
             return Redirect("/articles/show/" + articleID);
@@ -105,7 +117,7 @@ namespace Everything2Everyone.Controllers
         // When category is specified, the list of articles can be either unsorted or sorted
         // (chronologically/reverse chronologically/alphabetically/reverse alphabetically).
         // It is accesibile only to signed-in users of all kinds.
-
+        // [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Index(int? categoryID, int? sort, int? userSpecificMode)
         {
             // Fetch categories for side menu
@@ -157,38 +169,37 @@ namespace Everything2Everyone.Controllers
 
             //if (userSpecificMode != null)
             //{
-                // will be implemented when roles and permissions are decided upon
-                // returnedArticles = returnedArticles.Where(article => article.UserID == _userManager.GetUserId(User));
-                
+            // will be implemented when roles and permissions are decided upon
+            // returnedArticles = returnedArticles.Where(article => article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
             //}
 
 
-            // FOR PAGINATION
-            /////////////////
-            // chose how many articles we want to display
-            int _articlesPerPage = 10;
-            // because the number of articles is variable, we need to check how many exist
-            int totalArticles = returnedArticles.Count();
-            // take the current page of articles from the View
-            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
-            // 0th page: offset = 0
-            // 1st page: offset = 10
-            // 2nd page: offset = 20
-            // offset = number of articles already displayed
-            var offset = 0;
-            if (!currentPage.Equals(0))
-            {
-                offset = (currentPage - 1) * _articlesPerPage;
-            }
+            // pagination
+            int articlesPerPage = 10;
+            int numberOfArticles = returnedArticles.Count();
+            var currentPageNumber = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            var lastPage = Convert.ToInt32(Math.Ceiling((float)numberOfArticles / (float)articlesPerPage));
 
-            // take the corresponding articles depending on what page are we on
-            var paginatedArticles = returnedArticles.Skip(offset).Take(_articlesPerPage);
-            // take the number of the last page
-            ViewBag.lastPage = Math.Ceiling((float)totalArticles / (float)_articlesPerPage);
-            ViewBag.CurrentArticleQuery = paginatedArticles;
+            // <=1st page: offset = 0
+            // 2nd page: offset = 10
+            // ...
+            // >=last page: offset = 10 * (last page - 1)
+            var offset = 0;
+            if (lastPage > 1)
+            {
+                if (currentPageNumber >= lastPage)
+                    offset = (lastPage - 1) * articlesPerPage;
+                else if (currentPageNumber > 1)
+                    offset = (currentPageNumber - 1) * articlesPerPage;
+            }
+            returnedArticles = returnedArticles.Skip(offset).Take(articlesPerPage);
+
+            ViewBag.CurrentArticleQuery = returnedArticles;
             ViewBag.CategoryID = categoryID;
             ViewBag.Sorting = sort;
             ViewBag.UserSpecified = userSpecificMode;
+            ViewBag.lastPage = lastPage;
 
             // message received
             if (TempData.ContainsKey("ActionMessage"))
@@ -203,6 +214,7 @@ namespace Everything2Everyone.Controllers
         // Method which returns the specified article's content and details, along with its
         // associated comments, category and user. From this view, the restrict, edit and
         // delete actions are accessible
+        // [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Show(int articleID)
         {
             // Fetch categories for side menu
@@ -216,7 +228,7 @@ namespace Everything2Everyone.Controllers
             {
                 returnedArticle = DataBase.Articles.Include("Category").Include("Chapters")
                                                       .Include("Comments").Include("User").Where(article => article.ArticleID == articleID).First();
-                returnedChapters = DataBase.Chapters.Where(returnedArticle => returnedArticle.ArticleID == articleID).ToList(); 
+                returnedChapters = DataBase.Chapters.Where(returnedArticle => returnedArticle.ArticleID == articleID).ToList();
             }
             catch
             {
@@ -242,14 +254,15 @@ namespace Everything2Everyone.Controllers
             return View(returnedArticleBundle);
         }
 
+
         // because Views accept only one Model, we will use the POST Show method to add comments
         // to the corresponding article
         [HttpPost]
-        // [Authorize(Roles = "Editor,Admin")]
+        // [Authorize(Roles = "User,Editor,Admin")]
         public IActionResult Show([FromForm] Comment commentToBeInserted)
         {
-            // DEFAULT - TO BE DELETED
-            commentToBeInserted.UserID = "318d855d-4d7a-4b5e-a293-40720ca8faac";
+            commentToBeInserted.UserID = "fa1c312d-549a-42bd-8623-c1071cfd581e";
+            // commentToBeInserted.UserID = User.FindFirst(ClaimTypes.NameIdentifier).Value
             // at first, the dates are identical
             commentToBeInserted.DateAdded = DateTime.Now;
             commentToBeInserted.DateEdited = DateTime.Now;
@@ -264,7 +277,9 @@ namespace Everything2Everyone.Controllers
             return Redirect("/articles/show/" + commentToBeInserted.ArticleID);
         }
 
+
         // action returning the associated View
+        // [Authorize(Roles = "Editor,Administrator")]
         public IActionResult New()
         {
             // Fetch categories for side menu
@@ -287,6 +302,7 @@ namespace Everything2Everyone.Controllers
         // action inserting the new article and its associated
         // chapters into the database
         [HttpPost]
+        // [Authorize(Roles = "Editor,Administrator")]
         public IActionResult New(ArticleBundle articleBundle)
         {
             // Fetch categories for side menu
@@ -316,7 +332,7 @@ namespace Everything2Everyone.Controllers
 
                 DataBase.Articles.Add(articleBundle.Article);
                 DataBase.SaveChanges();
-                
+
                 // select the article with the biggest ID, because that will be
                 // the last article inserted in the Database,
                 // which is the article inserted above
@@ -342,26 +358,36 @@ namespace Everything2Everyone.Controllers
         }
 
 
+        // [Authorize(Roles = "Editor,Administrator")]
         public IActionResult Edit(int articleID, int versionID)
         {
-            // Fetch categories for side menu
-            FetchCategories();
-
-            // message received
-            if (TempData.ContainsKey("ActionMessage"))
+            // the most recent version of the article is required, in order
+            // the authorize the user who attempts to edit any other version
+            // (access to IsRestricted is necessary);
+            // the category of said article will also be requested, in case the
+            // requested version is indeed the most recent one
+            Article article;
+            // making sure provided articleID is valid
+            try
             {
-                ViewBag.DisplayedMessage = TempData["ActionMessage"];
+                article = DataBase.Articles.Include("Category").Where(article => article.ArticleID == articleID).First();
             }
+            catch
+            {
+                TempData["ActionMessage"] = "No article with specified ID could be found.";
+                return Redirect("/articles/index?userSpecificMode=1");
+            }
+
+            Authorize(article.UserID, articleID, article.IsRestricted);
+
 
             ArticleVersionBundle articleVersionBundle = new ArticleVersionBundle();
             articleVersionBundle.Article = new ArticleVersion();
-            articleVersionBundle.Chapters = new List<ChapterVersion>();
-            articleVersionBundle.Categories = StoreCategories();
 
             // the request involves editing a version other than the most recent version of the article with the provided articleID
             if (versionID != -1)
             {
-                // making sure provided articleID and versionID are valid
+                // making sure provided versionID is valid
                 try
                 {
                     // storing chosen article version into the bundled object
@@ -370,8 +396,8 @@ namespace Everything2Everyone.Controllers
                 }
                 catch
                 {
-                    TempData["ActionMessage"] = "No article with specified ID and version ID could be found.";
-                    return Redirect("/articles/index/my-articles");
+                    TempData["ActionMessage"] = "No version with specified version ID could be found.";
+                    return Redirect("/articles/index?userSpecificMode=1");
                 }
 
                 // storing chosen article's chapters in to bundled object
@@ -381,21 +407,6 @@ namespace Everything2Everyone.Controllers
             // the request involves editing the most recent version of the article with the provided articleID
             else
             {
-                // the most recent version is stored in the ARTICLES table,
-                // which means that, in order to access the info within, an
-                // 'Article' object is required
-                Article article;
-                // making sure provided articleID is valid
-                try
-                {
-                    article = DataBase.Articles.Include("Category").Where(article => article.ArticleID == articleID).First();
-                }
-                catch
-                {
-                    TempData["ActionMessage"] = "No article with specified ID and version ID could be found.";
-                    return Redirect("/articles/index/my-articles");
-                }
-
                 // copying values into the newly created 'ArticleVersionBundle' object
                 articleVersionBundle.Article.ArticleID = article.ArticleID;
                 articleVersionBundle.Article.CategoryID = article.CategoryID;
@@ -403,10 +414,11 @@ namespace Everything2Everyone.Controllers
                 articleVersionBundle.Article.CommitTitle = article.CommitTitle;
                 articleVersionBundle.Article.CommitDate = article.CommitDate;
 
+                articleVersionBundle.Chapters = new List<ChapterVersion>();
                 // since the chapters associated with the most recent version of the specified article
                 // are stored in the CHAPTERS table, each chapter's information must be inserted sequentially
                 // into the 'ArticleVersionBundle' object
-                foreach (Chapter chapter in DataBase.Chapters.Where(chapter => chapter.ArticleID == articleID)) 
+                foreach (Chapter chapter in DataBase.Chapters.Where(chapter => chapter.ArticleID == articleID))
                 {
                     ChapterVersion chapterVersion = new ChapterVersion();
                     chapterVersion.ChapterID = chapter.ChapterID;
@@ -417,10 +429,19 @@ namespace Everything2Everyone.Controllers
 
                     // adding the chapter into the bundled object
                     articleVersionBundle.Chapters.Add(chapterVersion);
-
-                    Console.WriteLine(articleVersionBundle.Chapters[articleVersionBundle.Chapters.Count-1].ContentUnparsed);
                 }
             }
+
+            articleVersionBundle.Categories = StoreCategories();
+
+            // message received
+            if (TempData.ContainsKey("ActionMessage"))
+            {
+                ViewBag.DisplayedMessage = TempData["ActionMessage"];
+            }
+
+            // Fetch categories for side menu
+            FetchCategories();
 
             // storing categories which will be sent in the front
             // end for the dropdown selector
@@ -431,6 +452,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
+        // [Authorize(Roles = "Editor,Administrator")]
         public IActionResult Edit(ArticleVersionBundle articleVersionBundle)
         {
             // Fetch categories for side menu
@@ -449,12 +471,16 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index/");
             }
 
+            Authorize(currentArticle.UserID, currentArticle.ArticleID, currentArticle.IsRestricted);
+
             if (ModelState.IsValid)
             {
                 // there must be at least one chapter associated with every article
-                if (articleVersionBundle.Chapters.Count == 0)
+                if (articleVersionBundle.Chapters == null)
                 {
+                    articleVersionBundle.Chapters = new List<ChapterVersion>();
                     articleVersionBundle.Categories = StoreCategories();
+
                     TempData["ActionMessage"] = "An article must contain at least one chapter";
                     return View(articleVersionBundle);
                 }
@@ -473,12 +499,10 @@ namespace Everything2Everyone.Controllers
                 DataBase.ArticleVersions.Add(oldArticleToBeInserted);
                 DataBase.SaveChanges();
 
-                // computing the currentVersionID, based on entries of ARTICLE_VERSIONS
-                var versionIDs = from articleVersion in DataBase.ArticleVersions
-                                       where articleVersion.ArticleID == articleVersionBundle.Article.ArticleID
-                                       select articleVersion.VersionID;
-
-                int currentVersionID = versionIDs.Max();
+                // computing the currentVersionID, based on entries in ARTICLE_VERSIONS
+                int currentVersionID = (from articleVersion in DataBase.ArticleVersions
+                                        where articleVersion.ArticleID == articleVersionBundle.Article.ArticleID
+                                        select articleVersion.VersionID).Max();
 
                 // processing each previously most recent chapter
                 foreach (Chapter oldChapter in currentArticle.Chapters)
@@ -511,7 +535,7 @@ namespace Everything2Everyone.Controllers
                 DataBase.SaveChanges();
 
                 // storing current chapter versions, based on the 'ArticleVersionBundle' received through the form
-                foreach(ChapterVersion newChapterVersion in articleVersionBundle.Chapters)
+                foreach (ChapterVersion newChapterVersion in articleVersionBundle.Chapters)
                 {
                     Chapter newChapter = new Chapter();
                     newChapter.ChapterID = newChapterVersion.ChapterID;
@@ -527,7 +551,7 @@ namespace Everything2Everyone.Controllers
                 TempData["ActionMessage"] = "Article edited successfully.";
                 return Redirect("/articles/show/" + articleVersionBundle.Article.ArticleID);
             }
-            
+
             // bundled object wasn't valid, so it is sent back
             // to the view for the necessary modifications
             articleVersionBundle.Categories = StoreCategories();
@@ -536,6 +560,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
+        // [Authorize(Roles = "Editor,Administrator")]
         public IActionResult Delete(int articleID)
         {
             Article article;
@@ -551,11 +576,20 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index/my-articles");
             }
 
+            Authorize(article.UserID, articleID, article.IsRestricted);
+
             DataBase.Articles.Remove(article);
             DataBase.SaveChanges();
 
             TempData["ActionMessage"] = "Article deleted successfully.";
-            return Redirect("/articles/index/my-articles");
+
+            // when an Admin deletes an article of a user other
+            // than himself, he is redirected to the Index page
+            // if (article.UserId != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
+            //      return Redirect("/articles/index");
+            // }
+
+            return Redirect("/articles/index?userSpecificMode=1");
         }
 
 
@@ -584,6 +618,24 @@ namespace Everything2Everyone.Controllers
         public void FetchCategories()
         {
             ViewBag.GlobalCategories = DataBase.Categories.OrderBy(category => category.Title);
+        }
+
+
+        [NonAction]
+        public IActionResult Authorize(string userID, int articleID, bool isRestricted)
+        {
+            // if (User.IsInRole("Editor") && (userID != User.FindFirst(ClaimTypes.NameIdentifier).Value || isRestricted)) {
+            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
+            //      return Redirect("/articles/show/" + articleID);
+            // }
+
+            // if (User.IsInRole("Admin") && _userManager.IsInRole(userID, "Admin) && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value) {
+            //      TempData["ActionMessage"] = "You don't have permission to access this resource";
+            //      return Redirect("/articles/show/" + articleID);
+            // }
+
+            // the user was successfully authorized
+            return new StatusCodeResult(200);
         }
     }
 }

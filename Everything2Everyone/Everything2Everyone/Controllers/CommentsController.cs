@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Everything2Everyone.Controllers
 {
@@ -19,25 +20,14 @@ namespace Everything2Everyone.Controllers
         }
 
         // [Authorize(Roles = "User,Editor,Admin")]
-        public IActionResult MyComments()
+        public IActionResult Index()
         {
-            // The user will be the user who is currently using the app => TO DO 
-            var userID = "318d855d-4d7a-4b5e-a293-40720ca8faac";
-
             FetchCategories();
 
-            try
-            {
-                var comments = DataBase.Comments.Where(comment => comment.UserID == userID);
-                //  var comments = DataBase.Comments.Where(comment => comment.UserID == _userManager.GetUserById(User))
-                ViewBag.UserComments = comments;
-                return View();
-            }
-            catch
-            {
-                TempData["ActionMessage"] = "No user with specified ID could be found!";
-                return Redirect("/articles/index");
-            }
+            var comments = DataBase.Comments.Where(comment => comment.UserID == "fa1c312d-549a-42bd-8623-c1071cfd581e");
+            //var comments = DataBase.Comments.Where(comment => comment.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ViewBag.UserComments = comments;
+            return View();
         }
 
         // [Authorize(Roles = "User,Editor,Admin")]
@@ -50,12 +40,11 @@ namespace Everything2Everyone.Controllers
             {
                 comment = DataBase.Comments.Where(comment => comment.CommentID == commentID).First();
 
-                //if(comment.UserID != _userManager.GetUserById(User))
+                //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 // {
                 //    TempData["ActionMessage"] = "You do not have permission to edit this comment!";
                 //    return Redirect("/articles/show/" + comment.ArticleID);
                 //}
-                ViewBag.ArticleCommented = DataBase.Articles.Where(article => article.ArticleID == comment.ArticleID).First();
 
             }
             catch
@@ -66,6 +55,9 @@ namespace Everything2Everyone.Controllers
 
             // Fetch categories for side menu
             FetchCategories();
+            // sending the article to the front-end, to prompt the user with
+            // details about the article corresponding to the current comment
+            ViewBag.ArticleOfComment = DataBase.Articles.Where(article => article.ArticleID == comment.ArticleID).First();
 
             return View(comment);
         }
@@ -82,7 +74,8 @@ namespace Everything2Everyone.Controllers
                 try
                 {
                     comment = DataBase.Comments.Find(commentToBeInserted.CommentID);
-                    //if(comment.UserID != _userManager.GetUserById(User))
+
+                    //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                     // {
                     //    TempData["ActionMessage"] = "You do not have permission to edit this comment!";
                     //    return Redirect("/articles/show/" + comment.ArticleID);
@@ -99,13 +92,15 @@ namespace Everything2Everyone.Controllers
                 comment.DateEdited = DateTime.Now;
                 DataBase.SaveChanges();
 
+                TempData["ActionMessage"] = "Comment successfully edited.";
                 return Redirect("/articles/show/" + comment.ArticleID);
             }
 
             // Fetch categories for side menu
             FetchCategories();
-            // Complete the ViewBag again
-            ViewBag.ArticleCommented = DataBase.Articles.Where(article => article.ArticleID == commentToBeInserted.ArticleID).First();
+            // sending the article to the front-end, to prompt the user with
+            // details about the article corresponding to the current comment
+            ViewBag.ArticleOfComment = DataBase.Articles.Where(article => article.ArticleID == commentToBeInserted.ArticleID).First();
 
             return View(commentToBeInserted);
         }
@@ -119,17 +114,16 @@ namespace Everything2Everyone.Controllers
             {
                 Comment commentToBeDeleted = DataBase.Comments.Find(commentID);
 
-                //if(commentToBeDeleted.UserID != _userManager.GetUserById(User))
+                //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 // {
                 //    TempData["ActionMessage"] = "You do not have permission to delete this comment!";
-                //    return Redirect("/articles/show/" + commentToBeDeleted.ArticleID);
+                //    return Redirect("/articles/show/" + comment.ArticleID);
                 //}
 
                 DataBase.Comments.Remove(commentToBeDeleted);
                 DataBase.SaveChanges();
 
                 TempData["ActionMessage"] = "Comment successfully deleted.";
-   
                 return Redirect("/articles/show/" + commentToBeDeleted.ArticleID);
             }
             catch
@@ -140,7 +134,8 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        // method which stores all categories into a viewbag item, in order to be shown in the side-menu partial view
+        // method which stores all categories into a viewbag item,
+        // in order to be displayed in the side-menu partial view
         [NonAction]
         public void FetchCategories()
         {

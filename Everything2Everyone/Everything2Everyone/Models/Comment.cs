@@ -18,8 +18,10 @@ namespace Everything2Everyone.Models
         [MinLength(1, ErrorMessage = "Content is required. Length must be non-null and must not exceed 500 characters.")]
         public string Content { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy - HH:mm}")]
         public DateTime DateAdded { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy - HH:mm}")]
         public DateTime DateEdited { get; set; }
 
         public virtual Article? Article { get; set; }

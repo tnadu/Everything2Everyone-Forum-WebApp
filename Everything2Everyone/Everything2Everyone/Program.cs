@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,11 +16,16 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)// UNCOMMENT WHEN IMPLEMENTING ROLES -> .AddRoles<IdentityRole>()
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<Role>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
-
 var app = builder.Build();
+
+using(var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -143,7 +149,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "MyComments",
     pattern: "/comments/my-comments",
-    defaults: new { controller = "Comments", action = "MyComments" });
+    defaults: new { controller = "Comments", action = "Index" });
 
 // USERS
 // Index - Manage users
@@ -151,12 +157,6 @@ app.MapControllerRoute(
     name: "ManageUsers",
     pattern: "/users/index",
     defaults: new { controller = "Users", action = "Index" });
-
-// MyProfile
-app.MapControllerRoute(
-    name: "MyProfile",
-    pattern: "/users/my-profile",
-    defaults: new { controller = "Users", action = "MyProfile" });
 
 // Delete
 app.MapControllerRoute(

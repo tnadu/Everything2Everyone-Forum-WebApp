@@ -27,6 +27,7 @@ namespace Everything2Everyone.Models
         [MinLength(5, ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
         public string CommitTitle { get; set; } = "CommitTitle";
 
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy - HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime CommitDate { get; set; }
 
         public virtual Article? Article { get; set; }
