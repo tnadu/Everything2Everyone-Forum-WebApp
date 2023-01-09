@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
+
 namespace Everything2Everyone.Controllers
 {
     public class UsersController : Controller
@@ -28,17 +29,18 @@ namespace Everything2Everyone.Controllers
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult ChangeEmail(string userID)
         {
+            // user, editor authorization
             if (!User.IsInRole("Administrator") && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
             {
-                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
 
             EmailChange changeEmail = new EmailChange();
 
-            // when the provided userID doesn't exist, the IsInRole() method throws an exception;
+            // when the provided userID doesn't exist, the linq query throws an exception;
             // if an Administrator's account was compromised and the bad actor intends to do reconnaissance
-            // by trying random ID's, they won't be prompted an error message which would clearly
+            // by trying random IDs, they won't be prompted an error message which would clearly
             // indicate that the user doesn't exist, making it more difficult for them to script
             // such a technique (they have to also some browser automation to fill in the inputs,
             // before finally being prompted with the error message)
@@ -49,7 +51,7 @@ namespace Everything2Everyone.Controllers
 
                 if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 {
-                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    TempData["ActionMessage"] = "You don't have permission to access this resource.";
                     return Redirect("/users/index");
                 }
 
@@ -92,12 +94,14 @@ namespace Everything2Everyone.Controllers
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult ChangeEmail(EmailChange emailChange)
         {
+            // user, editor authorization
             if (!User.IsInRole("Administrator") && emailChange.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
             {
-                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
 
+            // admin authorization => fails when admin attempts to change another admin's email
             try
             {
                 bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == emailChange.UserID).Select(u => u.RoleId).First() ==
@@ -105,13 +109,13 @@ namespace Everything2Everyone.Controllers
 
                 if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && emailChange.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 {
-                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    TempData["ActionMessage"] = "You don't have permission to access this resource.";
                     return Redirect("/users/index");
                 }
             }
             catch
             {
-                TempData["ActionMessage"] = "No user with the specified ID could be found.";
+                TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
@@ -119,8 +123,8 @@ namespace Everything2Everyone.Controllers
 
             var hasher = new PasswordHasher<User>();
 
+            // verifying that the attempting user entered the correct password
             User requestingUser = DataBase.Users.Where(user => user.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value).First();
-            // the hash of the provided password must be identical to that stored in the database
             if (hasher.VerifyHashedPassword(requestingUser, requestingUser.PasswordHash, emailChange.Password) == PasswordVerificationResult.Failed)
             {
                 TempData["ActionMessage"] = "Wrong password.";
@@ -154,12 +158,14 @@ namespace Everything2Everyone.Controllers
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult ChangePassword(string userID)
         {
+            // user, editor authorization
             if (!User.IsInRole("Administrator") && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
             {
-                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
 
+            // admin authorization => fails when admin attempts to change another admin's password
             try
             {
                 bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == userID).Select(u => u.RoleId).First() ==
@@ -167,13 +173,13 @@ namespace Everything2Everyone.Controllers
 
                 if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 {
-                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    TempData["ActionMessage"] = "You don't have permission to access this resource.";
                     return Redirect("/users/index");
                 }
             }
             catch
             {
-                TempData["ActionMessage"] = "No user with the specified ID could be found.";
+                TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
@@ -195,12 +201,14 @@ namespace Everything2Everyone.Controllers
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult ChangePassword(PasswordChange passwordChange)
         {
+            // user, editor authorization
             if (!User.IsInRole("Administrator") && passwordChange.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
             {
-                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
 
+            // admin authorization => fails when admin attempts to change another admin's password
             try
             {
                 bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == passwordChange.UserID).Select(u => u.RoleId).First() ==
@@ -208,13 +216,13 @@ namespace Everything2Everyone.Controllers
 
                 if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && passwordChange.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 {
-                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    TempData["ActionMessage"] = "You don't have permission to access this resource.";
                     return Redirect("/users/index");
                 }
             }
             catch
             {
-                TempData["ActionMessage"] = "No user with the specified ID could be found.";
+                TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
@@ -222,8 +230,8 @@ namespace Everything2Everyone.Controllers
 
             var hasher = new PasswordHasher<User>();
 
+            // verifying that the attempting user entered the correct password
             User requestingUser = DataBase.Users.Where(user => user.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value).First();
-            // the hash of the provided password must be identical to that stored in the database
             if (hasher.VerifyHashedPassword(requestingUser, requestingUser.PasswordHash, passwordChange.CurrentPassword) == PasswordVerificationResult.Failed)
             {
                 TempData["ActionMessage"] = "Wrong password.";
@@ -288,17 +296,19 @@ namespace Everything2Everyone.Controllers
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Edit(string userID)
         {
+            // user, editor authorization
             if (!User.IsInRole("Administrator") && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
             {
-                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
 
             User user;
 
-            // when the provided userID doesn't exist, the IsInRole() method throws an exception;
+            // admin authorization => fails when admin attempts to edit another admin;
+            // when the provided userID doesn't exist, the linq query throws an exception;
             // if an Administrator's account was compromised and the bad actor intends to do reconnaissance
-            // by trying random ID's, they won't be prompted an error message which would clearly
+            // by trying random IDs, they won't be prompted an error message which would clearly
             // indicate that the user doesn't exist, making it more difficult for them to script
             // such a technique (they have to also some browser automation to fill in the inputs,
             // before finally being prompted with the error message)
@@ -309,7 +319,7 @@ namespace Everything2Everyone.Controllers
 
                 if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 {
-                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    TempData["ActionMessage"] = "You don't have permission to access this resource.";
                     return Redirect("/users/index");
                 }
 
@@ -357,8 +367,8 @@ namespace Everything2Everyone.Controllers
                 ViewBag.CurrentUserRoleName = roles[random.Next(roles.Length)];
 
                 // join date generation
-                DateTime firstRegisterDay = new DateTime(2022, 10, 1);                              // the date the platform went public and registration was open
-                int validJoinDateInterval = (DateTime.Now - firstRegisterDay).Days;                 // computing the number of days that have passed since
+                DateTime firstRegisterDay = new DateTime(2022, 10, 1);                              // the date the platform went public and registration was open;
+                int validJoinDateInterval = (DateTime.Now - firstRegisterDay).Days;                 // computing the number of days that have passed since;
                 user.JoinDate = firstRegisterDay.AddDays(random.Next(validJoinDateInterval + 1));   // the join date will be generated by adding a random number of
                                                                                                     // days, with a max value equal to that generated earlier
             }
@@ -379,12 +389,14 @@ namespace Everything2Everyone.Controllers
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Edit(User userToBeInserted)
         {
+            // user, editor authorization
             if (!User.IsInRole("Administrator") && userToBeInserted.Id != User.FindFirst(ClaimTypes.NameIdentifier).Value)
             {
-                TempData["ActionMessage"] = "You don't have permission to access this resource";
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
 
+            // admin authorization => fails when admin attempts to edit another admin
             try
             {
                 bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == userToBeInserted.Id).Select(u => u.RoleId).First() ==
@@ -392,20 +404,20 @@ namespace Everything2Everyone.Controllers
 
                 if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && userToBeInserted.Id != User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 {
-                    TempData["ActionMessage"] = "You don't have permission to access this resource";
+                    TempData["ActionMessage"] = "You don't have permission to access this resource.";
                     return Redirect("/users/index");
                 }
             }
             catch
             {
-                TempData["ActionMessage"] = "No user with the specified ID could be found.";
+                TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
             // making sure provided roleID is valid            
             if (DataBase.Roles.Find(userToBeInserted.NewRoleID) == null)
             {
-                TempData["ActionMessage"] = "No user or role with specified ID could be found.";
+                TempData["ActionMessage"] = "No role with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
@@ -414,9 +426,11 @@ namespace Everything2Everyone.Controllers
             {
                 User user = DataBase.Users.Find(userToBeInserted.Id);
 
+                // changing of roles
                 if (User.IsInRole("Administrator")) {
                     string CurrentRoleId = DataBase.UserRoles.Where(userRole => userRole.UserId == userToBeInserted.Id).Select(u => u.RoleId).First();
 
+                    // admin didn't select a role => User will be set by default
                     if (userToBeInserted.NewRoleID == null)
                         userToBeInserted.NewRoleID = DataBase.Roles.Where(r => r.Name == "User").Select(r => r.Id).First();
 
@@ -439,7 +453,7 @@ namespace Everything2Everyone.Controllers
                 user.NickName = userToBeInserted.NickName;
                 DataBase.SaveChanges();
 
-                TempData["ActionMessage"] = "You have successfully changed the profile details!";
+                TempData["ActionMessage"] = "You have successfully changed the profile details.";
             }
 
             // Fetch categories for side menu
@@ -459,31 +473,44 @@ namespace Everything2Everyone.Controllers
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Delete(string userID)
         {
-            //Authorize(userID);
+            // user, editor authorization
+            if (!User.IsInRole("Administrator") && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You don't have permission to access this resource.";
+                return Redirect("/users/edit/" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
 
-            User userToBeRemoved;
+            // admin authorization => fails when admin attempts to remove another admin
+            try
+            {
+                bool isTheRequestedUserAnAdmin = DataBase.UserRoles.Where(u => u.UserId == userID).Select(u => u.RoleId).First() ==
+                                                 DataBase.Roles.Where(r => r.Name == "Administrator").Select(r => r.Id).First();
 
-            // making sure provided userID is valid - Administrator
-            userToBeRemoved = DataBase.Users.Find(userID);
-            
-            if (userToBeRemoved==null)
+                if (User.IsInRole("Administrator") && isTheRequestedUserAnAdmin && userID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                {
+                    TempData["ActionMessage"] = "You don't have permission to access this resource.";
+                    return Redirect("/users/index");
+                }
+            }
+            catch
             {
                 TempData["ActionMessage"] = "No user with specified ID could be found.";
                 return Redirect("/users/index");
             }
 
+            User userToBeRemoved = userToBeRemoved = DataBase.Users.Find(userID);
+
             DataBase.Users.Remove(userToBeRemoved);
             DataBase.SaveChanges();
-            Console.WriteLine("Success!!!!!!!!!!!!!!");
 
             // admins won't be prompted to create a new account, unless they deleted their own account
             if (User.FindFirst(ClaimTypes.NameIdentifier).Value != userID) {
-                TempData["message"] = "Account successfully deleted.";
+                TempData["ActionMessage"] = "Account successfully deleted.";
                 return Redirect("/users/index");
             }
 
             TempData["ActionMessage"] = "Account successfully deleted.";
-            return Redirect("/sign-up");
+            return Redirect("/signup");
         }
 
 

@@ -78,14 +78,20 @@
     </div>
 
     <button type="submit" class="btn-basic btn-edit" style="max-width: 5rem;">EDIT</button>
-    <br /><br />
-    <h1 class="small-title">Security:</h1>
-    <div class="vw-user-profile__btns">
-    <a href="/users/change-password/@Model.Id">Change password</a>
-    <a href="/users/change-email/@Model.Id">Change email</a>
-    <form name="DeleteMe" method="post" action="/users/delete/@Model.Id">
-        <input type="hidden">
-        <a href="javascript:document.DeleteMe.submit()">Permanently delete account</a>
-    </form>
-    </div>
 }
+
+<br /><br />
+<h1 class="small-title">Security:</h1>
+<div class="vw-user-profile__btns">
+<form action="/users/change-email/@Model.Id" method="get">
+    <button type="submit" class="btn-basic btn-edit" style="max-width: 7rem;">Change Email</button>
+</form>
+
+<form action="/users/change-password/@Model.Id" method="get">
+        <button type="submit" class="btn-basic btn-edit" style="max-width: 10rem;">Change Password</button>
+</form>
+
+<form id = "DeleteMe" method="post" action="/users/delete/@Model.Id">
+        <button type="submit" class="btn-basic btn-edit" style="max-width: 12rem;">Permanently Delete Account</button>
+</form>
+</div>
