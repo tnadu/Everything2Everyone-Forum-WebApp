@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -266,7 +267,11 @@ namespace Everything2Everyone.Controllers
             if (TempData.ContainsKey("ActionMessage"))
                 ViewBag.DisplayedMessage = TempData["ActionMessage"];
 
-            var currentUsers = DataBase.Users;
+            var currentUsers = (from user in DataBase.Users
+                                join userRoles in DataBase.UserRoles on user.Id equals userRoles.UserId
+                                join role in DataBase.Roles on userRoles.RoleId equals role.Id
+                                select new { UserId = user.Id, UserName = user.NickName, RoleName = role.Name }
+                                );
 
             // pagination
             int usersPerPage = 10;

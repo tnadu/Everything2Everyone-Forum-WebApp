@@ -1,6 +1,7 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -21,18 +22,17 @@ namespace Everything2Everyone.Controllers
             _roleManager = roleManager;
         }
 
-        // [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Index()
         {
             FetchCategories();
 
-            var comments = DataBase.Comments.Where(comment => comment.UserID == "fa1c312d-549a-42bd-8623-c1071cfd581e");
-            //var comments = DataBase.Comments.Where(comment => comment.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var comments = DataBase.Comments.Where(comment => comment.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
             ViewBag.UserComments = comments;
             return View();
         }
 
-        // [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Edit(int commentID)
         {
             Comment comment;
@@ -42,11 +42,11 @@ namespace Everything2Everyone.Controllers
             {
                 comment = DataBase.Comments.Where(comment => comment.CommentID == commentID).First();
 
-                //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
-                // {
-                //    TempData["ActionMessage"] = "You do not have permission to edit this comment!";
-                //    return Redirect("/articles/show/" + comment.ArticleID);
-                //}
+                if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                {
+                    TempData["ActionMessage"] = "You do not have permission to edit this comment!";
+                    return Redirect("/articles/show/" + comment.ArticleID);
+                }
 
             }
             catch
@@ -66,7 +66,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Edit(Comment commentToBeInserted) 
         { 
             if (ModelState.IsValid)
@@ -81,11 +81,11 @@ namespace Everything2Everyone.Controllers
                     return Redirect("/articles/index/");
                 }
 
-                //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
-                // {
-                //    TempData["ActionMessage"] = "You do not have permission to edit this comment!";
-                //    return Redirect("/articles/show/" + comment.ArticleID);
-                //}
+                if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                {
+                    TempData["ActionMessage"] = "You do not have permission to edit this comment!";
+                    return Redirect("/articles/show/" + comment.ArticleID);
+                }
 
                 comment.Content = commentToBeInserted.Content;
                 // comment got edited just now
@@ -118,11 +118,11 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index/");
             }
 
-            //if(comment.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
-            // {
-            //    TempData["ActionMessage"] = "You do not have permission to delete this comment!";
-            //    return Redirect("/articles/show/" + comment.ArticleID);
-            //}
+            if(commentToBeDeleted.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            {
+                TempData["ActionMessage"] = "You do not have permission to delete this comment!";
+                return Redirect("/articles/show/" + commentToBeDeleted.ArticleID);
+            }
 
             DataBase.Comments.Remove(commentToBeDeleted);
             DataBase.SaveChanges();

@@ -5,14 +5,18 @@
 <div class="vw-sidebar">
     <div class="small-title">Categories</div>
 
-    @using (Html.BeginForm(actionName: "New",
-        controllerName: "Categories",
-        method: FormMethod.Post,
-        new { @class = "vw-sidebar-form" }))
-    {
+    
+    <!-- Display 'Add New Category' form only for Administrators-->
+    @if(this.User.IsInRole("Administrator")){
+            @using (Html.BeginForm(actionName: "New",
+           controllerName: "Categories",
+           method: FormMethod.Post,
+           new { @class = "vw-sidebar-form" }))
+            {
 
-        @Html.TextBox("Title", null)
-        <button type="submit">+</button>
+                <input type="text" name="Title"></input>
+                <button type="submit">+</button>
+            }
     }
 
     @foreach (var category in ViewBag.GlobalCategories)
@@ -22,21 +26,24 @@
             <a href="/articles/index/?categoryID=@category.CategoryID" class="universal-link" style="color: white;">@category.Title</a>
             <div class="vw-sidebar-category-edit">
 
-                @using (Html.BeginForm(actionName: "Edit",
-               controllerName: "Categories",
-               method: FormMethod.Post,
-               routeValues: new { CategoryID = @category.CategoryID }))
-                {
-                    <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
-                }
+                <!-- Display editing buttons only if the user is Administrator-->
+                @if( this.User.IsInRole("Administrator")){
+                        @using (Html.BeginForm(actionName: "Edit",
+                            controllerName: "Categories",
+                            method: FormMethod.Get,
+                            routeValues: new { CategoryID = @category.CategoryID }))
+                        {
+                                    <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
+                        }
 
 
-                @using (Html.BeginForm(actionName: "Delete",
-               controllerName: "Categories",
-               method: FormMethod.Post,
-               routeValues: new { CategoryID = @category.CategoryID }))
-                {
-                    <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
+                        @using (Html.BeginForm(actionName: "Delete",
+                            controllerName: "Categories",
+                            method: FormMethod.Post,
+                            routeValues: new { CategoryID = @category.CategoryID }))
+                        {
+                                    <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
+                        }
                 }
 
             </div>

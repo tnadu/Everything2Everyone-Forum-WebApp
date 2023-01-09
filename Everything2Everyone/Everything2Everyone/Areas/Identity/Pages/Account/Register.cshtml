@@ -9,7 +9,9 @@
     <div class="col-md-4">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h2>Create a new account:</h2>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" 
+            class="text-danger"
+                 style="color: rgb(198, 47, 47)"></div><br />
 
             <!-- FIRST NAME & LAST NAME FIELDS-->
             <div class="vw-form-groups">
@@ -53,6 +55,14 @@
                     <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                 </div>
             </div>
+
+            <h5>
+                Already having an account?
+                <a href="/identity/account/login"
+                   style="color: var(--color-stroke);">
+                    Log in here.
+                </a>
+            </h5>
 
             <!-- Implicit values for JoinDate & ShowPublicIdentity-->
             <button id="registerSubmit" type="submit" class="btn-basic btn-log-sign">Register</button>

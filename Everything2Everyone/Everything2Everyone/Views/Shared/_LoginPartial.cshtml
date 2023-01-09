@@ -7,17 +7,25 @@
 <div class="vw-navbar-links">
     @if (SignInManager.IsSignedIn(User))
     {
-        <div class="btn-basic btn-new">
-            <a href="/Articles/New">NEW +</a>
-        </div>
+        @if (this.User.IsInRole("Administrator") || this.User.IsInRole("Editor")){
+            <div class="btn-basic btn-new">
+                <a href="/Articles/New">NEW +</a>
+            </div>
+        }
 
         <div class="dropdown">
-            <button class="btn-drop">...</button>
+            <button class="btn-drop"><img src="~/images/Icons/profile-icon.svg" /></button>
             <div class="dropdown-content">
                 <a href="/users/edit/@User.FindFirst(ClaimTypes.NameIdentifier).Value">Profile</a>
                 <a href="/comments/my-comments">My comments</a>
-                <a href="#">My articles</a>
-                <a href="/users/index">Manage users</a>
+                <a href="/articles/index/?userSpecificMode=1">My articles</a>
+
+                <!-- Display user management link only for administrators-->
+                @if (this.User.IsInRole("Administrator"))
+                {
+                    <a href="/users/index">Manage users</a>
+                }
+
                 <form style="background-color: var(--delete); color: var(--text-primary); display:flex; align-items: center; justify-content: center;" 
                         asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                     <button type="submit" class="nav-link btn btn-link text-dark" style="text-align:center;">Logout</button>

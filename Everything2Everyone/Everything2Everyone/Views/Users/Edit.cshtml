@@ -39,11 +39,13 @@
     </div>
 
     <div class="vw-form-groups">
+
         <div class="vw-form-groups-items">
             <label class="vw-log-sign-label">Nick name:</label>
             <input name="NickName" type="text" value="@Model.NickName" />
             @Html.ValidationMessageFor(m => m.NickName, null, new { @class = "text-danger" })
         </div>
+
         <div class="vw-form-groups-items">
             <label class="vw-log-sign-label" style="visibility:hidden">.</label>
 

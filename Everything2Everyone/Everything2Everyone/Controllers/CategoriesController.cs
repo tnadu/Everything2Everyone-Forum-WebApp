@@ -22,7 +22,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult New(Category categoryToBeInserted)
         {
             if (ModelState.IsValid)
@@ -40,7 +40,7 @@ namespace Everything2Everyone.Controllers
             return Redirect("/articles/index/");
         }
 
-        // [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Edit(int categoryID)
         {
             Category category;
@@ -64,7 +64,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Edit(Category categoryToBeInserted)
         {
             if (ModelState.IsValid)
@@ -94,7 +94,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Delete(int categoryID)
         {
             Category category = DataBase.Categories.Find(categoryID);

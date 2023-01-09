@@ -10,29 +10,14 @@
         baseURL += "sort=" + ViewBag.Sorting + "&&";
     if (ViewBag.UserSpecified != null)
         baseURL += "userSpecificMode=" + ViewBag.UserSpecified + "&&";
-    baseURL += "page=";
-          
+    if (ViewBag.searchInput != null)
+        baseURL += "search=" + ViewBag.searchInput + "&&"; 
 
-    if (TempData.ContainsKey("ActionMessage"))
-    {
-        if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
-        {
-            <div class="alert-message alert-message__succeeded"
-                                 data-aos="fade-down"
-                                 data-aos-duration="1000">
-                                    <h4>@TempData["ActionMessage"]</h4>
-            </div>
-        }
-        else
-        {
-            <div class="alert-message alert-message__failed"
-                                     data-aos="fade-down"
-                                     data-aos-duration="1000">
-                                    <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
-            </div>
-        }
-    }
+    baseURL += "page=";
+    
 }
+
+<partial name="ErrorMessagePartial" />
 
 <h1 class="vw-article-title" style="text-align: left;">@ViewBag.CategoryName</h1>
 <div class="articles-filter">
@@ -44,6 +29,8 @@
                 sortingBaseURL += "categoryID=" + ViewBag.CategoryID + "&&";
             if (ViewBag.UserSpecified != null)
                 sortingBaseURL += "userSpecificMode=" + ViewBag.UserSpecified + "&&";
+            if (ViewBag.searchInput != null)
+                sortingBaseURL += "search=" + ViewBag.searchInput + "&&";
             sortingBaseURL += "sort=";
         }
 
@@ -123,7 +110,7 @@
 <!-- ARTICLES GRID, 2 COLUMNS -->
 <div class="vw-articles-links">
     
-    @foreach (Article article in ViewBag.CurrentArticleQuery){
+    @foreach (var article in ViewBag.CurrentArticleQuery){
 
         <!-- ARTICLE ELEMENT -->
         <div class="vw-article-link">
@@ -135,7 +122,7 @@
                 href="/articles/index/?categoryID=@article.CategoryID">@article.Category.Title</a>
             
             <div class="vw-article-link-editor">
-                <p>OLAERIU VLAD MIHAI</p>
+                <!--  <p> numele autorului</p> -->
                 <div class="vw-article-link-date">@article.PublicationDate</div>
             </div>
         </div>

@@ -106,13 +106,6 @@ app.MapControllerRoute(
     pattern: "articles/choose-version/{articleID}",
     defaults: new { controller = "Articles", action = "ChooseVersion" });
 
-// Search article
-// TO DO 
-// app.MapControllerRoute(
-//    name: "ArticlesSearch",
-//    pattern: "Articles/Search/Search-string/{query?}",
-//    defaults: new { controller = "Articles", action = "Search" });
-
 // Categories routes
 // NEW
 app.MapControllerRoute(

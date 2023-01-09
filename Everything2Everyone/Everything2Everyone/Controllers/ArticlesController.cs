@@ -170,14 +170,46 @@ namespace Everything2Everyone.Controllers
             else if (sort == 2)
                 returnedArticles = returnedArticles.OrderBy(article => article.Title);
             else if (sort == 3)
-                returnedArticles = returnedArticles.OrderByDescending(article => article.Title);    
+            {
+                returnedArticles = returnedArticles.OrderByDescending(article => article.Title);
+            }
+            // when invalid or null sort value is provided, the default behaviour occurs
+            else
+            {
+                returnedArticles = returnedArticles.OrderByDescending(article => article.PublicationDate);
+            }
 
-            // filter articles by the user making the request
             if (userSpecificMode != null)
-                returnedArticles = returnedArticles.Where(article => article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            {
+               returnedArticles = returnedArticles.Where(article => article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
 
+            // Search engine
+            var searchInput = "";
 
-            // pagination
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+                // Eliminate white spaces
+                searchInput = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                // Search in Articles for Title or Content matching
+                List<int> articleIDs = DataBase.Articles.Include("Chapters").Where(
+                        article => article.Title.Contains(searchInput) || article.Chapters.Any(chapter => chapter.ContentUnparsed.Contains(searchInput))
+                    ).Select(article => article.ArticleID).ToList();
+
+                // Search in Comments for Content matching
+                List<int> articleIDsFromCommentsSearching = DataBase.Comments.Where(
+                        comment => comment.Content.Contains(searchInput)
+                    ).Select(comment => comment.ArticleID).ToList();
+
+                // Merge both lists into one
+                List<int> mergedArticleIDs = articleIDs.Union(articleIDsFromCommentsSearching).ToList();
+
+                // Find articles that match with the merge IDs
+                returnedArticles = returnedArticles.Where(article => mergedArticleIDs.Contains(article.ArticleID));
+            }
+
+            // Pagination
             int articlesPerPage = 10;
             int numberOfArticles = returnedArticles.Count();
             var currentPageNumber = Convert.ToInt32(HttpContext.Request.Query["page"]);
@@ -201,6 +233,7 @@ namespace Everything2Everyone.Controllers
             ViewBag.CategoryID = categoryID;
             ViewBag.Sorting = sort;
             ViewBag.UserSpecified = userSpecificMode;
+            ViewBag.searchInput = searchInput;
             ViewBag.lastPage = lastPage;
 
             // message received
@@ -232,6 +265,7 @@ namespace Everything2Everyone.Controllers
                                                    .Include("Comments").Include("User").Where(article => article.ArticleID == articleID).First();
 
                 returnedChapters = DataBase.Chapters.Where(returnedArticle => returnedArticle.ArticleID == articleID).ToList();
+                ViewBag.ArticleComments =  DataBase.Comments.Include("User").Where(comment => comment.ArticleID == articleID);
             }
             catch
             {
@@ -259,6 +293,9 @@ namespace Everything2Everyone.Controllers
             returnedArticleBundle.Article = returnedArticle;
             returnedArticleBundle.Chapters = returnedChapters;
 
+            // variable that will hold the current userID
+            ViewBag.currentUserID = _userManager.GetUserId(User);
+
             // Fetch categories for side menu
             FetchCategories();
 
@@ -269,11 +306,10 @@ namespace Everything2Everyone.Controllers
         // because Views accept only one Model, we will use the POST Show method to add comments
         // to the corresponding article
         [HttpPost]
-        // [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Show([FromForm] Comment commentToBeInserted)
         {
-            commentToBeInserted.UserID = "fa1c312d-549a-42bd-8623-c1071cfd581e";
-            // commentToBeInserted.UserID = User.FindFirst(ClaimTypes.NameIdentifier).Value
+            commentToBeInserted.UserID = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             // at first, the dates are identical
             commentToBeInserted.DateAdded = DateTime.Now;
             commentToBeInserted.DateEdited = DateTime.Now;
@@ -290,7 +326,7 @@ namespace Everything2Everyone.Controllers
 
 
         // action returning the associated View
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult New()
         {
             // Fetch categories for side menu
@@ -313,7 +349,7 @@ namespace Everything2Everyone.Controllers
         // action inserting the new article and its associated
         // chapters into the database
         [HttpPost]
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult New(ArticleBundle articleBundle)
         {
             // Fetch categories for side menu
@@ -370,7 +406,7 @@ namespace Everything2Everyone.Controllers
         }
 
 
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult Edit(int articleID, int versionID)
         {
             // the most recent version of the article is required, in order
@@ -464,7 +500,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult Edit(ArticleVersionBundle articleVersionBundle)
         {
             // Fetch categories for side menu
@@ -572,7 +608,7 @@ namespace Everything2Everyone.Controllers
 
 
         [HttpPost]
-        // [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public IActionResult Delete(int articleID)
         {
             Article article;
