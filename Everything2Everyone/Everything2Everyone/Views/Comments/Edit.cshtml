@@ -1,7 +1,6 @@
 ﻿@model Everything2Everyone.Models.Comment
 
-<h1>Editing your comment on: '@ViewBag.ArticleOfComment.Title'</h1>
-<h2>Maybe reconsider by <a href="/articles/show/@ViewBag.ArticleOfComment.ArticleID">reading it again.</a></h2>
+<h2 style="font-weight:bold">Editing your comment on: <a href="/articles/show/@ViewBag.ArticleOfComment.ArticleID">'@ViewBag.ArticleOfComment.Title'</a></h2>
 <form method="POST" action="/comments/edit/@Model.CommentID" class="vw-article-add-comment">
     <input type="hidden" name="ArticleID" value="@Model.ArticleID" />
 

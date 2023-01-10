@@ -6,19 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Everything2Everyone.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Ganss.Xss;
 
 namespace Everything2Everyone.Areas.Identity.Pages.Account
 {
@@ -143,10 +140,12 @@ namespace Everything2Everyone.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                var sanitizer = new HtmlSanitizer();
+
                 // Set the properties received from Input class
-                user.FirstName = Input.FirstName;
-                user.LastName = Input.LastName;
-                user.NickName = Input.NickName;
+                user.FirstName = sanitizer.Sanitize(Input.FirstName);
+                user.LastName = sanitizer.Sanitize(Input.LastName);
+                user.NickName = sanitizer.Sanitize(Input.NickName);
                 user.JoinDate = DateTime.Now;
                 user.ShowPublicIdentity = false;
 

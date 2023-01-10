@@ -5,7 +5,6 @@ namespace Everything2Everyone.Models
 {
     public class Chapter
     {
-        // [Key]
         public int ChapterID { get; set; }
 
         public int ArticleID { get; set; }
