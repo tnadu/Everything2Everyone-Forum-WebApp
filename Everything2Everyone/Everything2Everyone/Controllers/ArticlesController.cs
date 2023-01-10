@@ -47,8 +47,8 @@ namespace Everything2Everyone.Controllers
             }
 
 
-            // user, editor authorization
-            if (!User.IsInRole("Administrator") && currentArticleVersion.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            // editor authorization
+            if (!User.IsInRole("Administrator") && (currentArticleVersion.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value || currentArticleVersion.IsRestricted))
             {
                 TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/articles/show/" + articleID);
@@ -417,8 +417,8 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index?userSpecificMode=1");
             }
 
-            // user, editor authorization
-            if (!User.IsInRole("Administrator") && article.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            // editor authorization
+            if (!User.IsInRole("Administrator") && (article.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value || article.IsRestricted))
             {
                 TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/articles/show/" + articleID);
@@ -524,8 +524,8 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index/");
             }
 
-            // user, editor authorization
-            if (!User.IsInRole("Administrator") && currentArticle.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            // editor authorization
+            if (!User.IsInRole("Administrator") && (currentArticle.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value || currentArticle.IsRestricted))
             {
                 TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/articles/show/" + currentArticle.ArticleID);
@@ -641,8 +641,8 @@ namespace Everything2Everyone.Controllers
                 return Redirect("/articles/index?userSpecificMode=" + User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
 
-            // user, editor authorization
-            if (!User.IsInRole("Administrator") && article.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            // editor authorization
+            if (!User.IsInRole("Administrator") && (article.UserID != User.FindFirst(ClaimTypes.NameIdentifier).Value || article.IsRestricted))
             {
                 TempData["ActionMessage"] = "You don't have permission to access this resource.";
                 return Redirect("/articles/show/" + articleID);

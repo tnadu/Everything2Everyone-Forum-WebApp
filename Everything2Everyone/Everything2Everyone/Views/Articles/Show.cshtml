@@ -10,7 +10,7 @@
         @if (ViewBag.ShowEditDeleteButtons)
         {
             <div style="display:flex; align-items: center;">
-                @if(this.User.IsInRole("Administrator")){
+                @if(ViewBag.ShowRestrictButton){
                     <form method="get" action="/articles/restrict/@Model.Article.ArticleID">
                         <button type="submit" class="btn-basic" style="background:var(--top-gradient); border:none">
                             <img src="~/images/Icons/restrict.svg"
@@ -19,11 +19,7 @@
                     </form>
                 }
                 
-                <!-- Check if article is not restricted and the user is the publisher of the article-->
-                <!-- If the user is administrator display it anyway-->
-                @if ( (Model.Article.IsRestricted == false && Model.Article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value) ||
-                    this.User.IsInRole("Administrator")
-                )
+                @if (ViewBag.ShowEditDeleteButtons)
                 {
                     <a href="/Articles/Choose-Version/@Model.Article.ArticleID">
                         <img src="~/images/Icons/edit.png"
