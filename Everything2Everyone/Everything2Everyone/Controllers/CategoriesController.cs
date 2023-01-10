@@ -1,5 +1,6 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,9 @@ namespace Everything2Everyone.Controllers
         {
             if (ModelState.IsValid)
             {
+                var sanitizer = new HtmlSanitizer();
+                categoryToBeInserted.Title = sanitizer.Sanitize(categoryToBeInserted.Title);
+
                 DataBase.Categories.Add(categoryToBeInserted);
                 DataBase.SaveChanges();
 
@@ -79,7 +83,9 @@ namespace Everything2Everyone.Controllers
                     TempData["ActionMessage"] = "No category with specified ID could be found.";
                 }
 
-                category.Title = categoryToBeInserted.Title;
+                var sanitizer = new HtmlSanitizer();
+
+                category.Title = sanitizer.Sanitize(categoryToBeInserted.Title);
                 DataBase.SaveChanges();
 
                 TempData["ActionMessage"] = "Category edited successfully";

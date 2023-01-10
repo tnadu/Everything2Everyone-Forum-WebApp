@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Everything2Everyone.Models
 {
     public class Chapter
     {
-        // [Key]
         public int ChapterID { get; set; }
 
         public int ArticleID { get; set; }

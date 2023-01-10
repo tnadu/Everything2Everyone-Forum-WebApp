@@ -1,10 +1,10 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -138,10 +138,12 @@ namespace Everything2Everyone.Controllers
 
                 userToChange = DataBase.Users.Find(emailChange.UserID);
 
-                userToChange.UserName = emailChange.NewEmail;
-                userToChange.NormalizedUserName = emailChange.NewEmail.ToUpper();
-                userToChange.Email = emailChange.NewEmail;
-                userToChange.NormalizedEmail = emailChange.NewEmail.ToUpper();
+                var sanitizer = new HtmlSanitizer();
+
+                userToChange.UserName = sanitizer.Sanitize(emailChange.NewEmail);
+                userToChange.NormalizedUserName = sanitizer.Sanitize(emailChange.NewEmail).ToUpper();
+                userToChange.Email = sanitizer.Sanitize(emailChange.NewEmail);
+                userToChange.NormalizedEmail = sanitizer.Sanitize(emailChange.NewEmail).ToUpper();
 
                 DataBase.SaveChanges();
 
@@ -452,10 +454,12 @@ namespace Everything2Everyone.Controllers
                     DataBase.SaveChanges();
                 }
 
-                user.FirstName = userToBeInserted.FirstName;
-                user.LastName = userToBeInserted.LastName;
+                var sanitizer = new HtmlSanitizer();
+
+                user.FirstName = sanitizer.Sanitize(userToBeInserted.FirstName);
+                user.LastName = sanitizer.Sanitize(userToBeInserted.LastName);
                 user.ShowPublicIdentity = userToBeInserted.ShowPublicIdentity;
-                user.NickName = userToBeInserted.NickName;
+                user.NickName = sanitizer.Sanitize(userToBeInserted.NickName);
                 DataBase.SaveChanges();
 
                 TempData["ActionMessage"] = "You have successfully changed the profile details.";

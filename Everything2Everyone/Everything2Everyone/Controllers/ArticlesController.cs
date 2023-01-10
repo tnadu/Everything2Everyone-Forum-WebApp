@@ -1,5 +1,6 @@
 ﻿using Everything2Everyone.Data;
 using Everything2Everyone.Models;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -302,6 +303,8 @@ namespace Everything2Everyone.Controllers
         [Authorize(Roles = "User,Editor,Administrator")]
         public IActionResult Show([FromForm] Comment commentToBeInserted)
         {
+            var sanitizer = new HtmlSanitizer();
+            commentToBeInserted.Content = sanitizer.Sanitize(commentToBeInserted.Content);
             commentToBeInserted.UserID = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             // at first, the dates are identical
             commentToBeInserted.DateAdded = DateTime.Now;
@@ -345,6 +348,8 @@ namespace Everything2Everyone.Controllers
         [Authorize(Roles = "Editor,Administrator")]
         public IActionResult New(ArticleBundle articleBundle)
         {
+            var sanitizer = new HtmlSanitizer();
+
             // Fetch categories for side menu
             FetchCategories();
 
@@ -369,6 +374,8 @@ namespace Everything2Everyone.Controllers
                     return View(articleBundle);
                 }
 
+                articleBundle.Article.Title = sanitizer.Sanitize(articleBundle.Article.Title);
+                articleBundle.Article.CommitTitle = sanitizer.Sanitize(articleBundle.Article.CommitTitle);
                 DataBase.Articles.Add(articleBundle.Article);
                 DataBase.SaveChanges();
 
@@ -381,6 +388,9 @@ namespace Everything2Everyone.Controllers
 
                 foreach (Chapter chapter in articleBundle.Chapters)
                 {
+                    // sanitizing text included in Html.Raw helper
+                    chapter.Title = sanitizer.Sanitize(chapter.Title);
+                    chapter.Content = sanitizer.Sanitize(chapter.Content);
                     chapter.ArticleID = ArticleCreatedID;
                     DataBase.Chapters.Add(chapter);
                     DataBase.SaveChanges();
@@ -593,11 +603,12 @@ namespace Everything2Everyone.Controllers
                     DataBase.SaveChanges();
                 }
 
+                var sanitizer = new HtmlSanitizer();
 
                 // overwriting current article version, based on the 'ArticleVersionBundle' received through the form
                 currentArticle.CategoryID = articleVersionBundle.Article.CategoryID;
-                currentArticle.Title = articleVersionBundle.Article.Title;
-                currentArticle.CommitTitle = articleVersionBundle.Article.CommitTitle;
+                currentArticle.Title = sanitizer.Sanitize(articleVersionBundle.Article.Title);
+                currentArticle.CommitTitle = sanitizer.Sanitize(articleVersionBundle.Article.CommitTitle);
                 currentArticle.CommitDate = DateTime.Now;
 
                 DataBase.SaveChanges();
@@ -608,8 +619,8 @@ namespace Everything2Everyone.Controllers
                     Chapter newChapter = new Chapter();
                     newChapter.ChapterID = newChapterVersion.ChapterID;
                     newChapter.ArticleID = newChapterVersion.ArticleID;
-                    newChapter.Title = newChapterVersion.Title;
-                    newChapter.Content = newChapterVersion.Content;
+                    newChapter.Title = sanitizer.Sanitize(newChapterVersion.Title);
+                    newChapter.Content = sanitizer.Sanitize(newChapterVersion.Content);
 
                     DataBase.Chapters.Add(newChapter);
                     DataBase.SaveChanges();

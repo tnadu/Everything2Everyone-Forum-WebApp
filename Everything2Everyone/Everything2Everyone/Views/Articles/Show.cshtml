@@ -40,7 +40,7 @@
     <div class="vw-article-author">
         posted by 
         @if( Model.Article.User.ShowPublicIdentity == true){
-            @Model.Article.User.FirstName @Model.Article.User.LastName
+            @Html.Raw(Model.Article.User.FirstName + " " + Model.Article.User.LastName)
         } else{
             @Model.Article.User.NickName
         }
@@ -61,7 +61,7 @@
     @foreach (Chapter chapter in Model.Chapters){
         <div class="vw-chapter">
             <h2 class="vw-chapter-title">@chapter.Title</h2>
-            <p>@chapter.Content</p>
+            <p>@Html.Raw(chapter.Content)</p>
         </div>
     }
 

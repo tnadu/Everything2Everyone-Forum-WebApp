@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using Ganss.Xss;
+using Microsoft.EntityFrameworkCore;
 
 namespace Everything2Everyone.Controllers
 {
@@ -28,7 +30,7 @@ namespace Everything2Everyone.Controllers
         {
             FetchCategories();
 
-            var comments = DataBase.Comments.Where(comment => comment.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var comments = DataBase.Comments.Include("Article").Where(comment => comment.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             if (!comments.Any())
             {
@@ -98,7 +100,8 @@ namespace Everything2Everyone.Controllers
                     return Redirect("/articles/show/" + comment.ArticleID);
                 }
 
-                comment.Content = commentToBeInserted.Content;
+                var sanitizer = new HtmlSanitizer();
+                comment.Content = sanitizer.Sanitize(commentToBeInserted.Content);
                 // comment got edited just now
                 comment.DateEdited = DateTime.Now;
                 DataBase.SaveChanges();
