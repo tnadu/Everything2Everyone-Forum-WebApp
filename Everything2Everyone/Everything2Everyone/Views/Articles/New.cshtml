@@ -5,19 +5,19 @@
     {
         if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
         {
-    <div class="alert-message alert-message__succeeded"
-                                                                     data-aos="fade-down"
-                                                                     data-aos-duration="1000">
-                                                                            <h4>@TempData["ActionMessage"]</h4>
-    </div>
+            <div class="alert-message alert-message__succeeded"
+                data-aos="fade-down"
+                data-aos-duration="1000">
+                    <h4>@TempData["ActionMessage"]</h4>
+            </div>
         }
         else
         {
-    <div class="alert-message alert-message__failed"
-                                                                     data-aos="fade-down"
-                                                                     data-aos-duration="1000">
-                                                                            <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
-    </div>
+            <div class="alert-message alert-message__failed"
+                data-aos="fade-down"
+                data-aos-duration="1000">
+                    <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
+            </div>
         }
     }
 }
@@ -155,6 +155,7 @@
 
             // Textarea CONTENT
             const Content = document.createElement("textarea");
+            Content.classList.add("summernote");
             Content.name = "Chapters[" + numberOfCreatedChildren + "].Content";
             Content.rows = 10;
             Content.value = ChapterContent.value;

@@ -59,7 +59,7 @@
                     <input type="text" name="@("Chapters["+i+"].Title")" value="@Model.Chapters[i].Title">
 
                     <label for="ChapterContent" class="vw-form-label">Chapter content:</label>
-                    <textarea type="text" name="@("Chapters["+i+"].Content")" rows="10">@Model.Chapters[i].Content</textarea>
+                    <textarea type="text" name="@("Chapters["+i+"].Content")" rows="10" class="summernote">@Model.Chapters[i].Content</textarea>
 
                     <div class="chapter-added-btns">
                         <button class="btn-basic btn-edit" type="button">EDIT</button>
@@ -246,6 +246,7 @@
 
             // Textarea CONTENT
             const Content = document.createElement("textarea");
+            Content.classList.add("summernote");
             Content.name = "Chapters[" + numberOfCreatedChildren + "].Content";
             Content.rows = 10;
             Content.value = ChapterContent.value;
