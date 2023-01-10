@@ -17,17 +17,17 @@ namespace Everything2Everyone.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int VersionID { get; set; }
 
-        [Required(ErrorMessage = "Title is required. Length must be between 5 and 50 characters.")]
-        [MaxLength(50, ErrorMessage = "Title is required. Length must be between 5 and 50 characters.")]
-        [MinLength(5, ErrorMessage = "Title is required. Length must be between 5 and 50 characters.")]
+        [Required(ErrorMessage = "Title is required. Length must be between 3 and 50 characters.")]
+        [MaxLength(50, ErrorMessage = "Title is required. Length must be between 3 and 50 characters.")]
+        [MinLength(3, ErrorMessage = "Title is required. Length must be between 3 and 50 characters.")]
         public string Title { get; set; }
 
-        [Required(ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
-        [MaxLength(20, ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
-        [MinLength(5, ErrorMessage = "Commit Title is required. Length must be between 5 and 20 characters.")]
+        [Required(ErrorMessage = "Commit Title is required. Length must be between 3 and 20 characters.")]
+        [MaxLength(20, ErrorMessage = "Commit Title is required. Length must be between 3 and 20 characters.")]
+        [MinLength(3, ErrorMessage = "Commit Title is required. Length must be between 3 and 20 characters.")]
         public string CommitTitle { get; set; } = "CommitTitle";
 
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy - HH:mm}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy - HH:mm}")]
         public DateTime CommitDate { get; set; }
 
         public virtual Article? Article { get; set; }

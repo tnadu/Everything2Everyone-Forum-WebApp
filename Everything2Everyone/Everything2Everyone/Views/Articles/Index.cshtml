@@ -3,7 +3,7 @@
     NOTE! ActionMessage = the message returned when an action accours
 -->
 @{
-    string baseURL = "/articles/index/?";
+    string baseURL = "/articles/index?";
     if (ViewBag.CategoryID != null)
         baseURL += "categoryID=" + ViewBag.CategoryID + "&&";
     if (ViewBag.Sorting != null)

@@ -22,8 +22,7 @@
                 <!-- Check if article is not restricted and the user is the publisher of the article-->
                 <!-- If the user is administrator display it anyway-->
                 @if ( (Model.Article.IsRestricted == false && Model.Article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value) ||
-                    this.User.IsInRole("Administrator")
-                )
+                    this.User.IsInRole("Administrator"))
                 {
                     <a href="/Articles/Choose-Version/@Model.Article.ArticleID">
                         <img src="~/images/Icons/edit.png"
@@ -65,24 +64,25 @@
     @foreach (Chapter chapter in Model.Chapters){
         <div class="vw-chapter">
             <h2 class="vw-chapter-title">@chapter.Title</h2>
+<<<<<<< HEAD
             <p>@Html.Raw(@chapter.ContentUnparsed)</p>
+=======
+            <p>@chapter.Content</p>
+>>>>>>> main
         </div>
     }
 
-    <!-- Add comment, only if user is authentificated -->
-    @if( User.Identity.IsAuthenticated == true) {
-        <form method="POST" action="/Articles/Show/@Model.Article.ArticleID" class="vw-article-add-comment">
-            <input type="hidden" name="ArticleID" value="@Model.Article.ArticleID" />
+    <form method="POST" action="/articles/show/@Model.Article.ArticleID" class="vw-article-add-comment">
+        <input type="hidden" name="ArticleID" value="@Model.Article.ArticleID" />
 
-            <textarea name="Content" placeholder="Add a comment..." rows="4" id="comment_content"></textarea>
-            @Html.ValidationMessage("Content", null, new { @class = "text-danger"})
+        <textarea name="Content" placeholder="Add a comment..." rows="4" id="comment_content"></textarea>
+        @Html.ValidationMessage("Content", null, new { @class = "text-danger"})
 
-            <div class="vw-article-add-comment-btns">
-                <div class="btn-basic btn-delete" id="clear_comment">Clear</div>
-                <button class="btn-basic btn-add" type="submit">Post</button>
-            </div>
-        </form>
-    }
+        <div class="vw-article-add-comment-btns">
+            <div class="btn-basic btn-delete" id="clear_comment">Clear</div>
+            <button class="btn-basic btn-add" type="submit">Post</button>
+        </div>
+    </form>
 
     <!-- Display comments: -->
     @foreach ( var comment in ViewBag.ArticleComments)
@@ -91,28 +91,30 @@
             <div>
 
                 <div class="vw-comment-author">
-                <!-- Verify if the user wants his name to be publicly displayed-->
-                @if (comment.User.ShowPublicIdentity == true){
-                    @comment.User.FirstName @comment.User.LastName <span>@comment.User.NickName -
-                        <!-- Check if the comment was edited or not-->
-                        @if( comment.DateEdited != null){
-                            @comment.DateEdited.ToString("MM/dd/yyyy")
-                        } else{
-                            @comment.DateAdded.ToString("MM/dd/yyyy")
-                        }
-                    </span>
-                } else {
-                    @comment.User.NickName<span>
-                        <!-- Check if the comment was edited or not-->
-                        @if (comment.DateEdited != null)
-                        {
-                            @comment.DateEdited.ToString("MM/dd/yyyy")
-                        } else {
-                            @comment.DateAdded.ToString("MM/dd/yyyy")
-                        }
-                    </span>
-                }
+                    <!-- Verify if the user wants his name to be publicly displayed-->
+                    @if (comment.UserID == Model.Article.UserID)
+                    {
+                        <a style="font-weight: bold; margin-right:0.5rem">OP</a>
+                    }
+
+                    @if (comment.User.ShowPublicIdentity == true){
+                        @Html.Raw(comment.User.FirstName + " " + comment.User.LastName)
+                        <span>
+                            (@comment.User.NickName)   -   @comment.DateAdded.ToString("MM/dd/yyyy")
+                        </span>
+                    } else {
+                        @comment.User.NickName
+                        <span>   
+                            -   @comment.DateEdited.ToString("MM/dd/yyyy")                        
+                        </span>
+                    }
+
+                    @if (comment.DateEdited != comment.DateAdded)
+                    {
+                        <span>(edited)</span>
+                    }
                 </div>
+
                 <div class="vw-comment-content">
                     @comment.Content
                 </div>
@@ -120,13 +122,17 @@
             
             <div class="vw-sidebar-category-edit">
 
-                <!-- Display edit options only if user is Administrator OR the one who posted-->
-                @if(ViewBag.currentUserID == comment.User.Id || this.User.IsInRole("Administrator")){
-                    <form method="GET" action="/Comments/Edit/@comment.CommentID">
+                <!-- Display edit options only if current comment belongs to requesting user-->
+                @if (User.FindFirst(ClaimTypes.NameIdentifier).Value == comment.User.Id)
+                {
+                    <form method="GET" action="/comments/edit/@comment.CommentID">
                         <button type="submit"><img src="/Images/Icons/edit.png" alt="edit"></button>
                     </form>
+                }
 
-                    <form method="POST" action="/Comments/Delete/@comment.CommentID">
+                @if (User.IsInRole("Administrator") || Model.Article.UserID == User.FindFirst(ClaimTypes.NameIdentifier).Value || User.FindFirst(ClaimTypes.NameIdentifier).Value == comment.User.Id)
+                {
+                    <form method="POST" action="/comments/delete/@comment.CommentID">
                         <button type="submit"><img src="/Images/Icons/delete.png" alt="delete"></button>
                     </form>
                 }

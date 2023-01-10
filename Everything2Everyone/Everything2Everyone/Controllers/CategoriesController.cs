@@ -40,6 +40,7 @@ namespace Everything2Everyone.Controllers
             return Redirect("/articles/index/");
         }
 
+
         [Authorize(Roles = "Administrator")]
         public IActionResult Edit(int categoryID)
         {

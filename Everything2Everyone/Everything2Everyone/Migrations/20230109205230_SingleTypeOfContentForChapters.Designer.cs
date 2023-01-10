@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Everything2Everyone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230109120659_RolesUpdate")]
-    partial class RolesUpdate
+    [Migration("20230109205230_SingleTypeOfContentForChapters")]
+    partial class SingleTypeOfContentForChapters
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -128,9 +128,6 @@ namespace Everything2Everyone.Migrations
                     b.Property<int>("ArticleID")
                         .HasColumnType("int");
 
-                    b.Property<string>("ContentParsed")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(8000)
@@ -158,9 +155,6 @@ namespace Everything2Everyone.Migrations
 
                     b.Property<int>("VersionID")
                         .HasColumnType("int");
-
-                    b.Property<string>("ContentParsed")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -446,7 +440,8 @@ namespace Everything2Everyone.Migrations
 
                     b.HasOne("Everything2Everyone.Models.User", "User")
                         .WithMany("Articles")
-                        .HasForeignKey("UserID");
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
 

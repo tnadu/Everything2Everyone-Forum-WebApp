@@ -5,26 +5,26 @@
     {
         if ((TempData["ActionMessage"].ToString()).Contains("successfully"))
         {
-    <div class="alert-message alert-message__succeeded"
-                                                                     data-aos="fade-down"
-                                                                     data-aos-duration="1000">
-                                                                            <h4>@TempData["ActionMessage"]</h4>
-    </div>
+            <div class="alert-message alert-message__succeeded"
+                data-aos="fade-down"
+                data-aos-duration="1000">
+                    <h4>@TempData["ActionMessage"]</h4>
+            </div>
         }
         else
         {
-    <div class="alert-message alert-message__failed"
-                                                                     data-aos="fade-down"
-                                                                     data-aos-duration="1000">
-                                                                            <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
-    </div>
+            <div class="alert-message alert-message__failed"
+                data-aos="fade-down"
+                data-aos-duration="1000">
+                    <h4>@TempData["ActionMessage"] <span>Try again.</span></h4>
+            </div>
         }
     }
 }
 
 
 <body>
-    <form action="/Articles/New" method="post" class="vw-form vw-form-article">
+    <form action="/articles/new" method="post" class="vw-form vw-form-article">
         <input type="hidden" name="Article.UserID" value="@User.FindFirst(ClaimTypes.NameIdentifier).Value"/>
 
         <div class="vw-form-groups-items">
@@ -96,8 +96,8 @@
 
                 // Set the Title
                 currentChapters[i].childNodes[5].name = "Chapters[" + i + "].Title";
-                // Set the ContentUnparsed
-                currentChapters[i].childNodes[7].name = "Chapters[" + i + "].ContentUnparsed";
+                // Set the Content
+                currentChapters[i].childNodes[7].name = "Chapters[" + i + "].Content";
             }
         }
 
@@ -156,7 +156,7 @@
             // Textarea CONTENT
             const Content = document.createElement("textarea");
             Content.classList.add("summernote");
-            Content.name = "Chapters[" + numberOfCreatedChildren + "].ContentUnparsed";
+            Content.name = "Chapters[" + numberOfCreatedChildren + "].Content";
             Content.rows = 10;
             Content.value = ChapterContent.value;
             Content.disabled = true;

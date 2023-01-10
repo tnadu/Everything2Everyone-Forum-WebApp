@@ -18,9 +18,7 @@ namespace Everything2Everyone.Models
         [Required(ErrorMessage = "Content is required. Length must be non-null and must not exceed 8000 characters.")]
         [MinLength(1, ErrorMessage = "Content is required. Length must be non-null and must not exceed 8000 characters.")]
         [MaxLength(8000, ErrorMessage = "Content is required. Length must be non-null and must not exceed 8000 characters.")]
-        public string ContentUnparsed { get; set; }
-
-        public string? ContentParsed { get; set; }
+        public string Content { get; set; }
 
         public virtual Article? Article { get; set; }
     }

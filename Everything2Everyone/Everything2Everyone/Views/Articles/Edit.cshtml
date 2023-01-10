@@ -24,7 +24,7 @@
 
 
 <body>
-    <form action="/Articles/Edit" method="post" class="vw-form vw-form-article">
+    <form action="/articles/edit" method="post" class="vw-form vw-form-article">
         <div class="vw-form-groups-items">
             <input type="hidden" name="Article.ArticleID" value="@Model.Article.ArticleID" />
 
@@ -59,7 +59,7 @@
                     <input type="text" name="@("Chapters["+i+"].Title")" value="@Model.Chapters[i].Title">
 
                     <label for="ChapterContent" class="vw-form-label">Chapter content:</label>
-                    <textarea type="text" name="@("Chapters["+i+"].ContentUnparsed")" rows="10" class="summernote">@Model.Chapters[i].ContentUnparsed</textarea>
+                    <textarea type="text" name="@("Chapters["+i+"].Content")" rows="10" class="summernote">@Model.Chapters[i].Content</textarea>
 
                     <div class="chapter-added-btns">
                         <button class="btn-basic btn-edit" type="button">EDIT</button>
@@ -184,8 +184,8 @@
 
                 // Set the Title
                 currentChapters[i].childNodes[6].name = "Chapters[" + i + "].Title";
-                // Set the ContentUnparsed
-                currentChapters[i].childNodes[8].name = "Chapters[" + i + "].ContentUnparsed";
+                // Set the Content
+                currentChapters[i].childNodes[8].name = "Chapters[" + i + "].Content";
             }
         }
 
@@ -247,7 +247,7 @@
             // Textarea CONTENT
             const Content = document.createElement("textarea");
             Content.classList.add("summernote");
-            Content.name = "Chapters[" + numberOfCreatedChildren + "].ContentUnparsed";
+            Content.name = "Chapters[" + numberOfCreatedChildren + "].Content";
             Content.rows = 10;
             Content.value = ChapterContent.value;
             Content.disabled = true;
